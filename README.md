@@ -1,57 +1,60 @@
-___
-# DELETE THIS INSTRUCTIONS AND ADD AN INTRODUCTION ABOUT YOUR PROJECT
-___
+# SMART IV 
+**University of Peradeniya - Computer Engineering 3rd Year Project (Team 19)**
 
-# eYY-3yp-project-template
+> **CURRENT STATUS: INITIAL DEVELOPMENT**  
+> *We are currently in the initial hardware prototyping and software scaffolding phase. The Desktop Dashboard is under active development using simulated (mock) serial data while the physical ESP32 USB receiver and bedside units are being built.*
 
-This is a sample repository you can use for your Embedded Systems project. Once you followed these instructions, remove the text and add a brief introduction to here.
+---
 
-### Enable GitHub Pages
+##  The Vision
 
-You can put the things to be shown in GitHub pages into the _docs/_ folder. Both html and md file formats are supported. You need to go to settings and enable GitHub pages and select _main_ branch and _docs_ folder from the dropdowns, as shown in the below image.
+### The Healthcare Gap
+Currently, hospitals face a significant gap in intravenous (IV) therapy management:
+* **Manual IV Sets:** Universal and low cost (~$5), but rely on open-loop gravity flow. This lacks feedback mechanisms, leading to risks like occlusions, free-flow, and severe clinical complications.
+* **Volumetric Infusion Pumps:** Highly precise with closed-loop mechanisms, but prohibitively expensive ($1,000 – $5,000) and require proprietary consumables.
 
-![image](https://user-images.githubusercontent.com/11540782/98789936-028d3600-2429-11eb-84be-aaba665fdc75.png)
+### Our Solution
+**Smart IV** is the "missing middle ground." It is a low-cost, retrofit controller designed to attach to standard, existing IV sets. By utilizing a **PID-controlled mechanism** and a **stepper motor**, it continuously calculates flow errors to stabilize IV delivery—bringing ICU-level safety and automation to general hospital wards.
 
-### Special Configurations
 
-These projects will be automatically added into [https://projects.ce.pdn.ac.lk](). If you like to show more details about your project on this site, you can fill the parameters in the file, _/docs/index.json_
 
-```
-{
-  "title": "This is the title of the project",
-  "team": [
-    {
-      "name": "Team Member Name 1",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    },
-    {
-      "name": "Team Member Name 2",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    },
-    {
-      "name": "Team Member Name 3",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    }
-  ],
-  "supervisors": [
-    {
-      "name": "Dr. Supervisor 1",
-      "email": "email@eng.pdn.ac.lk"
-    },
-    {
-      "name": "Supervisor 2",
-      "email": "email@eng.pdn.ac.lk"
-    }
-  ],
-  "tags": ["Web", "Embedded Systems"]
-}
-```
+---
 
-Once you filled this _index.json_ file, please verify the syntax is correct. (You can use [this](https://jsonlint.com/) tool).
+##  Planned System Architecture
 
-### Page Theme
+Our system is designed across a three-tier hierarchy to ensure reliability and real-time monitoring:
 
-A custom theme integrated with this GitHub Page, which is based on [github.com/cepdnaclk/eYY-project-theme](https://github.com/cepdnaclk/eYY-project-theme). If you like to remove this default theme, you can remove the file, _docs/\_config.yml_ and use HTML based website.
+1.  **Edge Layer (Bedside):** ESP32 units equipped with IR drop counters and stepper motors to regulate flow. Data is transmitted locally via **ESP-NOW**.
+2.  **Local Station (Nurse PC):** A central ESP32 receiver relays data via UART to a **Desktop Dashboard (Electron/React)** for centralized, multi-patient monitoring.
+3.  **Cloud Layer (Remote):** **AWS IoT Core** integration to trigger remote mobile alerts via a **React Native** application for on-call staff.
+
+
+
+---
+
+##  Repository Structure
+
+```text
+e21-3yp-Smart-IV/
+├── smart-iv-dashboard/     # (ACTIVE) Electron + React.js Nurse Station Desktop App
+├── hardware/               # (PLANNED) C/C++ Firmware for ESP32 Bedside Units
+├── mobile-app/             # (PLANNED) React Native Application 
+└── mechanics/              # (PLANNED) 3D Printing / CAD files for chassis
+Running the Desktop Dashboard (Development Mode)
+Since the hardware is currently under construction, the Electron app uses a mockSerialService to generate simulated patient data for UI/UX testing.
+
+Prerequisites
+Node.js (v18+)
+
+npm
+
+Setup & Run
+Bash
+# 1. Navigate to the dashboard directory
+cd smart-iv-dashboard
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the application
+npm run dev
