@@ -3,6 +3,14 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+import mockSerialService from './mockSerialService.js';
+import bedStateManager from './bedStateManager.js';
+import ipcHandler from './ipcHandler.js';
+
+// Start our backend services
+mockSerialService.start();
+bedStateManager.init();
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -16,6 +24,8 @@ function createWindow() {
       sandbox: false
     }
   })
+
+  ipcHandler.init(mainWindow);
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
