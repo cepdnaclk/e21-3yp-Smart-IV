@@ -1,34 +1,35 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import React, { useState, useEffect } from 'react';
+import BedGrid from './components/BedGrid';
 
 function App() {
-  const ipcHandle = () => window.electron.ipcRenderer.send('ping')
+  // State to hold the live data dictionary from the backend
+  const [bedsData, setBedsData] = useState({});
+
+  useEffect(() => {
+    // 1. Connect to the IPC Bridge using the 'api' object exposed in preload.js
+    // We pass a callback function that updates our React state whenever the backend pushes new data.
+    const unsubscribe = window.api.onBedUpdate((allBeds) => {
+      setBedsData(allBeds);
+    });
+
+    // Cleanup function when the component unmounts (good React practice)
+    return () => {
+      // If we implemented an unsubscribe in preload, we would call it here
+    };
+  }, []); // Empty dependency array ensures this listener is only set up once
 
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
-  )
+    <div style={{ fontFamily: 'sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
+      <header style={{ backgroundColor: '#2c3e50', color: 'white', padding: '15px 20px' }}>
+        <h1 style={{ margin: 0, fontSize: '24px' }}>SMART IV WARD DASHBOARD</h1>
+      </header>
+      
+      <main>
+        {/* Pass the live data down into our Grid component */}
+        <BedGrid beds={bedsData} />
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
