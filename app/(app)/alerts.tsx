@@ -1,44 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAlertStore } from '../../src/stores/alertStore';
 import { apiService } from '../../src/services/apiService';
+import { useAlerts } from '../../src/hooks/useAlerts';
+import { formatTime } from '../../src/utils/formatters';
 import { COLORS } from '../../src/constants/colors';
 import { Alert } from '../../src/types/alert.types';
 
 export default function AlertsScreen() {
-  const { alerts, setAlerts, clearUnread, acknowledgeAlert } = useAlertStore();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const fetchAlerts = async () => {
-    try {
-      const data = await apiService.getActiveAlerts();
-      setAlerts(data);
-    } catch (error) {
-      console.error('Failed to fetch alerts', error);
-    }
-  };
+  const { alerts, acknowledgeAlert, clearUnread } = useAlertStore();
+  
+  // Bring in the custom hook
+  const { fetchAlerts, onRefresh, refreshing } = useAlerts();
 
   useEffect(() => {
     fetchAlerts();
     clearUnread();
-  }, []);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchAlerts();
-    clearUnread();
-    setRefreshing(false);
-  };
+  }, [fetchAlerts, clearUnread]);
 
   const handleAcknowledge = async (id: number) => {
     try {
-      // Optimistic UI update
       acknowledgeAlert(id);
       await apiService.acknowledgeAlert(id);
     } catch (error) {
       console.error('Failed to acknowledge alert', error);
-      // Rollback logic would go here in a robust implementation
     }
   };
 
@@ -46,7 +32,8 @@ export default function AlertsScreen() {
     <View style={styles.alertCard}>
       <View style={styles.alertHeader}>
         <Text style={styles.bedLabel}>{item.bedLabel} - {item.patientName}</Text>
-        <Text style={styles.timeText}>{new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+        {/* Using your new formatTime utility here */}
+        <Text style={styles.timeText}>{formatTime(item.createdAt)}</Text>
       </View>
       <Text style={styles.messageText}>{item.message}</Text>
       <TouchableOpacity style={styles.ackButton} onPress={() => handleAcknowledge(item.id)}>

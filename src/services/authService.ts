@@ -7,33 +7,15 @@ import { Nurse, NurseRole } from '../types/auth.types';
 export const authService = {
   async login(email: string, password: string): Promise<void> {
     useAuthStore.getState().setLoading(true);
-    try {
-      const { isSignedIn } = await signIn({ username: email, password });
-      
-      if (isSignedIn) {
-        const session = await fetchAuthSession();
-        const token = session.tokens?.accessToken?.toString() || null;
-        const attributes = await fetchUserAttributes();
-        
-        if (token) {
-          const nurse: Nurse = {
-            id: parseInt(attributes['custom:id'] || '0', 10),
-            cognitoId: attributes.sub || '',
-            name: attributes.name || 'Nurse',
-            email: attributes.email || email,
-            ward: attributes['custom:ward'] || 'General',
-            role: (attributes['custom:role'] as NurseRole) || 'NURSE',
-          };
-          
-          useAuthStore.getState().setAuth(token, nurse);
-        }
-      }
-    } catch (error) {
-      console.error('Login failed', error);
-      throw error;
-    } finally {
+    // TEMPORARY DUMMY LOGIN
+    setTimeout(() => {
+      const dummyNurse: Nurse = {
+        id: 1, cognitoId: 'dummy123', name: 'Nurse Sarah', email: email, ward: 'ICU', role: 'NURSE'
+      };
+      useAuthStore.getState().setAuth('dummy-token', dummyNurse);
       useAuthStore.getState().setLoading(false);
-    }
+    }, 1000); // 1-second fake loading delay
+  
   },
 
   async logout(): Promise<void> {

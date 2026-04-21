@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuthStore } from '../src/stores/authStore';
 import { authService } from '../src/services/authService';
-import { mqttService } from '../src/services/mqttService';
 import { notifService } from '../src/services/notifService';
+import { useMqtt } from '../src/hooks/useMqtt';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { COLORS } from '../src/constants/colors';
 
@@ -25,7 +25,6 @@ export default function RootLayout() {
         setIsInitializing(false);
       }
     };
-    
     initApp();
   }, []);
 
@@ -36,33 +35,22 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!isAuthenticated && !inAuthGroup) {
-      // User is not logged in but trying to access a protected route
       router.replace('/(auth)/login');
     } else if (isAuthenticated && inAuthGroup) {
-      // User is logged in but trying to view the login screen
       router.replace('/(app)/ward');
     }
   }, [isAuthenticated, segments, isInitializing]);
 
-  // 3. MQTT and Push Notification Lifecycle
+  // 3. Register Push Notifications
   useEffect(() => {
     if (isAuthenticated && nurse?.ward) {
-      // Connect to live data stream for the nurse's specific ward
-      mqttService.connect(nurse.ward);
-      // Register this specific device for push notifications
       notifService.registerWithBackend();
-    } else {
-      // Terminate connection immediately on logout or lost auth
-      mqttService.disconnect();
     }
-
-    // Cleanup connection on component unmount
-    return () => {
-      mqttService.disconnect();
-    };
   }, [isAuthenticated, nurse]);
 
-  // Prevent UI flickering while checking the stored session token
+  // 4. Initialize MQTT Lifecycle Hook
+  useMqtt();
+
   if (isInitializing) {
     return (
       <View style={styles.loadingContainer}>
@@ -71,7 +59,6 @@ export default function RootLayout() {
     );
   }
 
-  // Render the core navigation stack
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
