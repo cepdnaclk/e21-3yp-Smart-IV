@@ -92,7 +92,7 @@ function BedCard({ bed }) {
       {/* Top Banner with Patient Info */}
       <div style={headerStyle}>
         {/*<span>{headerIcon}</span>*/}
-        <span>BED {bed.bedId}: {bed.patientName}</span>
+        <span>BED {bed.bedId}</span>
       </div>
       
       {/* Telemetry Data Grid */}
