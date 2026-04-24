@@ -1,78 +1,51 @@
 import { EventEmitter } from 'events';
 
-/**
- * MockSerialService Class
- * * This class simulates the physical ESP32 USB Receiver Node connected via UART.
- * It extends EventEmitter so that other parts of the Electron Main process can 
- * listen for the 'bed:packet' events, exactly as they would with the real serialport library.
- */
 class MockSerialService extends EventEmitter {
   constructor() {
     super();
-    // This will hold the reference to our setInterval timer
-    this.interval = null;
-    
-    // Initial mock state array, representing the data we expect from the ESP32 network
-    // We are starting with 4 beds to match the Ward Dashboard requirements.
     this.mockBeds = [
-      { bedId: '01', patientName: 'John Doe', status: 'STABLE', flowRate: 60, targetFlow: 60, volRemaining: 400, battery: 95 },
-      { bedId: '02', patientName: 'Jane Smith', status: 'ALERT', flowRate: 40, targetFlow: 60, volRemaining: 150, battery: 70 },
-      { bedId: '05', patientName: 'Robert Brown', status: 'CRITICAL', flowRate: 0, targetFlow: 50, volRemaining: 450, battery: 20 },
-      { bedId: '07', patientName: 'David Lee', status: 'STABLE', flowRate: 80, targetFlow: 80, volRemaining: 800, battery: 92 }
+      { bedId: '01', patientName: 'A. Perera', status: 'STABLE', flowRate: 60, volRemaining: 400, battery: 95 },
+      { bedId: '02', patientName: 'S. Gunawardena', status: 'ALERT', flowRate: 40, volRemaining: 150, battery: 70 },
+      { bedId: '03', patientName: 'M. Ibrahim', status: 'STABLE', flowRate: 120, volRemaining: 800, battery: 100 },
+      { bedId: '04', patientName: 'K. Silva', status: 'STABLE', flowRate: 80, volRemaining: 200, battery: 45 },
+      { bedId: '05', patientName: 'P. Rajaratnam', status: 'CRITICAL', flowRate: 0, volRemaining: 450, battery: 20 },
+      { bedId: '06', patientName: 'N. Wickramasinghe', status: 'STABLE', flowRate: 50, volRemaining: 320, battery: 88 },
+      { bedId: '07', patientName: 'R. Jayasundara', status: 'STABLE', flowRate: 80, volRemaining: 490, battery: 92 },
+      { bedId: '08', patientName: 'T. Fernando', status: 'ALERT', flowRate: 150, volRemaining: 100, battery: 15 },
+      { bedId: '09', patientName: 'H. Mohomed', status: 'STABLE', flowRate: 60, volRemaining: 410, battery: 99 },
+      { bedId: '10', patientName: 'D. Senanayake', status: 'STABLE', flowRate: 75, volRemaining: 250, battery: 60 },
+      { bedId: '11', patientName: 'F. Rizvi', status: 'CRITICAL', flowRate: 5, volRemaining: 10, battery: 5 },
+      { bedId: '12', patientName: 'G. Ratnayake', status: 'STABLE', flowRate: 100, volRemaining: 450, battery: 100 },
+      { bedId: '13', patientName: 'V. Balasubramaniam', status: 'STABLE', flowRate: 55, volRemaining: 180, battery: 40 },
+      { bedId: '14', patientName: 'C. Rodrigo', status: 'STABLE', flowRate: 90, volRemaining: 300, battery: 85 },
+      { bedId: '15', patientName: 'J. Kumara', status: 'ALERT', flowRate: 200, volRemaining: 50, battery: 30 },
+      { bedId: '16', patientName: 'S. Thambiah', status: 'STABLE', flowRate: 45, volRemaining: 300, battery: 77 }
     ];
   }
 
-  /**
-   * Starts the mock data generation loop.
-   * * This function sets up a timer that triggers every 1 second (1000ms).
-   * In each cycle, it iterates through the mock beds, applies slight random 
-   * fluctuations to simulate real-world sensor noise, decreases the volume remaining,
-   * and finally emits a 'bed:packet' event with the updated data.
-   */
   start() {
-    console.log('🔌 Mock Serial Service started. Emitting fake hardware data...');
-    
-    this.interval = setInterval(() => {
+    console.log('🚀 Real-time simulation started for 16 beds.');
+    setInterval(() => {
       this.mockBeds.forEach(bed => {
-        // 1. Simulate minor real-world sensor fluctuations for STABLE beds
-        if (bed.status === 'STABLE') {
-          // Fluctuates the flow rate by +/- 1 mL/hr to simulate IR sensor readings
-          bed.flowRate = +(bed.targetFlow + (Math.random() * 2 - 1)).toFixed(1);
-          
-          // Decrease volume remaining slightly (flowRate is per hour, so we calculate per second drop)
-          const volumeDropPerSecond = bed.flowRate / 3600;
-          bed.volRemaining = +(bed.volRemaining - volumeDropPerSecond).toFixed(2); 
+        // 1. Simulate minor flow fluctuation (+/- 0.5 mL/hr) for "life"
+        if (bed.status !== 'CRITICAL') {
+          const noise = (Math.random() - 0.5);
+          bed.flowRate = parseFloat((bed.flowRate + noise).toFixed(1));
         }
 
-        // 2. Simulate an unexpected hardware anomaly for testing (Blockage)
-        // There is a 1% chance every second that Bed 01 will encounter a simulated blockage.
-        if (bed.bedId === '01' && bed.status === 'STABLE' && Math.random() > 0.99) {
-            console.log('⚠️ [TEST] Simulating Blockage on Bed 01');
-            bed.status = 'CRITICAL';
-            bed.flowRate = 0; // Flow stops during a blockage
-        }
+        // 2. Reduce Volume Remaining based on flow rate
+        // (flowRate is per hour, so we divide by 3600 for per-second reduction)
+        const reduction = bed.flowRate / 3600;
+        bed.volRemaining = parseFloat((bed.volRemaining - reduction).toFixed(2));
 
-        // 3. Emit the parsed packet just like the real readline parser will do
-        // We use the spread operator {...bed} to send a copy of the object, preventing unintended mutations
+        // 3. Ensure volume doesn't go negative
+        if (bed.volRemaining < 0) bed.volRemaining = 0;
+
+        // 4. Emit the individual packet
         this.emit('bed:packet', { ...bed });
       });
-    }, 1000); 
-  }
-
-  /**
-   * Stops the mock data generation loop.
-   * * This function clears the setInterval timer, effectively halting the
-   * emission of 'bed:packet' events. Useful for graceful shutdowns or
-   * testing disconnect scenarios.
-   */
-  stop() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      console.log('🔌 Mock Serial Service stopped.');
-    }
+    }, 1000);
   }
 }
 
-// Export a single instance of the service (Singleton pattern) 
-// so the entire app shares the same mock data source.
 export default new MockSerialService();
