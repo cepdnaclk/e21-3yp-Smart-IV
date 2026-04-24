@@ -4,22 +4,22 @@ class MockSerialService extends EventEmitter {
   constructor() {
     super();
     this.mockBeds = [
-      { bedId: '01', patientName: 'A. Perera', status: 'STABLE', flowRate: 60, volRemaining: 400, battery: 95 },
-      { bedId: '02', patientName: 'S. Gunawardena', status: 'ALERT', flowRate: 40, volRemaining: 150, battery: 70 },
-      { bedId: '03', patientName: 'M. Ibrahim', status: 'STABLE', flowRate: 120, volRemaining: 800, battery: 100 },
-      { bedId: '04', patientName: 'K. Silva', status: 'STABLE', flowRate: 80, volRemaining: 200, battery: 45 },
-      { bedId: '05', patientName: 'P. Rajaratnam', status: 'CRITICAL', flowRate: 0, volRemaining: 450, battery: 20 },
-      { bedId: '06', patientName: 'N. Wickramasinghe', status: 'STABLE', flowRate: 50, volRemaining: 320, battery: 88 },
-      { bedId: '07', patientName: 'R. Jayasundara', status: 'STABLE', flowRate: 80, volRemaining: 490, battery: 92 },
-      { bedId: '08', patientName: 'T. Fernando', status: 'ALERT', flowRate: 150, volRemaining: 100, battery: 15 },
-      { bedId: '09', patientName: 'H. Mohomed', status: 'STABLE', flowRate: 60, volRemaining: 410, battery: 99 },
-      { bedId: '10', patientName: 'D. Senanayake', status: 'STABLE', flowRate: 75, volRemaining: 250, battery: 60 },
-      { bedId: '11', patientName: 'F. Rizvi', status: 'CRITICAL', flowRate: 5, volRemaining: 10, battery: 5 },
-      { bedId: '12', patientName: 'G. Ratnayake', status: 'STABLE', flowRate: 100, volRemaining: 450, battery: 100 },
-      { bedId: '13', patientName: 'V. Balasubramaniam', status: 'STABLE', flowRate: 55, volRemaining: 180, battery: 40 },
-      { bedId: '14', patientName: 'C. Rodrigo', status: 'STABLE', flowRate: 90, volRemaining: 300, battery: 85 },
-      { bedId: '15', patientName: 'J. Kumara', status: 'ALERT', flowRate: 200, volRemaining: 50, battery: 30 },
-      { bedId: '16', patientName: 'S. Thambiah', status: 'STABLE', flowRate: 45, volRemaining: 300, battery: 77 }
+      { bedId: '01', status: 'STABLE', flowRate: 60, volRemaining: 400, battery: 95 },
+      { bedId: '02', status: 'ALERT', flowRate: 40, volRemaining: 150, battery: 70 },
+      { bedId: '03', status: 'STABLE', flowRate: 120, volRemaining: 800, battery: 100 },
+      { bedId: '04', status: 'STABLE', flowRate: 80, volRemaining: 200, battery: 45 },
+      { bedId: '05', status: 'CRITICAL', flowRate: 0, volRemaining: 450, battery: 20 },
+      { bedId: '06', status: 'STABLE', flowRate: 50, volRemaining: 320, battery: 88 },
+      { bedId: '07', status: 'STABLE', flowRate: 80, volRemaining: 490, battery: 92 },
+      { bedId: '08', status: 'ALERT', flowRate: 150, volRemaining: 100, battery: 15 },
+      { bedId: '09', status: 'STABLE', flowRate: 60, volRemaining: 410, battery: 99 },
+      { bedId: '10', status: 'STABLE', flowRate: 75, volRemaining: 250, battery: 60 },
+      { bedId: '11', status: 'CRITICAL', flowRate: 5, volRemaining: 10, battery: 5 },
+      { bedId: '12', status: 'STABLE', flowRate: 100, volRemaining: 450, battery: 100 },
+      { bedId: '13', status: 'STABLE', flowRate: 55, volRemaining: 180, battery: 40 },
+      { bedId: '14', status: 'STABLE', flowRate: 90, volRemaining: 300, battery: 85 },
+      { bedId: '15', status: 'ALERT', flowRate: 200, volRemaining: 50, battery: 30 },
+      { bedId: '16', status: 'STABLE', flowRate: 45, volRemaining: 300, battery: 77 }
     ];
   }
 
