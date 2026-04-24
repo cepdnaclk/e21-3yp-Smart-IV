@@ -1,29 +1,31 @@
 import React from 'react';
 import BedCard from './BedCard';
 
-/**
- * BedGrid Component
- * Receives the entire dictionary of bed states and maps them into a responsive grid.
- */
 function BedGrid({ beds }) {
-  // Convert the beds object (sent from IPC) into an array so we can map over it
+  // 1. Convert the object to an array
   const bedList = Object.values(beds);
+
+  // 2. Sort the list by bedId numerically (01, 02, 03...)
+  // We use parseInt to ensure "10" comes after "09"
+  const sortedBeds = bedList.sort((a, b) => {
+    return parseInt(a.bedId) - parseInt(b.bedId);
+  });
 
   const gridStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '20px',
-    padding: '20px'
+    gap: '25px',
+    padding: '30px',
+    justifyContent: 'center'
   };
 
   return (
     <div style={gridStyle}>
-      {/* If there are no beds connected yet, show a waiting message */}
-      {bedList.length === 0 ? (
-        <p>Waiting for telemetry data from ESP32 Receiver...</p>
+      {sortedBeds.length === 0 ? (
+        <p style={{ fontSize: '18px', color: '#666' }}>Waiting for telemetry data from ESP32 Receiver...</p>
       ) : (
-        /* Iterate through our bed array and create a BedCard for each one */
-        bedList.map((bed) => (
+        // 3. Map over the sorted list instead of the raw list
+        sortedBeds.map((bed) => (
           <BedCard key={bed.bedId} bed={bed} />
         ))
       )}
