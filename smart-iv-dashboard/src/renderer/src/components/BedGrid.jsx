@@ -7,7 +7,7 @@ function BedGrid({ beds }) {
 
   // 2. Sort the list by bedId numerically (01, 02, 03...)
   // We use parseInt to ensure "10" comes after "09"
-  const sortedBeds = bedList.sort((a, b) => {
+  const sortedBeds = [...bedList].sort((a, b) => {
     return parseInt(a.bedId) - parseInt(b.bedId);
   });
 
