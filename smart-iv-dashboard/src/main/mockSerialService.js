@@ -30,7 +30,7 @@ class MockSerialService extends EventEmitter {
         // 1. Simulate minor flow fluctuation (+/- 0.5 mL/hr) for "life"
         if (bed.status !== 'CRITICAL') {
           const noise = (Math.random() - 0.5);
-          bed.flowRate = parseFloat((bed.flowRate + noise).toFixed(1));
+          bed.flowRate = parseFloat((Math.max(0, bed.flowRate + noise)).toFixed(1));
         }
 
         // 2. Reduce Volume Remaining based on flow rate
@@ -39,7 +39,10 @@ class MockSerialService extends EventEmitter {
         bed.volRemaining = parseFloat((bed.volRemaining - reduction).toFixed(2));
 
         // 3. Ensure volume doesn't go negative
-        if (bed.volRemaining < 0) bed.volRemaining = 0;
+        if (bed.volRemaining < 0){
+          bed.volRemaining = 0;
+          bed.status = 'CRITICAL'; //Auto-escalate when bag is empty
+        } 
 
         // 4. Emit the individual packet
         this.emit('bed:packet', { ...bed });
