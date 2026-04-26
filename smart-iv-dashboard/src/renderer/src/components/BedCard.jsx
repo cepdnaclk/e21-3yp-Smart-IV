@@ -28,8 +28,12 @@ function BedCard({ bed }) {
   } else if (bed.status === 'CRITICAL') {
     headerColor = '#dc3545'; // Red
     headerIcon = '';
-    statusText = 'CRITICAL: No Flow ⚠️';
+    statusText = 'CRITICAL: No Flow';
     isGlowing = true; // Triggers the red outer glow for emergency visibility
+  } else if (bed.status === 'DISCONNECTED') { //Explicit case
+    headerColor = '#6c757d';
+    headerIcon = '';
+    statusText = 'DISCONNECTED';
   }
 
   // 3. Battery Visual Logic
