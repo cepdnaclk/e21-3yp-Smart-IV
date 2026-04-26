@@ -7,9 +7,6 @@ import mockSerialService from './mockSerialService.js';
 import bedStateManager from './bedStateManager.js';
 import ipcHandler from './ipcHandler.js';
 
-// Start our backend services
-mockSerialService.start();
-bedStateManager.init();
 
 function createWindow() {
   // Create the browser window.
@@ -25,10 +22,11 @@ function createWindow() {
     }
   })
 
-  ipcHandler.init(mainWindow);
+  
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    ipcHandler.init(mainWindow);
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -61,6 +59,10 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  //start backend services
+  mockSerialService.start();
+  bedStateManager.init();
 
   createWindow()
 
