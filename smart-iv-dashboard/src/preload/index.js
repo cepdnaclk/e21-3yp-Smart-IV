@@ -1,6 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-// Expose a safe 'api' object to the React window
+const makeListener = (channel) => (callback) => {
+  const handler = (_event, data) => callback(data);
+  ipcRenderer.on(channel, handler);
+  return () => ipcRenderer.removeListener(channel, handler); //Returns cleanup function
+};
+
 contextBridge.exposeInMainWorld('api', {
   
   // ==========================================
@@ -16,8 +21,8 @@ contextBridge.exposeInMainWorld('api', {
   // ==========================================
   // Main -> Renderer (Listening for pushes)
   // ==========================================
-  onBedUpdate: (callback) => ipcRenderer.on('bed:update', (_event, data) => callback(data)),
-  onNewAlert: (callback) => ipcRenderer.on('alert:new', (_event, data) => callback(data)),
-  onBedStale: (callback) => ipcRenderer.on('bed:stale', (_event, data) => callback(data)),
-  onSerialDisconnect: (callback) => ipcRenderer.on('serial:disc', (_event, data) => callback(data)),
+  onBedUpdate:        makeListener('bed:update'),
+  onNewAlert:         makeListener('alert:new'),
+  onBedStale:         makeListener('bed:stale'),
+  onSerialDisconnect: makeListener('serial:disc'),
 });
