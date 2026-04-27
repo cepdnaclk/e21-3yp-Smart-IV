@@ -1,103 +1,157 @@
 import { EventEmitter } from 'events';
-import mockSerialService from './mockSerialService.js'; // We will change this to the real serialService later
+import mockSerialService from './mockSerialService.js';
 
-/**
- * BedStateManager Class
- * * This is the central "source of truth" for the desktop dashboard.
- * It maintains an in-memory Map of all connected beds, updating them the 
- * moment a new packet arrives from the ESP32 receiver.
- * It also actively monitors for hardware disconnects (stale beds).
- */
 class BedStateManager extends EventEmitter {
   constructor() {
     super();
-    // A Map is highly efficient for frequent updates and lookups by bedId
     this.bedStateMap = new Map();
-    this.staleCheckInterval = null;
+    this.telemetryCounters = new Map(); 
+    this.lastAlertMap = new Map(); // Fixed: Initialize in constructor
     
-    // How long to wait before considering a bedside unit disconnected (5 seconds)
-    this.STALE_TIMEOUT_MS = 5000; 
+    this.STALE_TIMEOUT_MS = 5000;
+    this.TELEMETRY_INTERVAL_S = 5; 
+    this.staleCheckInterval = null;
   }
 
-  /**
-   * Starts listening to the serial service and begins the stale-check loop.
-   */
-  init() {
-    console.log('🧠 Bed State Manager initialized.');
+  async init() {
+    console.log('🧠 Bed State Manager: Initializing and hydrating sessions...');
 
-    // 1. Listen to incoming packets from the serial connection
+    // BUG FIX: Hydrate memory from the Database
+    // This ensures that if you restart the app, the "Active" beds reappear immediately
+    const activeSessions = global.dbService.getActiveSessions();
+    activeSessions.forEach(session => {
+      this.bedStateMap.set(session.bedId, {
+        ...session,
+        status: 'DISCONNECTED', // Initially disconnected until a packet arrives
+        lastSeen: 0,
+        isStale: true,
+        flowRate: 0,
+        volRemaining: session.maxVolume // Use the volume defined in the session
+      });
+    });
+
+    console.log(`✅ Hydrated ${activeSessions.length} active sessions from DB.`);
+
+    // 1. Listen to incoming packets
     mockSerialService.on('bed:packet', (packet) => {
       this.handleIncomingPacket(packet);
     });
 
-    // 2. Start a loop that runs every 1 second to check if any beds have stopped talking
+    // 2. Stale bed check loop
     this.staleCheckInterval = setInterval(() => {
       this.checkForStaleBeds();
     }, 1000);
   }
 
-  /**
-   * Processes a new packet from a bedside unit.
-   * @param {Object} packet - The JSON data object from the ESP32
-   */
-  handleIncomingPacket(packet) {
+  async handleIncomingPacket(packet) {
     const { bedId } = packet;
+    const existingBed = this.bedStateMap.get(bedId);
 
-    // Attach a timestamp to the packet so we know exactly when we last heard from this bed
+    // BUG FIX: Prevent "Ghost Sessions"
+    let sessionId = existingBed?.sessionId ?? null;
+
+    if (!sessionId) {
+      sessionId = global.dbService.startSession(bedId, {
+        targetMlhr: packet.targetMlhr,
+        bagVolumeMl: packet.maxVolume,
+        dropFactor: packet.dropFactor
+      });
+      if (!sessionId) return; 
+    }
+
     const updatedBedData = {
       ...packet,
+      sessionId,
       lastSeen: Date.now(),
       isStale: false
     };
 
-    // Update our in-memory map with the fresh data
     this.bedStateMap.set(bedId, updatedBedData);
 
-    // Broadcast the updated state so the IPC Handler can push it to the React UI
+    // Telemetry Batching (Save every 5s)
+    const counter = (this.telemetryCounters.get(bedId) ?? 0) + 1;
+    this.telemetryCounters.set(bedId, counter);
+
+    if (counter >= this.TELEMETRY_INTERVAL_S) {
+      this.telemetryCounters.set(bedId, 0);
+      global.dbService.saveTelemetry(sessionId, bedId, {
+        measMlhr:  packet.flowRate,
+        remainMl:  packet.volRemaining,
+        batPct:    packet.battery,
+        state:     packet.status
+      });
+    }
+
+    this.checkAndLogAlert(updatedBedData, sessionId);
     this.emit('state:updated', this.getAllBeds());
   }
 
-  /**
-   * Checks all beds to see if they have missed their check-ins.
-   * If a bed hasn't sent data in >5 seconds, we mark it as stale/disconnected.
-   */
+  checkAndLogAlert(bed, sessionId) {
+    const { bedId, status, battery, flowRate, targetMlhr } = bed;
+    const lastAlert = this.lastAlertMap.get(bedId);
+
+    let alertType = null;
+    let severity = null;
+    let message = null;
+
+    // Logic for occlusion, free-flow, empty bag, and low battery
+    if (flowRate === 0 && status === 'CRITICAL') {
+      alertType = 'OCCLUSION';
+      severity = 'CRITICAL';
+      message = `Bed ${bedId}: No flow detected.`;
+    } else if (targetMlhr > 0 && flowRate > targetMlhr * 1.2) {
+      alertType = 'FREE_FLOW';
+      severity = 'CRITICAL';
+      message = `Bed ${bedId}: Flow rate high (${flowRate} mL/hr).`;
+    } else if (bed.volRemaining <= 0) {
+      alertType = 'EMPTY_BAG';
+      severity = 'CRITICAL';
+      message = `Bed ${bedId}: Bag empty.`;
+    } else if (battery <= 20) {
+      alertType = 'LOW_BAT';
+      severity = 'WARNING';
+      message = `Bed ${bedId}: Battery low (${battery}%).`;
+    }
+
+    if (alertType && alertType !== lastAlert) {
+      global.dbService.logAlert(sessionId, bedId, { type: alertType, severity, message });
+      this.lastAlertMap.set(bedId, alertType);
+      this.emit('alert:new', { bedId, alertType, severity, message });
+    }
+
+    if (status === 'STABLE') {
+      this.lastAlertMap.set(bedId, null);
+    }
+  }
+
   checkForStaleBeds() {
     const now = Date.now();
     let stateChanged = false;
 
-    // Loop through every bed currently in our memory
     for (const [bedId, bedData] of this.bedStateMap.entries()) {
-      // If the bed is NOT currently stale, but its last packet was over 5 seconds ago...
+      // If we haven't heard from a bed in 5s and it's not already marked stale
       if (!bedData.isStale && (now - bedData.lastSeen > this.STALE_TIMEOUT_MS)) {
-        
-        console.log(`📡 ⚠️ WARNING: Bed ${bedId} has gone STALE (No data for >5s)`);
-        
         bedData.isStale = true;
-        bedData.status = 'DISCONNECTED'; // Force the status to show a disconnect error
+        bedData.status = 'DISCONNECTED';
         
-        this.bedStateMap.set(bedId, bedData);
+        if (bedData.sessionId) {
+          global.dbService.logAlert(bedData.sessionId, bedId, {
+            type: 'STALE',
+            severity: 'CRITICAL',
+            message: `Bed ${bedId}: Connection lost.`
+          });
+        }
         stateChanged = true;
-
-        // Emit a specific event just for this failure (useful for AlertService later)
         this.emit('bed:stale', bedData);
       }
     }
 
-    // If any bed changed to a stale state, push the update to the UI
-    if (stateChanged) {
-      this.emit('state:updated', this.getAllBeds());
-    }
+    if (stateChanged) this.emit('state:updated', this.getAllBeds());
   }
 
-  /**
-   * Helper function to convert the Map into a standard JavaScript Object.
-   * IPC (Main to Renderer communication) cannot send Maps directly, so we convert it first.
-   * @returns {Object} Dictionary of all bed states
-   */
   getAllBeds() {
     return Object.fromEntries(this.bedStateMap);
   }
 }
 
-// Export as a singleton so all parts of the backend share the exact same memory state
 export default new BedStateManager();
