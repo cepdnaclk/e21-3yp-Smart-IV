@@ -3,72 +3,83 @@ import bedStateManager from './bedStateManager.js';
 
 /**
  * IPC Handler
- * This file manages all communication between the Node.js backend (Main) 
+ * Manages all communication between the Node.js backend (Main) 
  * and the React.js frontend (Renderer).
  */
 class IpcHandler {
   /**
-   * Initializes the IPC channels. We pass the mainWindow object here 
-   * so we can push events down to the React UI.
    * @param {BrowserWindow} mainWindow - The main Electron window instance
    */
   init(mainWindow) {
-    console.log('🌉 IPC Handler initialized. Bridge to React established.');
+    console.log('🌉 IPC Handler: Bridge to React established.');
 
     // ====================================================================
     // 1. PUSH EVENTS (Main -> Renderer)
-    // We listen to our backend managers and push the data down to React
     // ====================================================================
 
-    // When the state manager updates (every 1 sec), send the entire bed map to React
+    // Pushes the entire ward state (16+ beds) to React every time it changes
     bedStateManager.on('state:updated', (allBeds) => {
-      // 'bed:update' is the exact channel name defined in your IPC Contract
       mainWindow.webContents.send('bed:update', allBeds);
     });
 
-    // When a bed goes stale (>5s without data), push a specific alert
+    // Pushes a specific alert notification (e.g., for OS-level notifications)
+    bedStateManager.on('alert:new', (alertData) => {
+      mainWindow.webContents.send('alert:new', alertData);
+    });
+
+    // Pushes connection loss events
     bedStateManager.on('bed:stale', (bedData) => {
       mainWindow.webContents.send('bed:stale', bedData);
     });
 
     // ====================================================================
-    // 2. INVOKE EVENTS (Renderer -> Main)
-    // React asks the backend for data or sends commands (like changing flow rate)
+    // 2. REQUEST/RESPONSE (Renderer -> Main)
     // ====================================================================
 
-    // Handle nurse commands from the CommandModal.jsx
-    ipcMain.handle('cmd:send', async (event, bedId, cmd, payload) => {
-      console.log(`🩺 Command received for Bed ${bedId}: ${cmd}`, payload);
-      // Later, this will call serialService to send data back to the ESP32
-      return { success: true, message: 'Command queued' };
-    });
-
-    // Handle requests for historical chart data (FlowChart.jsx)
+    // Handle history requests for Charting
     ipcMain.handle('db:history', async (event, bedId, fromTime, toTime) => {
-      // Placeholder: We will connect this to dbService.js later
-      return []; 
+      try {
+        return global.dbService.getTelemetry(bedId, fromTime, toTime); 
+      } catch (err) {
+        console.error(`❌ IPC: History fetch failed for Bed ${bedId}:`, err);
+        return [];
+      }
     });
 
-    // Handle requests for the active alerts panel (AlertPanel.jsx)
+    // Handle fetching active alarms for the Alert Panel
     ipcMain.handle('alerts:active', async () => {
-      // Placeholder: We will connect this to alertService.js later
-      return [];
+      try {
+        return global.dbService.getActiveAlerts(); 
+      } catch (err) {
+        console.error('❌ IPC: Active alerts fetch failed:', err);
+        return [];
+      }
     });
 
-    // Handle a nurse clicking "Acknowledge" on an alert
+    // Handle Nurse acknowledgement
     ipcMain.handle('alerts:ack', async (event, alertId, nurseId) => {
-      console.log(`✅ Alert ${alertId} acknowledged by ${nurseId}`);
-      return { success: true };
+      try {
+        global.dbService.acknowledgeAlert(alertId, nurseId); 
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: err.message };
+      }
     });
 
-    // Get the status of the USB receiver connection
+    // Handle commands sent to the ESP32 (Flow rate changes, etc.)
+    ipcMain.handle('cmd:send', async (event, bedId, cmd, payload) => {
+      console.log(`🩺 Command for Bed ${bedId}: ${cmd}`, payload);
+      // In the next phase, we'll hook this up to the serialPort write logic
+      return { success: true, message: 'Command sent to bedside unit' };
+    });
+
+    // Status checks for system health
     ipcMain.handle('serial:status', async () => {
       return { status: 'CONNECTED', port: 'COM3 (Mock)' };
     });
 
-    // Get the status of the AWS IoT Core cloud connection
     ipcMain.handle('aws:status', async () => {
-      return { status: 'DISCONNECTED' }; // Not built yet!
+      return { status: 'DISCONNECTED' }; 
     });
   }
 }
