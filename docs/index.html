@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartIV – Intelligent IV Drip Monitoring System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #0B6AFF;
+            --primary-dark: #0047CC;
+            --primary-light: #E8F0FF;
+            --accent: #00D4AA;
+            --accent2: #FF6B35;
+            --dark: #0A0F1E;
+            --dark2: #121929;
+            --mid: #1E2A45;
+            --text: #4A5568;
+            --text-light: #8892A4;
+            --white: #FFFFFF;
+            --border: #E2E8F0;
+            --bg-light: #F7F9FC;
+            --bg-blue: #EBF2FF;
+            --gradient: linear-gradient(135deg, #0B6AFF 0%, #00D4AA 100%);
+            --gradient-dark: linear-gradient(135deg, #0A0F1E 0%, #1E2A45 100%);
+            --shadow: 0 4px 24px rgba(11,106,255,0.12);
+            --shadow-lg: 0 12px 48px rgba(11,106,255,0.18);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+
+        h1,h2,h3,h4,h5,h6 {
+            font-family: 'Sora', sans-serif;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        p { line-height: 1.75; }
+
+        a { text-decoration: none; color: inherit; }
+
+        img { max-width: 100%; }
+
+        /* ===== UTILITIES ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section-pad { padding: 100px 0; }
+        .section-pad-sm { padding: 70px 0; }
+
+        .tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--primary-light); color: var(--primary);
+            font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+            padding: 6px 16px; border-radius: 100px;
+            text-transform: uppercase; margin-bottom: 16px;
+        }
+        .tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+        .section-title { margin-bottom: 56px; }
+        .section-title h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; }
+        .section-title p { font-size: 17px; color: var(--text-light); max-width: 560px; }
+        .section-title.center { text-align: center; }
+        .section-title.center p { margin: 0 auto; }
+
+        .highlight { color: var(--primary); }
+
+        .btn-primary-main {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--primary); color: var(--white);
+            padding: 14px 28px; border-radius: 100px;
+            font-weight: 700; font-size: 15px;
+            transition: all 0.3s; border: none; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(11,106,255,0.35);
+        }
+        .btn-primary-main:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,106,255,0.4); }
+
+        .btn-outline {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: transparent; color: var(--dark);
+            padding: 13px 28px; border-radius: 100px;
+            font-weight: 600; font-size: 15px;
+            border: 2px solid var(--border);
+            transition: all 0.3s; cursor: pointer;
+        }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ===== PRELOADER ===== */
+        #preloader {
+            position: fixed; inset: 0; background: var(--dark);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s;
+        }
+        #preloader.hidden { opacity: 0; pointer-events: none; }
+        .loader-ring {
+            width: 56px; height: 56px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 20px 0;
+            transition: all 0.4s;
+        }
+        nav.scrolled {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+            padding: 14px 0;
+        }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            font-family: 'Sora', sans-serif; font-weight: 800;
+            font-size: 20px; color: var(--white);
+            transition: color 0.3s;
+        }
+        nav.scrolled .nav-logo { color: var(--dark); }
+        .nav-logo .logo-icon {
+            width: 38px; height: 38px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 18px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 8px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.85);
+            font-weight: 500; font-size: 14px;
+            padding: 8px 16px; border-radius: 8px;
+            transition: all 0.2s;
+        }
+        nav.scrolled .nav-links a { color: var(--text); }
+        .nav-links a:hover { background: rgba(255,255,255,0.1); color: white; }
+        nav.scrolled .nav-links a:hover { background: var(--bg-light); color: var(--primary); }
+        .nav-cta { display: flex; align-items: center; gap: 12px; }
+        .nav-github {
+            display: flex; align-items: center; gap: 8px;
+            color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600;
+            padding: 8px 16px; border-radius: 100px;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+        }
+        nav.scrolled .nav-github { color: var(--dark); border-color: var(--border); }
+        .nav-github:hover { background: rgba(255,255,255,0.15); }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+        .hamburger span { width: 22px; height: 2px; background: white; border-radius: 2px; transition: all 0.3s; }
+        nav.scrolled .hamburger span { background: var(--dark); }
+
+        /* ===== HERO ===== */
+        #hero {
+            min-height: 100vh; background: var(--gradient-dark);
+            position: relative; overflow: hidden;
+            display: flex; align-items: center; padding-top: 80px;
+        }
+        .hero-bg-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.18; pointer-events: none;
+        }
+        .orb1 { width: 600px; height: 600px; background: var(--primary); top: -150px; right: -150px; }
+        .orb2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; left: -100px; }
+        .hero-grid-lines {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600;
+            padding: 8px 18px; border-radius: 100px; margin-bottom: 28px;
+        }
+        .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .hero-title {
+            font-size: clamp(36px, 6vw, 68px); font-weight: 800;
+            color: var(--white); line-height: 1.1; margin-bottom: 24px;
+        }
+        .hero-title .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-desc {
+            font-size: 18px; color: rgba(255,255,255,0.65);
+            max-width: 560px; line-height: 1.8; margin-bottom: 40px;
+        }
+        .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 64px; }
+        .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+        .stat-item h3 { font-size: 32px; font-weight: 800; color: white; margin-bottom: 4px; }
+        .stat-item p { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
+        .stat-divider { width: 1px; background: rgba(255,255,255,0.1); }
+        .hero-visual { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; }
+        .hero-device-mockup {
+            width: 100%; max-width: 480px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+            padding: 32px; backdrop-filter: blur(20px);
+        }
+        .mockup-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+        .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .mockup-dot.red { background: #FF5F57; }
+        .mockup-dot.yellow { background: #FFBD2E; }
+        .mockup-dot.green { background: #28CA41; }
+        .mockup-title { margin-left: auto; font-size: 12px; color: rgba(255,255,255,0.4); font-family: 'Sora', sans-serif; }
+        .iv-monitor-card {
+            background: rgba(255,255,255,0.07); border-radius: 16px;
+            padding: 20px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.08);
+        }
+        .iv-monitor-card .card-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .iv-monitor-card .card-value { font-size: 28px; font-weight: 800; color: white; font-family: 'Sora', sans-serif; }
+        .iv-monitor-card .card-unit { font-size: 13px; color: rgba(255,255,255,0.5); margin-left: 4px; }
+        .iv-monitor-card .card-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--accent); margin-top: 8px; font-weight: 600; }
+        .iv-monitor-card .card-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+        .iv-bar-row { display: flex; align-items: center; gap: 12px; }
+        .iv-bar-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .iv-bar-fill { height: 100%; border-radius: 4px; background: var(--gradient); width: 62%; animation: drainBar 600s linear forwards; }
+        @keyframes drainBar { from { width: 62%; } to { width: 0%; } }
+        .iv-bar-label { font-size: 12px; color: rgba(255,255,255,0.5); min-width: 30px; text-align: right; }
+        .alert-chip {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,107,53,0.15); border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 10px; padding: 12px 16px; margin-top: 16px;
+        }
+        .alert-chip .alert-icon { font-size: 18px; color: var(--accent2); }
+        .alert-chip p { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4; }
+        .alert-chip strong { color: var(--accent2); }
+        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ===== PROBLEM SECTION ===== */
+        #problem { background: var(--bg-light); }
+        .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .problem-stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .prob-stat {
+            background: white; border-radius: var(--radius);
+            padding: 28px 24px; border: 1px solid var(--border);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .prob-stat:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .prob-stat .num { font-size: 36px; font-weight: 800; font-family: 'Sora', sans-serif; color: var(--primary); margin-bottom: 8px; }
+        .prob-stat .num.red { color: #E53E3E; }
+        .prob-stat .num.orange { color: var(--accent2); }
+        .prob-stat .num.green { color: var(--accent); }
+        .prob-stat p { font-size: 14px; color: var(--text-light); line-height: 1.5; }
+        .prob-stat.full { grid-column: 1/-1; }
+        .problem-text h2 { font-size: clamp(24px, 3.5vw, 36px); margin-bottom: 20px; }
+        .problem-text p { margin-bottom: 16px; color: var(--text); }
+        .problem-text ul { list-style: none; margin-top: 24px; }
+        .problem-text ul li { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; font-size: 15px; color: var(--text); }
+        .problem-text ul li .ico { color: var(--accent2); margin-top: 3px; flex-shrink: 0; }
+
+        /* ===== FEATURES ===== */
+        #features { background: white; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .feature-card {
+            background: var(--bg-light); border-radius: var(--radius);
+            padding: 36px 28px; border: 1px solid var(--border);
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient); transform: scaleX(0); transform-origin: left;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); background: white; }
+        .feature-icon {
+            width: 56px; height: 56px;
+            background: var(--primary-light); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: var(--primary); margin-bottom: 20px;
+        }
+        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .feature-card p { font-size: 14px; color: var(--text-light); line-height: 1.7; }
+
+        /* ===== SOLUTION ARCHITECTURE ===== */
+        #architecture { background: var(--dark); color: white; }
+        #architecture .section-title h2 { color: white; }
+        #architecture .section-title p { color: rgba(255,255,255,0.5); }
+        .arch-diagram {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; padding: 48px; position: relative; overflow: hidden;
+        }
+        .arch-diagram::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(11,106,255,0.15) 0%, transparent 60%);
+        }
+        .arch-layers { position: relative; }
+        .arch-layer {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 24px 28px; margin-bottom: 0; display: flex;
+            align-items: center; gap: 24px;
+        }
+        .arch-layer-label {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35); writing-mode: vertical-rl;
+            transform: rotate(180deg); min-width: 40px; font-weight: 600;
+        }
+        .arch-nodes { display: flex; gap: 16px; flex: 1; flex-wrap: wrap; }
+        .arch-node {
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 12px;
+            flex: 1; min-width: 160px;
+        }
+        .arch-node .node-icon { font-size: 22px; }
+        .arch-node h4 { font-size: 13px; font-weight: 700; color: white; margin-bottom: 2px; }
+        .arch-node p { font-size: 11px; color: rgba(255,255,255,0.4); }
+        .arch-arrow { text-align: center; padding: 12px 0; color: rgba(255,255,255,0.2); font-size: 20px; }
+        .arch-layers-stack { display: flex; flex-direction: column; gap: 0; }
+        .arch-connector { display: flex; justify-content: center; align-items: center; height: 40px; position: relative; }
+        .arch-connector::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.1); }
+        .arch-connector i { background: var(--dark); padding: 4px; color: rgba(255,255,255,0.3); position: relative; z-index: 1; }
+
+        /* ===== HARDWARE ===== */
+        #hardware { background: var(--bg-light); }
+        .hw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .hw-image-frame {
+            background: white; border-radius: 24px; border: 1px solid var(--border);
+            overflow: hidden; box-shadow: var(--shadow); aspect-ratio: 4/3;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 16px; color: var(--text-light); font-size: 14px;
+        }
+        .hw-image-frame p { text-align: center; max-width: 200px; line-height: 1.5; }
+        .hw-spec-item {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 20px 0; border-bottom: 1px solid var(--border);
+        }
+        .hw-spec-item:last-child { border-bottom: none; }
+        .hw-spec-ico {
+            width: 42px; height: 42px; border-radius: 10px;
+            background: var(--primary-light); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .hw-spec-item h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .hw-spec-item p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+        .hw-sub-title {
+            font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--primary); font-weight: 700; margin-bottom: 6px; margin-top: 32px;
+        }
+        .hw-sub-title:first-child { margin-top: 0; }
+
+        /* ===== LIGHTBOX ===== */
+        #lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 3000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #lightbox.open { opacity: 1; pointer-events: auto; }
+        #lightbox img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .lightbox-close {
+            position: absolute; top: 30px; right: 30px; font-size: 32px;
+            color: white; cursor: pointer; transition: color 0.2s;
+        }
+        .lightbox-close:hover { color: var(--accent2); }
+        .clickable-img { cursor: zoom-in; transition: transform 0.3s; }
+        .clickable-img:hover { transform: scale(1.02); }
+
+        /* ===== SOFTWARE ===== */
+        #software { background: white; }
+        .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .tab-btns { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 8px 18px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer;
+            border: 1.5px solid var(--border); background: white; color: var(--text); transition: all 0.2s;
+        }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-content-item { display: none; }
+        .tab-content-item.active { display: block; }
+        .sw-screen {
+            background: var(--bg-light); border-radius: 20px; border: 1px solid var(--border);
+            overflow: hidden; box-shadow: var(--shadow); aspect-ratio: 9/16; max-height: 520px;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+            color: var(--text-light);
+        }
+        .sw-feature-list { list-style: none; }
+        .sw-feature-list li {
+            display: flex; align-items: flex-start; gap: 12px; padding: 14px 0;
+            border-bottom: 1px solid var(--border); font-size: 14px;
+        }
+        .sw-feature-list li:last-child { border-bottom: none; }
+        .sw-feature-list li .chk { color: var(--accent); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+        .sw-feature-list li div h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+        .sw-feature-list li div p { font-size: 13px; color: var(--text-light); }
+        .sw-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; }
+        .sw-stack-item {
+            background: var(--bg-light); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px; display: flex; align-items: center; gap: 12px;
+        }
+        .sw-stack-item .stack-ico { font-size: 22px; }
+        .sw-stack-item h5 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+        .sw-stack-item p { font-size: 11px; color: var(--text-light); }
+
+        /* ===== TESTING ===== */
+        #testing { background: var(--bg-light); }
+        .testing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        .testing-card {
+            background: white; border-radius: var(--radius); padding: 32px;
+            border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .testing-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .testing-card h3 i { color: var(--primary); }
+        .test-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid var(--bg-light);
+        }
+        .test-item:last-child { border-bottom: none; }
+        .test-item .ti-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+        .test-item p { font-size: 14px; color: var(--text); }
+        .test-item .pass { color: var(--accent); font-size: 13px; font-weight: 700; margin-top: 2px; }
+
+        /* ===== BUDGET ===== */
+        #budget { background: white; }
+        .budget-table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        thead th {
+            background: var(--dark); color: white; padding: 16px 20px;
+            font-size: 13px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; text-align: left;
+        }
+        thead th:first-child { border-radius: 16px 0 0 0; }
+        thead th:last-child { border-radius: 0 16px 0 0; text-align: right; }
+        tbody td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:nth-child(even) td { background: var(--bg-light); }
+        tbody td:last-child { text-align: right; font-weight: 600; }
+        tfoot td {
+            padding: 18px 20px; background: var(--primary-light);
+            font-weight: 800; font-size: 15px; color: var(--primary);
+        }
+        tfoot td:last-child { text-align: right; }
+        tfoot tr:last-child td:first-child { border-radius: 0 0 0 16px; }
+        tfoot tr:last-child td:last-child { border-radius: 0 0 16px 0; }
+
+        /* ===== TEAM ===== */
+        #team { background: var(--bg-light); }
+        .supervisor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+        .supervisor-card {
+            background: white; border-radius: var(--radius); padding: 32px;
+            border: 1px solid var(--border); display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow);
+        }
+        .supervisor-avatar {
+            width: 96px; height: 96px; border-radius: 50%; background: var(--primary-light);
+            display: flex; align-items: center; justify-content: center; font-size: 36px;
+            color: var(--primary); flex-shrink: 0; overflow: hidden; padding: 0;
+        }
+        .supervisor-info h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+        .supervisor-info h3 a { color: inherit; text-decoration: none; transition: color 0.2s ease; }
+        .supervisor-info h3 a:hover { color: var(--primary); }
+        .supervisor-info .role { font-size: 13px; color: var(--primary); font-weight: 600; margin-bottom: 8px; }
+        .supervisor-info p { font-size: 14px; color: var(--text-light); }
+        .team-label { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); font-weight: 700; margin-bottom: 24px; }
+        .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .team-card {
+            background: white; border-radius: var(--radius); padding: 28px 20px;
+            text-align: center; border: 1px solid var(--border); transition: all 0.3s;
+        }
+        .team-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .member-avatar {
+            width: 80px; height: 80px; border-radius: 50%; background: var(--primary-light);
+            display: flex; align-items: center; justify-content: center; font-size: 28px;
+            color: var(--primary); margin: 0 auto 16px; overflow: hidden; padding: 0;
+        }
+        .team-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .team-card .reg { font-size: 12px; color: var(--primary); font-weight: 600; margin-bottom: 6px; }
+        .team-card .role-tag {
+            font-size: 11px; color: var(--text-light); background: var(--bg-light);
+            padding: 4px 12px; border-radius: 100px; display: inline-block;
+        }
+        .team-links { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+        .team-links a {
+            width: 32px; height: 32px; border-radius: 8px; background: var(--bg-light);
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+            color: var(--text-light); transition: all 0.2s;
+        }
+        .team-links a:hover { background: var(--primary-light); color: var(--primary); }
+
+        /* ===== LINKS ===== */
+        #links { background: var(--dark); }
+        #links .section-title h2 { color: white; }
+        #links .section-title p { color: rgba(255,255,255,0.5); }
+        .links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .link-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius); padding: 28px 24px; text-align: center;
+            transition: all 0.3s; color: white;
+        }
+        .link-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-4px); }
+        .link-card i { font-size: 28px; color: var(--accent); margin-bottom: 12px; display: block; }
+        .link-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: white; }
+        .link-card p { font-size: 12px; color: rgba(255,255,255,0.4); }
+
+        /* ===== FOOTER ===== */
+        footer { background: var(--dark2); color: white; padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; }
+        .footer-logo { display: flex; align-items: center; gap: 10px; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 18px; }
+        .footer-logo .logo-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .footer-meta { font-size: 13px; color: rgba(255,255,255,0.35); text-align: right; }
+        .footer-meta a { color: rgba(255,255,255,0.5); }
+
+        /* ===== SCROLL TO TOP ===== */
+        #scrolltop {
+            position: fixed; bottom: 28px; right: 28px; width: 44px; height: 44px; border-radius: 50%;
+            background: var(--primary); color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; cursor: pointer; z-index: 999; opacity: 0; transform: translateY(16px);
+            transition: all 0.3s; box-shadow: var(--shadow);
+        }
+        #scrolltop.show { opacity: 1; transform: translateY(0); }
+
+        /* ===== MOBILE MENU ===== */
+        .mobile-nav {
+            position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+            background: var(--dark); z-index: 2000; padding: 80px 32px 40px;
+            transition: right 0.35s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; gap: 8px;
+        }
+        .mobile-nav.open { right: 0; }
+        .mobile-nav a { color: rgba(255,255,255,0.8); font-size: 16px; font-weight: 600; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: block; }
+        .mobile-nav a:hover { color: white; }
+        .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; display: none; }
+        .mobile-overlay.open { display: block; }
+        .mobile-close { position: absolute; top: 24px; right: 24px; font-size: 22px; color: rgba(255,255,255,0.6); cursor: pointer; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .fade-up-delay-1 { transition-delay: 0.1s; }
+        .fade-up-delay-2 { transition-delay: 0.2s; }
+        .fade-up-delay-3 { transition-delay: 0.3s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .nav-links, .nav-cta { display: none; }
+            .hamburger { display: flex; }
+            .hero-grid { flex-direction: column; }
+            .problem-grid, .hw-grid, .sw-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr 1fr; }
+            .team-grid { grid-template-columns: 1fr 1fr; }
+            .supervisor-grid { grid-template-columns: 1fr; }
+            .links-grid { grid-template-columns: 1fr 1fr; }
+            .testing-grid { grid-template-columns: 1fr; }
+            .hero-visual { display: none; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .arch-nodes { flex-direction: column; }
+        }
+        @media (max-width: 640px) {
+            .section-pad { padding: 70px 0; }
+            .features-grid { grid-template-columns: 1fr; }
+            .team-grid { grid-template-columns: 1fr 1fr; }
+            .links-grid { grid-template-columns: 1fr 1fr; }
+            .problem-stat-cards { grid-template-columns: 1fr 1fr; }
+            .hero-stats { gap: 24px; }
+            .stat-divider { display: none; }
+            .supervisor-card { flex-direction: column; text-align: center; }
+            .sw-stack { grid-template-columns: 1fr; }
+            .arch-layer { flex-direction: column; }
+            .arch-layer-label { writing-mode: horizontal-tb; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader"><div class="loader-ring"></div></div>
+
+<!-- Lightbox for Images -->
+<div id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close"><i class="fas fa-times"></i></span>
+    <img id="lightbox-img" src="" alt="Enlarged view" onclick="event.stopPropagation()">
+</div>
+
+<!-- Scroll to Top -->
+<div id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i class="fas fa-arrow-up"></i>
+</div>
+
+<!-- Mobile Nav -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav" id="mobileNav">
+    <span class="mobile-close" onclick="closeMobileMenu()"><i class="fas fa-times"></i></span>
+    <a href="#hero" onclick="closeMobileMenu()">Home</a>
+    <a href="#problem" onclick="closeMobileMenu()">Problem</a>
+    <a href="#features" onclick="closeMobileMenu()">Features</a>
+    <a href="#architecture" onclick="closeMobileMenu()">Architecture</a>
+    <a href="#hardware" onclick="closeMobileMenu()">Hardware</a>
+    <a href="#software" onclick="closeMobileMenu()">Software</a>
+    <a href="#testing" onclick="closeMobileMenu()">Testing</a>
+    <a href="#budget" onclick="closeMobileMenu()">Budget</a>
+    <a href="#team" onclick="closeMobileMenu()">Team</a>
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+    <div class="container">
+        <div class="nav-inner">
+            <a href="#hero" class="nav-logo">
+                <div class="logo-icon"><i class="fas fa-droplet"></i></div>
+                SmartIV
+            </a>
+            <div class="nav-links">
+                <a href="#problem">Problem</a>
+                <a href="#features">Features</a>
+                <a href="#architecture">Architecture</a>
+                <a href="#hardware">Hardware</a>
+                <a href="#software">Software</a>
+                <a href="#testing">Testing</a>
+                <a href="#budget">Budget</a>
+                <a href="#team">Team</a>
+            </div>
+            <div class="nav-cta">
+                <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" class="nav-github" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <div class="hamburger" onclick="openMobileMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+    <div class="hero-bg-orb orb1"></div>
+    <div class="hero-bg-orb orb2"></div>
+    <div class="hero-grid-lines"></div>
+    <div class="container">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 60px 0;">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span></span>
+                     A 3rd Year Project of Dept. of Computer Engineering, UOP
+                </div>
+                <h1 class="hero-title">
+                    Smart Monitoring<br>for <span class="grad">Intravenous</span><br>Drip Systems
+                </h1>
+                <p class="hero-desc">
+                    SmartIV is an IoT-powered system that monitors IV drip flow rates in real time, 
+                    sends automated alerts to nurses, and prevents critical medication errors — reducing patient risk 
+                    and easing the burden on healthcare staff.
+                </p>
+                <div class="hero-btns">
+                    <a href="#features" class="btn-primary-main">
+                        <i class="fas fa-play-circle"></i> Explore Features
+                    </a>
+                    <a href="#architecture" class="btn-outline" style="color:rgba(255,255,255,0.8); border-color:rgba(255,255,255,0.2);">
+                        <i class="fas fa-diagram-project"></i> View Architecture
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <h3>70%</h3>
+                        <p>Reduction in<br>missed IV alerts</p>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <h3>Real-time</h3>
+                        <p>Flow rate<br>monitoring</p>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <h3>24 / 7</h3>
+                        <p>Automated<br>nurse alerts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-device-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-dot red"></div>
+                        <div class="mockup-dot yellow"></div>
+                        <div class="mockup-dot green"></div>
+                        <span class="mockup-title">SmartIV Dashboard — Live</span>
+                    </div>
+                    <div class="cards-grid">
+                        <div class="iv-monitor-card">
+                            <div class="card-label">Flow Rate</div>
+                            <div><span class="card-value">42</span><span class="card-unit">drops/min</span></div>
+                            <div class="card-status">Normal</div>
+                        </div>
+                        <div class="iv-monitor-card">
+                            <div class="card-label">Volume Left</div>
+                            <div><span class="card-value">178</span><span class="card-unit">mL</span></div>
+                            <div class="card-status">Stable</div>
+                        </div>
+                    </div>
+                    <div class="iv-monitor-card">
+                        <div class="card-label">Estimated Time Remaining</div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                            <span style="font-size:22px; font-weight:800; color:white; font-family:'Sora',sans-serif;">1h 24m</span>
+                            <span style="font-size:11px; color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.07); padding:4px 10px; border-radius:6px;">Patient: Bed 04-A</span>
+                        </div>
+                        <div class="iv-bar-row">
+                            <div class="iv-bar-bg"><div class="iv-bar-fill"></div></div>
+                            <span class="iv-bar-label">62%</span>
+                        </div>
+                    </div>
+                    <div class="alert-chip">
+                        <span class="alert-icon"><i class="fas fa-triangle-exclamation"></i></span>
+                        <p><strong>Low bag alert — Bed 07-B:</strong> Estimated empty in 18 minutes. Nurse notified.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PROBLEM ===== -->
+<section id="problem" class="section-pad">
+    <div class="container">
+        <div class="problem-grid">
+            <div class="problem-stat-cards">
+                <div class="prob-stat fade-up">
+                    <div class="num red">1 in 3</div>
+                    <p>IV-related incidents occur due to delayed nurse response to drip completion</p>
+                </div>
+                <div class="prob-stat fade-up fade-up-delay-1">
+                    <div class="num orange">[X]%</div>
+                    <p>Of hospitals in Sri Lanka still rely on manual visual inspection of IV bags</p>
+                </div>
+                <div class="prob-stat fade-up fade-up-delay-2">
+                    <div class="num">~8 hrs</div>
+                    <p>Average shift length for a nurse, during which dozens of IV bags must be monitored</p>
+                </div>
+                <div class="prob-stat fade-up fade-up-delay-3">
+                    <div class="num green">SmartIV</div>
+                    <p>Automates monitoring and alerts — so nurses focus on care, not checking drips</p>
+                </div>
+            </div>
+            <div class="problem-text fade-up">
+                <div class="tag">The Problem</div>
+                <h2>Manual IV monitoring creates serious patient safety risks</h2>
+                <p>
+                    Intravenous therapy is one of the most common procedures in hospitals. Yet in most wards, nurses must 
+                    manually check each IV drip bag to determine flow rate and volume — a repetitive, error-prone process 
+                    that is easy to miss during busy shifts.
+                </p>
+                <p>
+                    When a drip runs dry unnoticed, air can enter the bloodstream. If the flow rate is incorrect, 
+                    patients may receive too much or too little medication — with potentially life-threatening consequences.
+                </p>
+                <ul>
+                    <li><span class="ico"><i class="fas fa-circle-xmark"></i></span> No real-time flow rate visibility across multiple patients</li>
+                    <li><span class="ico"><i class="fas fa-circle-xmark"></i></span> Nurses alerted only after manually noticing an issue</li>
+                    <li><span class="ico"><i class="fas fa-circle-xmark"></i></span> High cognitive load during busy shifts leads to missed checks</li>
+                    <li><span class="ico"><i class="fas fa-circle-xmark"></i></span> No historical data to review IV administration patterns</li>
+                </ul>
+                <div style="margin-top:32px;">
+                    <a href="#features" class="btn-primary-main">See Our Solution <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section id="features" class="section-pad">
+    <div class="container">
+        <div class="section-title center">
+            <div class="tag">Key Features</div>
+            <h2>Everything nurses and hospitals need, <span class="highlight">built in.</span></h2>
+            <p>SmartIV combines hardware sensors, cloud infrastructure, and a mobile-first interface to deliver complete IV drip oversight.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-up">
+                <div class="feature-icon"><i class="fas fa-droplet"></i></div>
+                <h3>Real-Time Flow Rate Monitoring</h3>
+                <p>Optical drop sensors count drip rate continuously and stream data to the cloud for instant visibility on any device.</p>
+            </div>
+            <div class="feature-card fade-up fade-up-delay-1">
+                <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                <h3>Automated Nurse Alerts</h3>
+                <p>Push notifications are sent directly to nurses' devices when a bag is nearly empty, flow is abnormal, or the drip has stopped unexpectedly.</p>
+            </div>
+            <div class="feature-card fade-up fade-up-delay-2">
+                <div class="feature-icon"><i class="fas fa-calculator"></i></div>
+                <h3>Bag Volume Estimation</h3>
+                <p>Nurses input the initial bag volume via the device keypad. The system continuously calculates the remaining volume and time until empty based on the exact number of drops detected by the dual IR sensors.</p>
+            </div>
+            <div class="feature-card fade-up">
+                <div class="feature-icon"><i class="fas fa-mobile-screen"></i></div>
+                <h3>Mobile & Web Dashboard</h3>
+                <p>Nurses and ward managers can monitor all patients in real time through a clean mobile app or web dashboard, from anywhere in the hospital.</p>
+            </div>
+            <div class="feature-card fade-up fade-up-delay-1">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Historical Data & Analytics</h3>
+                <p>Every IV session is logged. Doctors and administrators can review flow rate histories, alert logs, and trend data for quality improvement.</p>
+            </div>
+            <div class="feature-card fade-up fade-up-delay-2">
+                <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+                <h3>Secure Patient Records</h3>
+                <p>All patient and session data is encrypted in transit and at rest. Role-based access ensures only authorised staff can view sensitive records.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ARCHITECTURE ===== -->
+<section id="architecture" class="section-pad">
+    <div class="container">
+        <div class="section-title center" style="margin-bottom:48px;">
+            <div class="tag" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7);">Architecture</div>
+            <h2 style="color:white;">How SmartIV works end-to-end</h2>
+            <p>A layered architecture connecting bedside hardware to the cloud and nurse interfaces.</p>
+        </div>
+        <div class="arch-diagram fade-up">
+            <div class="arch-layers-stack">
+                <!-- Layer 1: Sensing & Actuation -->
+                <div class="arch-layer">
+                    <div class="arch-layer-label">Hardware</div>
+                    <div class="arch-nodes">
+                        <div class="arch-node">
+                            <span class="node-icon">💧</span>
+                            <div>
+                                <h4>Dual IR Sensors</h4>
+                                <p>Detects each drip with redundancy</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">⚙️</span>
+                            <div>
+                                <h4>Nema 17 Stepper</h4>
+                                <p>Actuates the flow regulator</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">⌨️</span>
+                            <div>
+                                <h4>Keypad & LCD</h4>
+                                <p>Local input and status display</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="arch-connector"><i class="fas fa-arrow-down"></i></div>
+                <!-- Layer 2: Processing -->
+                <div class="arch-layer">
+                    <div class="arch-layer-label">Processing</div>
+                    <div class="arch-nodes">
+                        <div class="arch-node">
+                            <span class="node-icon">🔲</span>
+                            <div>
+                                <h4>ESP32 Edge Device</h4>
+                                <p>Local processing & flow control</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">🔌</span>
+                            <div>
+                                <h4>ESP32 USB Dongle</h4>
+                                <p>Desktop station receiver</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">📡</span>
+                            <div>
+                                <h4>MQTT Protocol</h4>
+                                <p>Lightweight IoT messaging</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="arch-connector"><i class="fas fa-arrow-down"></i></div>
+                <!-- Layer 3: Cloud -->
+                <div class="arch-layer">
+                    <div class="arch-layer-label">Cloud</div>
+                    <div class="arch-nodes">
+                        <div class="arch-node">
+                            <span class="node-icon">☁️</span>
+                            <div>
+                                <h4>AWS IoT Core</h4>
+                                <p>Device connectivity hub</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">⚙️</span>
+                            <div>
+                                <h4>Backend API</h4>
+                                <p>Node.js / Spring Boot</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">🗄️</span>
+                            <div>
+                                <h4>Database</h4>
+                                <p>MongoDB / MySQL</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="arch-connector"><i class="fas fa-arrow-down"></i></div>
+                <!-- Layer 4: Interface -->
+                <div class="arch-layer">
+                    <div class="arch-layer-label">Interface</div>
+                    <div class="arch-nodes">
+                        <div class="arch-node">
+                            <span class="node-icon">📱</span>
+                            <div>
+                                <h4>Nurse Mobile App</h4>
+                                <p>React Native — alerts & monitoring</p>
+                            </div>
+                        </div>
+                        <div class="arch-node">
+                            <span class="node-icon">🖥️</span>
+                            <div>
+                                <h4>Admin Web Dashboard</h4>
+                                <p>React.js — ward-level overview</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HARDWARE ===== -->
+<section id="hardware" class="section-pad">
+    <div class="container">
+        <div class="section-title">
+            <div class="tag">Hardware</div>
+            <h2>Bedside device design &amp; components</h2>
+            <p>The SmartIV unit attaches directly to the IV stand — compact, non-invasive, and battery-powered for full ward portability.</p>
+        </div>
+        <div class="hw-grid">
+            <div>
+                <div class="hw-image-frame fade-up" style="padding: 0;">
+                    <img src="images/concept-design.jpg" alt="Concept Design Photo" class="clickable-img" onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="hw-image-frame fade-up" style="margin-top:20px; aspect-ratio: 16/9; padding: 0;">
+                    <img src="images/circuit.png" alt="SmartIV Circuit Design" class="clickable-img" onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+            <div class="hw-specs fade-up">
+                <div class="hw-sub-title">Sensors &amp; Actuators</div>
+                <div class="hw-spec-item">
+                    <div class="hw-spec-ico"><i class="fas fa-eye"></i></div>
+                    <div>
+                        <h4>Dual Optical IR Sensors</h4>
+                        <p>Two IR sensors accurately count drops passing through the IV drip chamber, ensuring precise real-time flow rate calculations and reliable redundancy.</p>
+                    </div>
+                </div>
+                <div class="hw-spec-item">
+                    <div class="hw-spec-ico"><i class="fas fa-gear"></i></div>
+                    <div>
+                        <h4>Nema 17 Stepper Motor</h4>
+                        <p>Acts as the system's actuator, precisely compressing or releasing the IV tube to regulate the fluid flow rate autonomously.</p>
+                    </div>
+                </div>
+                <div class="hw-spec-item">
+                    <div class="hw-spec-ico"><i class="fas fa-keyboard"></i></div>
+                    <div>
+                        <h4>Keypad Module &amp; LCD Display</h4>
+                        <p>Allows nurses to manually input the initial IV bag volume (e.g., 500mL) and view real-time status, alerts, and settings directly at the bedside.</p>
+                    </div>
+                </div>
+                <div class="hw-sub-title">Processing &amp; Communication</div>
+                <div class="hw-spec-item">
+                    <div class="hw-spec-ico"><i class="fas fa-microchip"></i></div>
+                    <div>
+                        <h4>ESP32 Dual Setup (Edge &amp; Dongle)</h4>
+                        <p>An ESP32 microcontroller in the edge device handles local processing, motor control, and sensing. A second ESP32 acts as a USB dongle connected to the desktop station for reliable local data reception.</p>
+                    </div>
+                </div>
+                <div class="hw-spec-item">
+                    <div class="hw-spec-ico"><i class="fas fa-battery-three-quarters"></i></div>
+                    <div>
+                        <h4>Battery &amp; Power Management</h4>
+                        <p>Rechargeable Li-Po battery with a BMS ensures the unit runs independently of mains power, supporting full ward mobility.</p>
+                    </div>
+                </div>
+                <div class="hw-spec-item">
+                    <div class="hw-spec-ico"><i class="fas fa-circle-nodes"></i></div>
+                    <div>
+                        <h4>Custom PCB</h4>
+                        <p>All components integrated onto a custom-designed PCB for a compact, reliable, and production-ready form factor.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SOFTWARE ===== -->
+<section id="software" class="section-pad" style="background:var(--bg-light);">
+    <div class="container">
+        <div class="section-title center">
+            <div class="tag">Software</div>
+            <h2>Intuitive interfaces for nurses &amp; administrators</h2>
+            <p>SmartIV's software stack delivers real-time monitoring, instant alerts, and historical insights across mobile and web.</p>
+        </div>
+        <div class="sw-grid" style="align-items:start;">
+            <div class="fade-up">
+                <div class="tab-btns">
+                    <button class="tab-btn active" onclick="switchTab(this,'mobile')">📱 Mobile App</button>
+                    <button class="tab-btn" onclick="switchTab(this,'web')">🖥️ Web Dashboard</button>
+                </div>
+                <div id="tab-mobile" class="tab-content-item active">
+                    <div class="sw-screen" style="padding: 0;">
+                        <img src="images/mobile-app.PNG" alt="Mobile App Screenshot" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+                <div id="tab-web" class="tab-content-item">
+                    <div class="sw-screen" style="aspect-ratio:16/9; max-height:320px; padding: 0;">
+                        <img src="images/desktop-app.jpeg" alt="Desktop Dashboard Screenshot" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+            <div class="fade-up fade-up-delay-1">
+                <ul class="sw-feature-list">
+                    <li>
+                        <span class="chk"><i class="fas fa-check-circle"></i></span>
+                        <div>
+                            <h4>Live Patient Overview</h4>
+                            <p>All patients on a ward displayed on a single screen with current flow rate, volume, and estimated time remaining.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="chk"><i class="fas fa-check-circle"></i></span>
+                        <div>
+                            <h4>Push Notifications &amp; Alerts</h4>
+                            <p>Nurses receive immediate push alerts when a bag is low, the drip has stopped, or the flow rate is outside normal range.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="chk"><i class="fas fa-check-circle"></i></span>
+                        <div>
+                            <h4>Patient &amp; Session History</h4>
+                            <p>Full log of each IV session per patient including flow rate graphs, alert events, and administration timestamps.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="chk"><i class="fas fa-check-circle"></i></span>
+                        <div>
+                            <h4>Role-Based Access Control</h4>
+                            <p>Nurses, ward sisters, and admins each have differentiated views and permissions to keep data secure and relevant.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="chk"><i class="fas fa-check-circle"></i></span>
+                        <div>
+                            <h4>Alert Acknowledgement</h4>
+                            <p>Nurses can acknowledge alerts directly in the app, creating an audit trail of response actions per patient event.</p>
+                        </div>
+                    </li>
+                </ul>
+                <div class="sw-stack">
+                    <div class="sw-stack-item">
+                        <span class="stack-ico">⚛️</span>
+                        <div><h5>React Native</h5><p>Mobile app (iOS & Android)</p></div>
+                    </div>
+                    <div class="sw-stack-item">
+                        <span class="stack-ico">🌐</span>
+                        <div><h5>React.js</h5><p>Web dashboard frontend</p></div>
+                    </div>
+                    <div class="sw-stack-item">
+                        <span class="stack-ico">🖥️</span>
+                        <div><h5>Node.js / Spring Boot</h5><p>Backend API server</p></div>
+                    </div>
+                    <div class="sw-stack-item">
+                        <span class="stack-ico">☁️</span>
+                        <div><h5>AWS IoT Core</h5><p>Device cloud gateway</p></div>
+                    </div>
+                    <div class="sw-stack-item">
+                        <span class="stack-ico">🗄️</span>
+                        <div><h5>MongoDB / MySQL</h5><p>Database</p></div>
+                    </div>
+                    <div class="sw-stack-item">
+                        <span class="stack-ico">📨</span>
+                        <div><h5>MQTT Broker</h5><p>IoT messaging layer</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== TESTING ===== -->
+<section id="testing" class="section-pad">
+    <div class="container">
+        <div class="section-title center">
+            <div class="tag">Testing</div>
+            <h2>Rigorous validation — from sensor to screen</h2>
+            <p>SmartIV is tested at every layer to ensure reliability, accuracy, and real-world readiness.</p>
+        </div>
+        <div class="testing-grid">
+            <div class="testing-card fade-up">
+                <h3><i class="fas fa-microchip"></i> Hardware Testing</h3>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-eye"></i></div>
+                    <div>
+                        <p>Drop sensor accuracy testing against known flow rates</p>
+                        <div class="pass">✓ Validated</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-gear"></i></div>
+                    <div>
+                        <p>Stepper motor precision and automated flow regulation accuracy</p>
+                        <div class="pass">✓ Validated</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-battery-full"></i></div>
+                    <div>
+                        <p>Battery life and power management under continuous operation</p>
+                        <div class="pass" style="color:var(--accent2);">⏳ In Progress</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-wifi"></i></div>
+                    <div>
+                        <p>Wi-Fi connectivity and MQTT data transmission reliability</p>
+                        <div class="pass">✓ Validated</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-thermometer-half"></i></div>
+                    <div>
+                        <p>Device performance in hospital temperature and humidity conditions</p>
+                        <div class="pass" style="color:var(--accent2);">⏳ In Progress</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testing-card fade-up fade-up-delay-1">
+                <h3><i class="fas fa-code"></i> Software Testing</h3>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-vial"></i></div>
+                    <div>
+                        <p>Unit testing for all backend API endpoints and business logic</p>
+                        <div class="pass">✓ Validated</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-plug"></i></div>
+                    <div>
+                        <p>Integration testing: hardware → MQTT → backend → mobile app</p>
+                        <div class="pass">✓ Validated</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-bolt"></i></div>
+                    <div>
+                        <p>Load testing simulating full ward with 20+ simultaneous devices</p>
+                        <div class="pass" style="color:var(--accent2);">⏳ In Progress</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-user-check"></i></div>
+                    <div>
+                        <p>User acceptance testing with nursing staff at [Hospital Name]</p>
+                        <div class="pass" style="color:var(--text-light);">◌ Planned</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <div class="ti-icon"><i class="fas fa-bell"></i></div>
+                    <div>
+                        <p>Alert delivery latency — target under 3 seconds from sensor trigger</p>
+                        <div class="pass">✓ Validated</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== BUDGET ===== -->
+<section id="budget" class="section-pad">
+    <div class="container">
+        <div class="section-title center">
+            <div class="tag">Budget</div>
+            <h2>Estimated project budget</h2>
+        </div>
+        <div class="budget-table-wrap fade-up">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item</th>
+                        <th>Model / Notes</th>
+                        <th>Qty</th>
+                        <th>Unit Price (LKR)</th>
+                        <th>Total (LKR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Primary MCU</td>
+                        <td>ESP32-S3 Development Board</td>
+                        <td>1</td>
+                        <td>2,150.00</td>
+                        <td>2,150.00</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Secondary MCU</td>
+                        <td>ESP32 DevKit V1</td>
+                        <td>1</td>
+                        <td>1,835.00</td>
+                        <td>1,835.00</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Stepper Motor</td>
+                        <td>NEMA 17 Stepper (Bipolar)</td>
+                        <td>1</td>
+                        <td>2,240.00</td>
+                        <td>2,240.00</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Motor Driver</td>
+                        <td>TMC2208 Silent Driver</td>
+                        <td>1</td>
+                        <td>1,390.00</td>
+                        <td>1,390.00</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>UI Display Module</td>
+                        <td>Arduino LCD + Logic Level Converter</td>
+                        <td>1</td>
+                        <td>1,950.00</td>
+                        <td>1,950.00</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Input Peripherals</td>
+                        <td>4x4 Keypad Module + Buttons</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>820.00</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Drop Detection</td>
+                        <td>IR Speed sensor module LM393</td>
+                        <td>1</td>
+                        <td>150.00</td>
+                        <td>150.00</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Main Power Supply</td>
+                        <td>WX-DC2412 Switching Power Module</td>
+                        <td>1</td>
+                        <td>2,950.00</td>
+                        <td>2,950.00</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Battery System</td>
+                        <td>2x 18650 Cells + Holder + BMS</td>
+                        <td>1</td>
+                        <td>—</td>
+                        <td>1,305.00</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Voltage Regulation</td>
+                        <td>Buck convertor + Protective Cover</td>
+                        <td>1</td>
+                        <td>300.00</td>
+                        <td>300.00</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Medical Testing Kit</td>
+                        <td>Standard IV sets (x3) + NaCl IV bags (x4)</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>1,258.08</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Chassis</td>
+                        <td>3D Injection moulding</td>
+                        <td>1</td>
+                        <td>5,000.00</td>
+                        <td>5,000.00</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>Alert System</td>
+                        <td>Buzzer</td>
+                        <td>1</td>
+                        <td>55.00</td>
+                        <td>55.00</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Misc. Hardware</td>
+                        <td>PCBs, Screws, Bearings & Connections</td>
+                        <td>1</td>
+                        <td>4,820.00</td>
+                        <td>4,820.00</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5"><strong>Total Estimated Hardware Cost (per unit)</strong></td>
+                        <td><strong>LKR 26,223.08</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <p style="font-size:13px; color:var(--text-light); margin-top:16px; text-align:center;">
+            * Prices are estimates based on local market rates. Cloud hosting and software development costs are separate.
+        </p>
+    </div>
+</section>
+
+<!-- ===== TEAM ===== -->
+<section id="team" class="section-pad">
+    <div class="container">
+        <div class="section-title center">
+            <div class="tag">Our Team</div>
+            <h2>The people behind SmartIV</h2>
+        </div>
+        
+        <!-- Supervisors -->
+        <div class="team-label">Project Supervisors</div>
+        <div class="supervisor-grid">
+            <div class="supervisor-card fade-up">
+                <div class="supervisor-avatar"><img src="images/yasodha-vimukthi.jpeg" alt="Ms. Yasodha Vimukthi" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="supervisor-info">
+                    <h3> <a href="https://people.ce.pdn.ac.lk/staff/academic/yasodha-vimukthi/" target="_blank">Ms. Yasodha Vimukthi</a></h3>
+                    <p>Lecturer, Department of Computer Engineering<br>
+                    Faculty of Engineering, University of Peradeniya</p>
+                </div>
+            </div>
+
+            <div class="supervisor-card fade-up fade-up-delay-1">
+                <div class="supervisor-avatar"><img src="images/isuru-nawinne.png" alt="Dr. Isuru Nawinne" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="supervisor-info">
+                    <h3> <a href="https://people.ce.pdn.ac.lk/staff/academic/isuru-nawinne/" target="_blank"> Dr. Isuru Nawinne</a></h3>
+                    <p>Senior Lecturer, Department of Computer Engineering<br>
+                    Faculty of Engineering, University of Peradeniya</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Members -->
+        <div class="team-label">Team Members</div>
+        <div class="team-grid">
+            <div class="team-card fade-up">
+                <div class="member-avatar"><img src="images/pavindran.png" alt="Pavindran V." style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <h4>Pavindran V.</h4>
+                <div class="reg">E/21/283</div>
+                <span class="role-tag">Hardware / Firmware</span>
+                <div class="team-links">
+                    <a href="https://www.linkedin.com/in/pavindran-velalagan-404646214/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/pavindranvelalagan/" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="team-card fade-up fade-up-delay-1">
+                <div class="member-avatar"><img src="images/shagiththiah.jpg" alt="Shagiththiah K." style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <h4>Shagiththiah K.</h4>
+                <div class="reg">E/21/375</div>
+                <span class="role-tag">Mobile App</span>
+                <div class="team-links">
+                    <a href="https://www.linkedin.com/in/shagiththiah-kirupakaran-608457254/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/shagiththiah" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="team-card fade-up fade-up-delay-2">
+                <div class="member-avatar"><img src="images/suthail.jpg" alt="Suthail A.L.M" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <h4>Suthail A.L.M</h4>
+                <div class="reg">E/21/395</div>
+                <span class="role-tag">Desktop App</span>
+                <div class="team-links">
+                    <a href="https://www.linkedin.com/in/suthail-latheef-84a5892b3/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/EngSuthail" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="team-card fade-up fade-up-delay-3">
+                <div class="member-avatar"><img src="images/paarkavi.jpg" alt="Paarkavi J." style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <h4>Paarkavi J.</h4>
+                <div class="reg">E/21/206</div>
+                <span class="role-tag">Cloud & Network</span>
+                <div class="team-links">
+                    <a href="https://www.linkedin.com/in/paarkavi-jeyatheeswaran-ab8541321/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/paarkavi29" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ===== LINKS ===== -->
+<section id="links" class="section-pad-sm">
+    <div class="container">
+        <div class="section-title center" style="margin-bottom:40px;">
+            <h2>Useful Links</h2>
+            <p>Explore the project resources and our department.</p>
+        </div>
+        <div class="links-grid">
+            <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" target="_blank" class="link-card fade-up">
+                <i class="fab fa-github"></i>
+                <h4>GitHub Repository</h4>
+                <p>Source code, firmware, and documentation</p>
+            </a>
+            <a href="https://projects.ce.pdn.ac.lk/3yp/e21/" target="_blank" class="link-card fade-up fade-up-delay-1">
+                <i class="fas fa-laptop-code"></i>
+                <h4>Peer Projects</h4>
+                <p>Explore other 3rd-year projects by the E21 batch</p>
+            </a>
+            <a href="https://www.ce.pdn.ac.lk/" target="_blank" class="link-card fade-up fade-up-delay-2">
+                <i class="fas fa-building-columns"></i>
+                <h4>Computer Engineering Dept.</h4>
+                <p>Department of Computer Engineering, UoP</p>
+            </a>
+            <a href="https://eng.pdn.ac.lk/" target="_blank" class="link-card fade-up fade-up-delay-3">
+                <i class="fas fa-gear"></i>
+                <h4>Faculty of Engineering</h4>
+                <p>Faculty of Engineering, University of Peradeniya</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div class="footer-logo">
+                <div class="logo-icon"><i class="fas fa-droplet"></i></div>
+                SmartIV
+            </div>
+            <div class="footer-meta">
+                <div>Department of Computer Engineering · Faculty of Engineering · University of Peradeniya</div>
+                <div style="margin-top:4px;">© 2025 SmartIV. All rights reserved.</div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // Preloader
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('preloader').classList.add('hidden');
+        }, 600);
+    });
+
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 60);
+        document.getElementById('scrolltop').classList.toggle('show', window.scrollY > 400);
+    });
+
+    // Mobile menu
+    function openMobileMenu() {
+        document.getElementById('mobileNav').classList.add('open');
+        document.getElementById('mobileOverlay').classList.add('open');
+    }
+    function closeMobileMenu() {
+        document.getElementById('mobileNav').classList.remove('open');
+        document.getElementById('mobileOverlay').classList.remove('open');
+    }
+
+    // Lightbox Functionality
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+    }
+
+    // Tab switcher
+    function switchTab(btn, tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content-item').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // Intersection Observer for fade-up animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+</body>
+</html>
