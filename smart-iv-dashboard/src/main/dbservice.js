@@ -85,6 +85,17 @@ class DbService {
     return stmt.all();
   }
 
+  //
+  sessionExists(sessionId) {
+    if (!this.db) return false;
+    const stmt = this.db.prepare(`
+      SELECT id FROM infusion_sessions 
+      WHERE id = @sessionId AND end_ts IS NULL
+    `);
+    const result = stmt.get({ sessionId });
+    return !!result; // returns true if found, false if not
+  }
+
   startSession(bedId, { patientRef, targetMlhr, bagVolumeMl, dropFactor } = {}) {
     if (!this.db) { console.error('DB not initialized'); return null; }
     const stmt = this.db.prepare(`
@@ -146,7 +157,7 @@ class DbService {
   }
 
   getTelemetry(bedId, fromTs, toTs) {
-    if (!this.db) return null;
+    if (!this.db) return [];
     const stmt = this.db.prepare(`
       SELECT * FROM telemetry_data
       WHERE bed_id = @bedId AND ts BETWEEN @fromTs AND @toTs
@@ -181,7 +192,7 @@ class DbService {
   }
 
   getActiveAlerts() {
-    if (!this.db) return null;
+    if (!this.db) return [];
     const stmt = this.db.prepare(`
       SELECT * FROM alert_log
       WHERE ack_ts IS NULL
@@ -192,6 +203,7 @@ class DbService {
   }
 
   acknowledgeAlert(alertId, nurseId) {
+    if (!this.db) return;
     const stmt = this.db.prepare(`
       UPDATE alert_log
       SET ack_ts = @ackTs, ack_by = @nurseId
