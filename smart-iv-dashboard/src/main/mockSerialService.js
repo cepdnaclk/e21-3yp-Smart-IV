@@ -14,7 +14,7 @@ class MockSerialService extends EventEmitter {
       { bedId: '08', status: 'ALERT',    flowRate: 150, volRemaining: 100, maxVolume: 500,  battery: 15,  dropFactor: 20, targetMlhr: 80.0,  sessionId: null },
       { bedId: '09', status: 'STABLE',   flowRate: 60,  volRemaining: 410, maxVolume: 500,  battery: 99,  dropFactor: 20, targetMlhr: 60.0,  sessionId: null },
       { bedId: '10', status: 'STABLE',   flowRate: 75,  volRemaining: 250, maxVolume: 500,  battery: 60,  dropFactor: 20, targetMlhr: 75.0,  sessionId: null },
-      { bedId: '11', status: 'CRITICAL', flowRate: 5,   volRemaining: 10,  maxVolume: 500,  battery: 5,   dropFactor: 20, targetMlhr: 60.0,  sessionId: null },
+      { bedId: '11', status: 'CRITICAL', flowRate: 0,   volRemaining: 10,  maxVolume: 500,  battery: 5,   dropFactor: 20, targetMlhr: 60.0,  sessionId: null },
       { bedId: '12', status: 'STABLE',   flowRate: 100, volRemaining: 450, maxVolume: 500,  battery: 100, dropFactor: 20, targetMlhr: 100.0, sessionId: null },
       { bedId: '13', status: 'STABLE',   flowRate: 55,  volRemaining: 180, maxVolume: 500,  battery: 40,  dropFactor: 20, targetMlhr: 55.0,  sessionId: null },
       { bedId: '14', status: 'STABLE',   flowRate: 90,  volRemaining: 300, maxVolume: 500,  battery: 85,  dropFactor: 20, targetMlhr: 90.0,  sessionId: null },
