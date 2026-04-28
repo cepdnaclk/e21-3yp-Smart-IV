@@ -10,7 +10,7 @@ function BedCard({ bed }) {
   const flowRate = bed.flowRate ?? 0;
   const volRemaining = bed.volRemaining ?? 0;
   const battery = bed.battery ?? 0;
-  const maxVolume = bed.maxVolume || 500; 
+  const maxVolume = bed.maxVolume ?? 500; 
 
   // Determine styling based on the status
   let headerColor = '#6c757d'; // Default Grey (Offline)
@@ -29,7 +29,7 @@ function BedCard({ bed }) {
     isGlowing = true; 
   } else if (bed.status === 'DISCONNECTED') { 
     headerColor = '#2c3e50';
-    statusText = 'RE-CONNECTING...';
+    statusText = 'DISCONNECTED';
   }
 
   // Battery Visual Logic
