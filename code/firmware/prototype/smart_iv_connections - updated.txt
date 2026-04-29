@@ -1,0 +1,120 @@
+SMART IV — CURRENT CONNECTION LIST
+====================================
+
+BATTERY
+-------
+Battery (+)  → Rocker Switch (input)
+Battery (−)  → Common GND rail
+
+ROCKER SWITCH
+-------------
+Switch input  → Battery (+)
+Switch output → LM2596 IN+
+Switch output → TMC2208 VMOT
+
+LM2596 BUCK CONVERTER
+----------------------
+IN+  → Rocker Switch output
+IN−  → Common GND rail
+OUT+ → ESP32 VIN
+OUT− → Common GND rail
+(output set to exactly 5.0V)
+
+ESP32
+-----
+VIN  → LM2596 OUT+ (5V)
+GND  → Common GND rail (both GND pins connected)
+3.3V → TMC2208 VIO
+3.3V → TMC2208 PDN (via 1kΩ resistor)
+3.3V → IR Sensor #1 VCC
+3.3V → IR Sensor #2 VCC
+3.3V → OLED VCC
+
+TMC2208 MOTOR DRIVER
+---------------------
+VMOT → Rocker Switch output (raw battery voltage 6–8.4V)
+GND  → Common GND rail
+VIO  → ESP32 3.3V
+GND  → Common GND rail (logic side)
+EN   → ESP32 GPIO 27
+STEP → ESP32 GPIO 25
+DIR  → ESP32 GPIO 26
+PDN  → 1kΩ resistor → ESP32 3.3V
+MS1  → Common GND rail
+MS2  → Common GND rail
+A1   → NEMA17 GREEN wire
+A2   → NEMA17 BLACK wire
+B1   → NEMA17 BLUE wire
+B2   → NEMA17 RED wire
+
+(Leave unconnected: MS3, CLK, SPREAD, UART)
+
+NEMA17 STEPPER MOTOR
+---------------------
+GREEN → TMC2208 A1
+BLACK → TMC2208 A2
+BLUE  → TMC2208 B1
+RED   → TMC2208 B2
+
+100µF CAPACITOR
+---------------
+(+) long leg  → TMC2208 VMOT pin
+(−) short leg → TMC2208 GND pin
+(Placed as close to TMC2208 as possible)
+
+1kΩ RESISTOR
+-------------
+One end   → TMC2208 PDN pin
+Other end → ESP32 3.3V
+
+4x4 KEYPAD
+-----------
+Pin 1 (R1) → ESP32 GPIO 13
+Pin 2 (R2) → ESP32 GPIO 14
+Pin 3 (R3) → ESP32 GPIO 16
+Pin 4 (R4) → ESP32 GPIO 17
+Pin 5 (C1) → ESP32 GPIO 4
+Pin 6 (C2) → ESP32 GPIO 5
+Pin 7 (C3) → ESP32 GPIO 18
+Pin 8 (C4) → ESP32 GPIO 19
+(No VCC or GND needed for keypad)
+
+IR SENSORS
+
+IR SENSOR #1 — EMITTER ONLY (physically modified)
+   Clear LED (IR emitter) intact
+   Black LED (photodetector) physically cut out
+   VCC → ESP32 3.3V
+   GND → Common GND rail
+   OUT → NOT CONNECTED
+
+IR SENSOR #2 — RECEIVER ONLY (physically modified)
+   Black LED (photodetector) intact
+   Clear LED physically cut out
+   VCC → ESP32 3.3V
+   GND → Common GND rail
+   OUT → ESP32 GPIO 34
+
+OLED I2C DISPLAY
+-----------------
+VCC → ESP32 3.3V
+GND → Common GND rail
+SDA → ESP32 GPIO 21
+SCL → ESP32 GPIO 22
+
+(Note: Level Shifter removed from circuit.
+ OLED is connected directly to ESP32 — no level shifter needed.)
+
+COMMON GND RAIL
+---------------
+Battery (−)
+LM2596 IN−
+LM2596 OUT−
+ESP32 GND (both pins)
+TMC2208 GND (both GND pins)
+100µF capacitor (−) leg
+MS1
+MS2
+IR Sensor #1 GND
+IR Sensor #2 GND
+OLED GND

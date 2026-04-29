@@ -6,9 +6,9 @@ class BedStateManager extends EventEmitter {
     super();
     this.bedStateMap = new Map();
     this.telemetryCounters = new Map(); 
-    this.lastAlertMap = new Map(); // Fixed: Initialize in constructor
+    this.lastAlertMap = new Map();
     
-    this.STALE_TIMEOUT_MS = 5000;
+    this.STALE_TIMEOUT_MS = 15000;  // 15s — tolerates natural pauses between IV drops
     this.TELEMETRY_INTERVAL_S = 5; 
     this.staleCheckInterval = null;
   }
@@ -16,28 +16,27 @@ class BedStateManager extends EventEmitter {
   async init() {
     console.log('🧠 Bed State Manager: Initializing and hydrating sessions...');
 
-    // BUG FIX: Hydrate memory from the Database
-    // This ensures that if you restart the app, the "Active" beds reappear immediately
+    // Hydrate memory from the Database
     const activeSessions = global.dbService.getActiveSessions();
     activeSessions.forEach(session => {
       this.bedStateMap.set(session.bedId, {
         ...session,
-        status: 'DISCONNECTED', // Initially disconnected until a packet arrives
+        status: 'DISCONNECTED',
         lastSeen: 0,
         isStale: true,
         flowRate: 0,
-        volRemaining: session.maxVolume // Use the volume defined in the session
+        volRemaining: session.maxVolume
       });
     });
 
     console.log(`✅ Hydrated ${activeSessions.length} active sessions from DB.`);
 
-    // 1. Listen to incoming packets
-    mockSerialService.on('bed:packet', (packet) => {
+    // FIX: mockSerialService emits 'data', not 'bed:packet'
+    mockSerialService.on('data', (packet) => {
       this.handleIncomingPacket(packet);
     });
 
-    // 2. Stale bed check loop
+    // Stale bed check loop
     this.staleCheckInterval = setInterval(() => {
       this.checkForStaleBeds();
     }, 1000);
@@ -47,7 +46,6 @@ class BedStateManager extends EventEmitter {
     const { bedId } = packet;
     const existingBed = this.bedStateMap.get(bedId);
 
-    // BUG FIX: Prevent "Ghost Sessions"
     let sessionId = existingBed?.sessionId ?? null;
 
     if (!sessionId) {
@@ -94,7 +92,6 @@ class BedStateManager extends EventEmitter {
     let severity = null;
     let message = null;
 
-    // Logic for occlusion, free-flow, empty bag, and low battery
     if (flowRate === 0 && status === 'CRITICAL') {
       alertType = 'OCCLUSION';
       severity = 'CRITICAL';
@@ -129,7 +126,6 @@ class BedStateManager extends EventEmitter {
     let stateChanged = false;
 
     for (const [bedId, bedData] of this.bedStateMap.entries()) {
-      // If we haven't heard from a bed in 5s and it's not already marked stale
       if (!bedData.isStale && (now - bedData.lastSeen > this.STALE_TIMEOUT_MS)) {
         bedData.isStale = true;
         bedData.status = 'DISCONNECTED';

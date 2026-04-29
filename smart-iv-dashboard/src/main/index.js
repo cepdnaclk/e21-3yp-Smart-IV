@@ -7,6 +7,7 @@ import mockSerialService from './mockSerialService.js';
 import bedStateManager from './bedStateManager.js';
 import ipcHandler from './ipcHandler.js';
 import dbService from './dbService.js';
+import { startSerialBridge } from './serialBridge.js';  // ← NEW
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -52,11 +53,16 @@ app.whenReady().then(() => {
   dbService.init();
   global.dbService = dbService;
 
-  // 3. Then start backend services
+  // 3. Start the serial bridge (reads USB receiver ESP32 → writes liveData.json)
+  //    This is non-blocking — if the ESP32 isn't plugged in it logs a warning
+  //    and the app continues normally using mock/simulation data.
+  startSerialBridge();  // ← NEW
+
+  // 4. Then start backend services
   mockSerialService.start();
   bedStateManager.init();
 
-  // 4. Then create the window
+  // 5. Then create the window
   createWindow()
 
   app.on('activate', function () {
@@ -66,7 +72,7 @@ app.whenReady().then(() => {
 
 // Close DB cleanly when app quits
 app.on('window-all-closed', () => {
-  dbService.close(); // ✅ Clean shutdown
+  dbService.close();
   if (process.platform !== 'darwin') {
     app.quit()
   }
