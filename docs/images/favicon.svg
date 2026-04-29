@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="smartIvGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B6AFF" />
+      <stop offset="100%" stop-color="#00D4AA" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="512" height="512" rx="120" fill="url(#smartIvGrad)" />
+  
+  <g transform="translate(133, 124) scale(0.55)">
+    <path fill="#ffffff" d="M224 0c-3.2 0-6.4 1.3-8.5 3.5l-192 192C9.4 209.6 0 228.6 0 250.7c0 125.9 100.3 229.3 224 229.3s224-103.4 224-229.3c0-22.1-9.4-41.1-23.5-55.2l-192-192C230.4 1.3 227.2 0 224 0z" />
+  </g>
+</svg>
