@@ -1916,6 +1916,50 @@
         .dl-notice-row i { color: var(--accent2); font-size: 15px; margin-top: 2px; flex-shrink: 0; }
         .dl-notice-row p { font-size: 13px; color: var(--text); line-height: 1.7; }
         .dl-notice-row strong { color: var(--dark); }
+        /* ===== GALLERY & ACHIEVEMENTS ===== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            background: white;
+        }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        .gallery-item .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .gallery-item:hover .overlay {
+            opacity: 1;
+        }
+        .gallery-item .overlay i {
+            color: white; font-size: 24px;
+        }
+        .gallery-subtitle {
+            font-size: 20px; font-weight: 800; color: var(--dark);
+            margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .gallery-subtitle i { color: var(--primary); }
+
         @media (max-width: 768px) {
             .dl-panel { padding: 24px 20px; }
             .dl-sysreq-nodes { flex-direction: column; }
@@ -2836,6 +2880,80 @@
                         <a href="https://github.com/paarkavi29" target="_blank"><i class="fab fa-github"></i></a>
                         <a href="mailto:e21206@eng.pdn.ac.lk" target="_blank"><i class="fas fa-envelope"></i></a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== GALLERY & ACHIEVEMENTS ===== -->
+    <section id="gallery" class="section-pad" style="background:white;">
+        <div class="container">
+            <div class="section-title center fade-up">
+                <div class="tag">Gallery</div>
+                <h2>Project Journey & Achievements</h2>
+                <p>A visual log of our prototyping phases and competition highlights.</p>
+            </div>
+
+            <!-- Photolog -->
+            <div class="gallery-subtitle fade-up">Prototype Development & Presentations</div>
+            <div class="gallery-grid fade-up">
+                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (1).jpeg')">
+                    <img src="images/photolog/prototype (1).jpeg" alt="Prototype Making" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (2).jpeg')">
+                    <img src="images/photolog/prototype (2).jpeg" alt="Prototype Making" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (3).jpeg')">
+                    <img src="images/photolog/prototype (3).jpeg" alt="Prototype Making" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (4).jpeg')">
+                    <img src="images/photolog/prototype (4).jpeg" alt="Prototype Making" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/photolog/M1.jpeg')">
+                    <img src="images/photolog/M1.jpeg" alt="Milestone 1 Presentation" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/photolog/M2.jpeg')">
+                    <img src="images/photolog/M2.jpeg" alt="Milestone 2 Presentation" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="gallery-subtitle fade-up">Awards & Competitions</div>
+            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">Highlights from our participation as finalists in the SLIoT Challenge and future events.</p>
+            <div class="gallery-grid fade-up" style="margin-bottom:0;">
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (1).jpg')">
+                    <img src="images/sliot/pic (1).jpg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (1).jpeg')">
+                    <img src="images/sliot/pic (1).jpeg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (2).jpg')">
+                    <img src="images/sliot/pic (2).jpg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (2).jpeg')">
+                    <img src="images/sliot/pic (2).jpeg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (3).jpg')">
+                    <img src="images/sliot/pic (3).jpg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (3).jpeg')">
+                    <img src="images/sliot/pic (3).jpeg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                </div>
+                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (4).jpeg')">
+                    <img src="images/sliot/pic (4).jpeg" alt="Competition Highlight" loading="lazy">
+                    <div class="overlay"><i class="fas fa-expand"></i></div>
                 </div>
             </div>
         </div>
