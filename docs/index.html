@@ -1079,6 +1079,30 @@
             transform: scale(1.02);
         }
 
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            padding: 20px;
+            transition: color 0.2s;
+            user-select: none;
+        }
+
+        .lightbox-nav:hover {
+            color: var(--primary);
+        }
+
+        .lightbox-nav.prev {
+            left: 20px;
+        }
+
+        .lightbox-nav.next {
+            right: 20px;
+        }
+
         /* ===== SOFTWARE ===== */
         #software {
             background: white;
@@ -1816,153 +1840,399 @@
         }
 
         /* ===== DOWNLOAD SECTION ===== */
-        #download { background: var(--bg-light); color: var(--text); }
-        #download .section-title h2 { color: var(--dark); }
-        #download .section-title p { color: var(--text-light); }
-        .dl-panel {
-            background: white; border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 48px 36px;
-            max-width: 860px; margin: 0 auto;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-            display: flex; flex-direction: column; align-items: center; text-align: center;
+        #download {
+            background: var(--bg-light);
+            color: var(--text);
         }
+
+        #download .section-title h2 {
+            color: var(--dark);
+        }
+
+        #download .section-title p {
+            color: var(--text-light);
+        }
+
+        .dl-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 48px 36px;
+            max-width: 860px;
+            margin: 0 auto;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
         .dl-app-row {
-            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
             margin-bottom: 32px;
         }
+
         .dl-app-ico {
-            width: 56px; height: 56px; border-radius: 14px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
             background: var(--primary-light);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: var(--primary); flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+            flex-shrink: 0;
         }
-        .dl-app-meta { display: flex; flex-direction: column; align-items: center; }
-        .dl-app-meta h3 { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
-        .dl-app-meta .dl-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+        .dl-app-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dl-app-meta h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .dl-app-meta .dl-tags {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .dl-tag {
-            font-size: 12px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; padding: 4px 12px; border-radius: 100px;
-            border: 1px solid var(--border); color: var(--text-light);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            color: var(--text-light);
             background: white;
         }
-        .dl-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; width: 100%; }
-        
+
+        .dl-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            width: 100%;
+        }
+
         .dl-modern-btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 14px;
-            background: var(--gradient); color: white;
-            padding: 18px 48px; border-radius: 100px;
-            font-size: 18px; font-weight: 700;
-            text-decoration: none; border: none; cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: var(--gradient);
+            color: white;
+            padding: 18px 48px;
+            border-radius: 100px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
             box-shadow: 0 8px 24px rgba(11, 106, 255, 0.3);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            width: 100%; max-width: 360px;
+            width: 100%;
+            max-width: 360px;
         }
+
         .dl-modern-btn:hover {
             transform: translateY(-4px);
             box-shadow: 0 14px 32px rgba(11, 106, 255, 0.4);
         }
-        .dl-modern-btn .btn-icon { font-size: 22px; }
-        .dl-modern-btn .btn-text { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-        .dl-modern-btn .btn-title { font-size: 17px; line-height: 1.2; }
-        .dl-modern-btn .btn-sub { font-size: 12px; font-weight: 500; opacity: 0.8; line-height: 1.2; }
+
+        .dl-modern-btn .btn-icon {
+            font-size: 22px;
+        }
+
+        .dl-modern-btn .btn-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .dl-modern-btn .btn-title {
+            font-size: 17px;
+            line-height: 1.2;
+        }
+
+        .dl-modern-btn .btn-sub {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.8;
+            line-height: 1.2;
+        }
 
         .dl-checksum-row {
-            display: inline-flex; align-items: center; gap: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
             padding: 12px 24px;
-            background: var(--bg-light); border: 1px solid var(--border);
-            border-radius: 100px; max-width: 100%;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            max-width: 100%;
         }
+
         .dl-checksum-row .cs-label {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--text-light); font-weight: 700; white-space: nowrap;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            font-weight: 700;
+            white-space: nowrap;
         }
+
         .dl-checksum-row .cs-hash {
-            font-family: 'Courier New', monospace; font-size: 12px;
-            color: var(--text); word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--text);
+            word-break: break-all;
         }
-        .dl-checksum-row i { color: var(--text-light); cursor: pointer; flex-shrink: 0; transition: color 0.2s; font-size: 14px; }
-        .dl-checksum-row i:hover { color: var(--primary); }
+
+        .dl-checksum-row i {
+            color: var(--text-light);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: color 0.2s;
+            font-size: 14px;
+        }
+
+        .dl-checksum-row i:hover {
+            color: var(--primary);
+        }
+
         .dl-sysreq-wrap {
-            max-width: 860px; margin: 40px auto 0;
+            max-width: 860px;
+            margin: 40px auto 0;
         }
+
         .dl-sysreq-label {
-            font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--text-light); font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-light);
+            font-weight: 600;
             margin-bottom: 16px;
         }
-        .dl-sysreq-nodes { display: flex; gap: 16px; flex-wrap: wrap; }
-        .dl-sysreq-node {
-            background: white; border: 1px solid var(--border);
-            border-radius: 12px; padding: 16px 20px;
-            display: flex; align-items: center; gap: 12px;
-            flex: 1; min-width: 180px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-        .dl-sysreq-node .node-ico {
-            width: 36px; height: 36px; border-radius: 8px;
-            background: var(--bg-light);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 15px; color: var(--primary); flex-shrink: 0;
-        }
-        .dl-sysreq-node h4 { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
-        .dl-sysreq-node p { font-size: 11px; color: var(--text-light); }
-        .dl-notice-row {
-            max-width: 860px; margin: 24px auto 0;
-            display: flex; align-items: flex-start; gap: 14px;
-            padding: 16px 20px;
-            background: rgba(255,107,53,0.07); border: 1px solid rgba(255,107,53,0.18);
-            border-radius: var(--radius-sm);
-        }
-        .dl-notice-row i { color: var(--accent2); font-size: 15px; margin-top: 2px; flex-shrink: 0; }
-        .dl-notice-row p { font-size: 13px; color: var(--text); line-height: 1.7; }
-        .dl-notice-row strong { color: var(--dark); }
-        /* ===== GALLERY & ACHIEVEMENTS ===== */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+        .dl-sysreq-nodes {
+            display: flex;
             gap: 16px;
-            margin-bottom: 48px;
+            flex-wrap: wrap;
         }
-        .gallery-item {
-            position: relative;
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            aspect-ratio: 4/3;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
+
+        .dl-sysreq-node {
             background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 180px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
-        .gallery-item img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.4s ease;
+
+        .dl-sysreq-node .node-ico {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: var(--primary);
+            flex-shrink: 0;
         }
-        .gallery-item:hover img {
-            transform: scale(1.05);
+
+        .dl-sysreq-node h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2px;
         }
-        .gallery-item .overlay {
+
+        .dl-sysreq-node p {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .dl-notice-row {
+            max-width: 860px;
+            margin: 24px auto 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            background: rgba(255, 107, 53, 0.07);
+            border: 1px solid rgba(255, 107, 53, 0.18);
+            border-radius: var(--radius-sm);
+        }
+
+        .dl-notice-row i {
+            color: var(--accent2);
+            font-size: 15px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .dl-notice-row p {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .dl-notice-row strong {
+            color: var(--dark);
+        }
+
+        /* ===== MODERN SLIDESHOW GALLERY ===== */
+        .slideshow-container {
+            max-width: 100%;
+            margin-bottom: 56px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .slideshow-main {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: var(--dark);
+            overflow: hidden;
+            cursor: zoom-in;
+        }
+
+        .slideshow-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .slideshow-nav {
             position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
         }
-        .gallery-item:hover .overlay {
+
+        .slideshow-nav:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .slideshow-nav.prev {
+            left: 16px;
+        }
+
+        .slideshow-nav.next {
+            right: 16px;
+        }
+
+        .slideshow-thumbs {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+            overflow-x: auto;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border);
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .slideshow-thumbs::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .slideshow-thumb {
+            flex: 0 0 calc(20% - 8px);
+            min-width: 80px;
+            aspect-ratio: 16/9;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.5;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .slideshow-thumb:hover {
+            opacity: 0.8;
+        }
+
+        .slideshow-thumb.active {
             opacity: 1;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(11, 106, 255, 0.2);
         }
-        .gallery-item .overlay i {
-            color: white; font-size: 24px;
+
+        .slideshow-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
         .gallery-subtitle {
-            font-size: 20px; font-weight: 800; color: var(--dark);
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--dark);
             margin-bottom: 20px;
-            display: flex; align-items: center; gap: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .gallery-subtitle i { color: var(--primary); }
 
         @media (max-width: 768px) {
-            .dl-panel { padding: 24px 20px; }
-            .dl-sysreq-nodes { flex-direction: column; }
+            .slideshow-thumb {
+                flex: 0 0 calc(33.333% - 6.66px);
+            }
+
+            .slideshow-nav {
+                width: 40px;
+                height: 40px;
+            }
+
+            .dl-panel {
+                padding: 24px 20px;
+            }
+
+            .dl-sysreq-nodes {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -1976,8 +2246,14 @@
 
     <!-- Lightbox for Images -->
     <div id="lightbox" onclick="closeLightbox()">
-        <span class="lightbox-close"><i class="fas fa-times"></i></span>
+        <span class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></span>
+        <span class="lightbox-nav prev" onclick="event.stopPropagation(); changeLightboxSlide(-1)"><i
+                class="fas fa-chevron-left"></i></span>
+
         <img id="lightbox-img" src="" alt="Enlarged view" onclick="event.stopPropagation()">
+
+        <span class="lightbox-nav next" onclick="event.stopPropagation(); changeLightboxSlide(1)"><i
+                class="fas fa-chevron-right"></i></span>
     </div>
 
     <!-- Scroll to Top -->
@@ -2894,66 +3170,54 @@
                 <p>A visual log of our prototyping phases and competition highlights.</p>
             </div>
 
-            <!-- Photolog -->
-            <div class="gallery-subtitle fade-up">Prototype Development & Presentations</div>
-            <div class="gallery-grid fade-up">
-                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (1).jpeg')">
-                    <img src="images/photolog/prototype (1).jpeg" alt="Prototype Making" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
+            <div class="gallery-subtitle fade-up">Our journey with Smart IV</div>
+            <div class="slideshow-container fade-up" id="gallery-journey">
+                <div class="slideshow-main" onclick="openLightbox('journey')">
+                    <img src="images/photolog/prototype (1).jpeg" alt="Prototype Making" id="main-img-journey">
+                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('journey', -1)"><i
+                            class="fas fa-chevron-left"></i></div>
+                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('journey', 1)"><i
+                            class="fas fa-chevron-right"></i></div>
                 </div>
-                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (2).jpeg')">
-                    <img src="images/photolog/prototype (2).jpeg" alt="Prototype Making" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (3).jpeg')">
-                    <img src="images/photolog/prototype (3).jpeg" alt="Prototype Making" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/photolog/prototype (4).jpeg')">
-                    <img src="images/photolog/prototype (4).jpeg" alt="Prototype Making" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/photolog/M1.jpeg')">
-                    <img src="images/photolog/M1.jpeg" alt="Milestone 1 Presentation" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/photolog/M2.jpeg')">
-                    <img src="images/photolog/M2.jpeg" alt="Milestone 2 Presentation" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                <div class="slideshow-thumbs" id="thumbs-journey">
+                    <div class="slideshow-thumb active" onclick="setSlide('journey', 0)"><img
+                            src="images/photolog/prototype (1).jpeg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('journey', 1)"><img
+                            src="images/photolog/prototype (2).jpeg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('journey', 2)"><img
+                            src="images/photolog/prototype (3).jpeg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('journey', 3)"><img
+                            src="images/photolog/prototype (4).jpeg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('journey', 5)"><img src="images/photolog/M2.jpeg"
+                            alt="Thumb"></div>
                 </div>
             </div>
 
-            <!-- Achievements -->
-            <div class="gallery-subtitle fade-up">Awards & Competitions</div>
-            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">Highlights from our participation as finalists in the SLIoT Challenge and future events.</p>
-            <div class="gallery-grid fade-up" style="margin-bottom:0;">
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (1).jpg')">
-                    <img src="images/sliot/pic (1).jpg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
+            <div class="gallery-subtitle fade-up">Achievements</div>
+            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
+                Highlights from our participation as finalists in the SLIoT Challenge and future events.</p>
+            <div class="slideshow-container fade-up" style="margin-bottom:0;" id="gallery-achievements">
+                <div class="slideshow-main" onclick="openLightbox('achievements')">
+                    <img src="images/sliot/pic (1).jpg" alt="Competition Highlight" id="main-img-achievements">
+                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('achievements', -1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('achievements', 1)"><i
+                            class="fas fa-chevron-right"></i></div>
                 </div>
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (1).jpeg')">
-                    <img src="images/sliot/pic (1).jpeg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (2).jpg')">
-                    <img src="images/sliot/pic (2).jpg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (2).jpeg')">
-                    <img src="images/sliot/pic (2).jpeg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (3).jpg')">
-                    <img src="images/sliot/pic (3).jpg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (3).jpeg')">
-                    <img src="images/sliot/pic (3).jpeg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
-                </div>
-                <div class="gallery-item" onclick="openLightbox('images/sliot/pic (4).jpeg')">
-                    <img src="images/sliot/pic (4).jpeg" alt="Competition Highlight" loading="lazy">
-                    <div class="overlay"><i class="fas fa-expand"></i></div>
+                <div class="slideshow-thumbs" id="thumbs-achievements">
+                    <div class="slideshow-thumb active" onclick="setSlide('achievements', 0)"><img
+                            src="images/sliot/pic (1).jpg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('achievements', 1)"><img
+                            src="images/sliot/pic (1).jpeg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('achievements', 2)"><img
+                            src="images/sliot/pic (2).jpg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('achievements', 4)"><img
+                            src="images/sliot/pic (3).jpg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('achievements', 5)"><img
+                            src="images/sliot/pic (3).jpeg" alt="Thumb"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('achievements', 6)"><img
+                            src="images/sliot/pic (4).jpeg" alt="Thumb"></div>
                 </div>
             </div>
         </div>
@@ -3000,10 +3264,11 @@
                     <i class="fas fa-copy" onclick="copyHash()" title="Copy checksum"></i>
                 </div>
             </div>
-            
-             <!-- SmartScreen notice -->
-             <div class="dl-notice-row fade-up">
-                <p><strong>Note:</strong> Windows SmartScreen may appear since this is a research project installer. Click <em>More info</em> &rarr; <em>Run anyway</em>.</p>
+
+            <!-- SmartScreen notice -->
+            <div class="dl-notice-row fade-up">
+                <p><strong>Note:</strong> Windows SmartScreen may appear since this is a research project installer.
+                    Click <em>More info</em> &rarr; <em>Run anyway</em>.</p>
             </div>
 
         </div>
@@ -3084,11 +3349,33 @@
             document.getElementById('mobileOverlay').classList.remove('open');
         }
 
-        // Lightbox Functionality
-        function openLightbox(src) {
-            document.getElementById('lightbox-img').src = src;
+        // Lightbox Functionality (with navigation)
+        let lightboxGallery = '';
+        let lightboxIndex = 0;
+
+        function openLightbox(galleryId) {
+            lightboxGallery = galleryId;
+            // Sync lightbox index with the current slideshow index
+            lightboxIndex = galleriesData[galleryId].currentIndex;
+            updateLightboxImage();
             document.getElementById('lightbox').classList.add('open');
         }
+
+        function updateLightboxImage() {
+            document.getElementById('lightbox-img').src = galleriesData[lightboxGallery].images[lightboxIndex];
+        }
+
+        function changeLightboxSlide(direction) {
+            const gallery = galleriesData[lightboxGallery];
+            lightboxIndex += direction;
+
+            // Loop around if we hit the end or beginning
+            if (lightboxIndex >= gallery.images.length) lightboxIndex = 0;
+            if (lightboxIndex < 0) lightboxIndex = gallery.images.length - 1;
+
+            updateLightboxImage();
+        }
+
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('open');
         }
@@ -3134,6 +3421,69 @@
                 el.style.color = 'var(--accent)';
                 setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 1800);
             });
+        }
+
+        // ===== MODERN SLIDESHOW GALLERY LOGIC =====
+        const galleriesData = {
+            'journey': {
+                currentIndex: 0,
+                images: [
+                    'images/photolog/prototype (1).jpeg', 'images/photolog/prototype (2).jpeg',
+                    'images/photolog/prototype (3).jpeg', 'images/photolog/prototype (4).jpeg',
+                    'images/photolog/M1.jpeg', 'images/photolog/M2.jpeg'
+                ]
+            },
+            'achievements': {
+                currentIndex: 0,
+                images: [
+                    'images/sliot/pic (1).jpg', 'images/sliot/pic (1).jpeg',
+                    'images/sliot/pic (2).jpg', 'images/sliot/pic (2).jpeg',
+                    'images/sliot/pic (3).jpg', 'images/sliot/pic (3).jpeg',
+                    'images/sliot/pic (4).jpeg'
+                ]
+            }
+        };
+
+        function updateSlide(galleryId) {
+            const gallery = galleriesData[galleryId];
+            const mainImg = document.getElementById(`main-img-${galleryId}`);
+            const thumbs = document.querySelectorAll(`#thumbs-${galleryId} .slideshow-thumb`);
+
+            // Quick fade transition
+            mainImg.style.opacity = '0.4';
+            setTimeout(() => {
+                mainImg.src = gallery.images[gallery.currentIndex];
+                mainImg.style.opacity = '1';
+            }, 150);
+
+            // Update active state on thumbnails
+            thumbs.forEach((thumb, index) => {
+                if (index === gallery.currentIndex) {
+                    thumb.classList.add('active');
+                    // Smoothly scroll the active thumbnail into view
+                    thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+
+        function changeSlide(galleryId, direction) {
+            const gallery = galleriesData[galleryId];
+            gallery.currentIndex += direction;
+
+            // Loop logic
+            if (gallery.currentIndex >= gallery.images.length) {
+                gallery.currentIndex = 0;
+            } else if (gallery.currentIndex < 0) {
+                gallery.currentIndex = gallery.images.length - 1;
+            }
+            updateSlide(galleryId);
+        }
+
+        function setSlide(galleryId, index) {
+            galleriesData[galleryId].currentIndex = index;
+            updateSlide(galleryId);
         }
     </script>
 </body>
