@@ -113,7 +113,7 @@ Smart IV uses a **3-tier IoT architecture**: Edge → Local Station → Cloud.
 │  │  DynamoDB    │               │ Cognito  │            │        │
 │  │  (optional)  │               │ Auth     │            │        │
 │  └──────────────┘               └──────────┘            │        │
-│                                                          ▼       │
+│                                                        ▼         │
 │                                             ┌─────────────────┐  │
 │                                             │ React Native    │  │
 │                                             │ Mobile App      │  │
