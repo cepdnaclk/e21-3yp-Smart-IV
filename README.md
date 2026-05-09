@@ -95,8 +95,8 @@ Smart IV uses a **3-tier IoT architecture**: Edge → Local Station → Cloud.
 ┌──────────────────────────────▼────────────────────────────────────┐
 │  TIER 2 — LOCAL STATION (Ward Level)                              │
 │                                                                   │
-│  ┌──────────────────┐    USB/UART    ┌──────────────────────┐     │
-│  │  ESP32 Receiver  │ ────────────▶ │  Nurse Station PC    │     │
+│  ┌──────────────────┐    USB/UART  ┌──────────────────────┐     │
+│  │  ESP32 Receiver  │ ────────────▶│  Nurse Station PC    │     │
 │  │  (USB Dongle)    │               │  Tauri + React App   │     │
 │  └──────────────────┘               │  SQLite DB           │     │
 │                                     │  Alert Rule Engine   │     │
