@@ -642,4 +642,4 @@ Cloud hosting and software development costs are separate and scale with ward si
 
 ---
 
-> © 2025 Smart IV — gDepartment of Computer Engineering, University of Peradeniya. All rights reserved.
+> © 2025 Smart IV — Department of Computer Engineering, University of Peradeniya. All rights reserved.
