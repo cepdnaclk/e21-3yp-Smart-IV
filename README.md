@@ -107,7 +107,7 @@ Smart IV uses a **3-tier IoT architecture**: Edge → Local Station → Cloud.
 │  TIER 3 — CLOUD LAYER (Remote Access)                            │
 │                                                                  │
 │  ┌──────────────┐  Rule Engine  ┌──────────┐  Push  ┌────────┐   │
-│  │ AWS IoT Core │ ────────────▶│  Lambda  │──────▶│  SNS   │ │
+│  │ AWS IoT Core │ ────────────▶│  Lambda  │──────▶ │  SNS   │   │
 │  └──────────────┘               └──────────┘        └───┬────┘   │
 │  ┌──────────────┐               ┌──────────┐            │        │
 │  │  DynamoDB    │               │ Cognito  │            │        │
