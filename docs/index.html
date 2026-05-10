@@ -2540,7 +2540,7 @@
             <div class="arch-diagram fade-up" style="display: flex; justify-content: center; padding: 20px;">
                 <img src="images/smart_iv_desktop_architecture.svg" alt="Smart IV Desktop Architecture"
                     class="clickable-img" onclick="openLightbox(this.src)"
-                    style="width: 100%; max-width: 1000px; height: auto; border-radius: 12px;">
+                    style="width: 100%; max-width: 1000px; height: auto; border-radius: 12px;" loading="lazy">
             </div>
         </div>
     </section>
@@ -2558,11 +2558,11 @@
                 <div>
                     <div class="hw-image-frame fade-up" style="padding: 0;">
                         <img src="images/concept-design.jpg" alt="Concept Design Photo" class="clickable-img"
-                            onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover;">
+                            onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                     </div>
                     <div class="hw-image-frame fade-up" style="margin-top:20px; aspect-ratio: 16/9; padding: 0;">
                         <img src="images/circuit.png" alt="SmartIV Circuit Design" class="clickable-img"
-                            onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover;">
+                            onclick="openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                     </div>
                 </div>
                 <div class="hw-specs fade-up">
@@ -3151,15 +3151,15 @@
                 </div>
                 <div class="slideshow-thumbs" id="thumbs-journey">
                     <div class="slideshow-thumb active" onclick="setSlide('journey', 0)"><img
-                            src="images/photolog/prototype (1).jpeg" alt="Thumb"></div>
+                            src="images/photolog/prototype (1).jpeg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('journey', 1)"><img
-                            src="images/photolog/prototype (2).jpeg" alt="Thumb"></div>
+                            src="images/photolog/prototype (2).jpeg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('journey', 2)"><img
-                            src="images/photolog/prototype (3).jpeg" alt="Thumb"></div>
+                            src="images/photolog/prototype (3).jpeg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('journey', 3)"><img
-                            src="images/photolog/prototype (4).jpeg" alt="Thumb"></div>
+                            src="images/photolog/prototype (4).jpeg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('journey', 5)"><img src="images/photolog/M2.jpeg"
-                            alt="Thumb"></div>
+                            alt="Thumb" loading="lazy"></div>
                 </div>
             </div>
 
@@ -3177,17 +3177,17 @@
                 </div>
                 <div class="slideshow-thumbs" id="thumbs-achievements">
                     <div class="slideshow-thumb active" onclick="setSlide('achievements', 0)"><img
-                            src="images/sliot/pic (1).jpg" alt="Thumb"></div>
+                            src="images/sliot/pic (1).jpg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('achievements', 1)"><img
-                            src="images/sliot/pic (1).jpeg" alt="Thumb"></div>
+                            src="images/sliot/pic (1).jpeg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('achievements', 2)"><img
-                            src="images/sliot/pic (2).jpg" alt="Thumb"></div>
+                            src="images/sliot/pic (2).jpg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('achievements', 4)"><img
-                            src="images/sliot/pic (3).jpg" alt="Thumb"></div>
+                            src="images/sliot/pic (3).jpg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('achievements', 5)"><img
-                            src="images/sliot/pic (3).jpeg" alt="Thumb"></div>
+                            src="images/sliot/pic (3).jpeg" alt="Thumb" loading="lazy"></div>
                     <div class="slideshow-thumb" onclick="setSlide('achievements', 6)"><img
-                            src="images/sliot/pic (4).jpeg" alt="Thumb"></div>
+                            src="images/sliot/pic (4).jpeg" alt="Thumb" loading="lazy"></div>
                 </div>
             </div>
         </div>
@@ -3295,12 +3295,19 @@
 
     <!-- ===== JAVASCRIPT ===== -->
     <script>
-        // Preloader
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('preloader').classList.add('hidden');
-            }, 600);
-        });
+        // Faster Preloader Logic
+        function hidePreloader() {
+            const preloader = document.getElementById('preloader');
+            if (preloader && !preloader.classList.contains('hidden')) {
+                preloader.classList.add('hidden');
+            }
+        }
+        // Hide when DOM is ready (much faster than window.load)
+        document.addEventListener('DOMContentLoaded', hidePreloader);
+        // Fallback for older browsers or edge cases
+        window.addEventListener('load', hidePreloader);
+        // Force hide after 2 seconds to ensure user is never stuck
+        setTimeout(hidePreloader, 2000);
 
         // Navbar scroll
         const navbar = document.getElementById('navbar');
