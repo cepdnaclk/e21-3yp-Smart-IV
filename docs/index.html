@@ -39,6 +39,10 @@
             --shadow-lg: 0 12px 48px rgba(11, 106, 255, 0.18);
             --radius: 16px;
             --radius-sm: 10px;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-blur: 12px;
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -54,7 +58,11 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--text);
-            background: var(--white);
+            background: #ffffff;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(11, 106, 255, 0.03) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, rgba(0, 212, 170, 0.03) 0, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 107, 53, 0.03) 0, transparent 50%);
             overflow-x: hidden;
         }
 
@@ -142,6 +150,25 @@
 
         .section-title.center p {
             margin: 0 auto;
+        }
+
+        .section-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #features, #team, #hardware, #gallery {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #features .container, #team .container, #hardware .container, #gallery .container {
+            position: relative;
+            z-index: 1;
         }
 
         .highlight {
@@ -234,10 +261,12 @@
         }
 
         nav.scrolled {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.05);
             padding: 14px 0;
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .nav-inner {
@@ -250,6 +279,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            padding-right: 20px;
             font-family: 'Sora', sans-serif;
             font-weight: 800;
             font-size: 20px;
@@ -276,14 +306,14 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0;
         }
 
         .nav-links a {
             color: rgba(255, 255, 255, 0.85);
             font-weight: 500;
             font-size: 14px;
-            padding: 8px 16px;
+            padding: 8px 20px;
             border-radius: 8px;
             transition: all 0.2s;
         }
@@ -305,7 +335,8 @@
         .nav-cta {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 0;
+            padding-left: 20px;
         }
 
         .nav-github {
@@ -315,7 +346,7 @@
             color: rgba(255, 255, 255, 0.85);
             font-size: 14px;
             font-weight: 600;
-            padding: 8px 16px;
+            padding: 8px 20px;
             border-radius: 100px;
             border: 1.5px solid rgba(255, 255, 255, 0.3);
             transition: all 0.2s;
@@ -758,13 +789,16 @@
         }
 
         .feature-card {
-            background: var(--bg-light);
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
             border-radius: var(--radius);
             padding: 36px 28px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--glass-border);
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--glass-shadow);
         }
 
         .feature-card::before {
@@ -787,7 +821,7 @@
         .feature-card:hover {
             transform: translateY(-6px);
             box-shadow: var(--shadow-lg);
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .feature-icon {
@@ -958,11 +992,13 @@
         }
 
         .hw-image-frame {
-            background: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
             border-radius: 24px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--glass-border);
             overflow: hidden;
-            box-shadow: var(--shadow);
+            box-shadow: var(--glass-shadow);
             aspect-ratio: 4/3;
             display: flex;
             align-items: center;
@@ -1389,19 +1425,23 @@
         }
 
         .supervisor-card {
-            background: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
             border-radius: var(--radius);
             padding: 32px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             gap: 20px;
             transition: all 0.3s;
+            box-shadow: var(--glass-shadow);
         }
 
         .supervisor-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow);
+            background: rgba(255, 255, 255, 0.85);
         }
 
         .supervisor-avatar {
@@ -1463,17 +1503,21 @@
         }
 
         .team-card {
-            background: white;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
             border-radius: var(--radius);
             padding: 28px 20px;
             text-align: center;
-            border: 1px solid var(--border);
+            border: 1px solid var(--glass-border);
             transition: all 0.3s;
+            box-shadow: var(--glass-shadow);
         }
 
         .team-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow);
+            background: rgba(255, 255, 255, 0.85);
         }
 
         .member-avatar {
@@ -2478,6 +2522,8 @@
 
     <!-- ===== FEATURES ===== -->
     <section id="features" class="section-pad">
+        <div class="section-orb" style="width: 400px; height: 400px; background: var(--primary); top: 10%; left: -200px;"></div>
+        <div class="section-orb" style="width: 300px; height: 300px; background: var(--accent); bottom: 10%; right: -150px;"></div>
         <div class="container">
             <div class="section-title center">
                 <div class="tag">Key Features</div>
@@ -2547,6 +2593,7 @@
 
     <!-- ===== HARDWARE ===== -->
     <section id="hardware" class="section-pad">
+        <div class="section-orb" style="width: 500px; height: 500px; background: var(--accent2); top: 20%; right: -250px;"></div>
         <div class="container">
             <div class="section-title">
                 <div class="tag">Hardware</div>
@@ -2624,6 +2671,8 @@
 
     <!-- ===== SOFTWARE ===== -->
     <section id="software" class="section-pad" style="background:var(--bg-light);">
+        <div class="section-orb" style="width: 400px; height: 400px; background: var(--primary); top: 10%; left: -200px;"></div>
+        <div class="section-orb" style="width: 300px; height: 300px; background: var(--accent); bottom: 10%; right: -150px;"></div>
         <div class="container">
             <div class="section-title center">
                 <div class="tag">Software</div>
@@ -2981,6 +3030,8 @@
 
     <!-- ===== TEAM ===== -->
     <section id="team" class="section-pad">
+        <div class="section-orb" style="width: 400px; height: 400px; background: var(--primary); top: 0; left: -200px;"></div>
+        <div class="section-orb" style="width: 400px; height: 400px; background: var(--accent); bottom: 0; right: -200px;"></div>
         <div class="container">
             <div class="section-title center">
                 <div class="tag">Our Team</div>
@@ -3086,6 +3137,7 @@
 
             <!-- External Resource Persons -->
             <div class="team-label" style="margin-top: 56px;">External Resource Persons</div>
+            <div class="section-orb" style="width: 300px; height: 300px; background: var(--accent2); top: 50%; right: 10%;"></div>
             <div class="supervisor-grid">
                 <div class="supervisor-card fade-up">
                     <div class="supervisor-avatar">
@@ -3133,6 +3185,8 @@
 
     <!-- ===== GALLERY & ACHIEVEMENTS ===== -->
     <section id="gallery" class="section-pad" style="background:white;">
+        <div class="section-orb" style="width: 500px; height: 500px; background: var(--primary); top: 10%; right: -250px; opacity: 0.05;"></div>
+        <div class="section-orb" style="width: 500px; height: 500px; background: var(--accent); bottom: 10%; left: -250px; opacity: 0.05;"></div>
         <div class="container">
             <div class="section-title center fade-up">
                 <div class="tag">Gallery</div>
