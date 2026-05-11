@@ -177,13 +177,13 @@ Acts as the flow actuator by precisely compressing or releasing the IV tube clam
 | Cloud Messaging | MQTT over TLS (`rumqttc`) → AWS IoT Core |
 | Cloud Compute | AWS Lambda |
 | Cloud Notifications | AWS SNS |
-| Cloud Auth | AWS Cognito |
-| Mobile App | React Native (iOS & Android) |
+| Cloud Auth | AWS Cognito (Amplify) |
+| Mobile App | React Native (Expo) |
 
 ### Desktop App — Tauri + React
 
 ```
-smart-iv-desktop/
+Desktop-App-Rust/
 ├── src-tauri/
 │   ├── src/
 │   │   ├── main.rs          # Tauri app entry, task orchestration
@@ -195,18 +195,22 @@ smart-iv-desktop/
 │   └── Cargo.toml
 ├── src/
 │   ├── store/
-│   │   ├── bedsStore.ts     # Zustand slice — live bed state
-│   │   └── alertStore.ts    # Zustand slice — active alerts
+│   │   └── index.ts         # All Zustand stores (beds, alerts, settings, serial)
 │   ├── components/
+│   │   ├── Sidebar.tsx      # Left navigation bar + simulation toggle
 │   │   ├── BedCard.tsx      # Per-bed status card
 │   │   ├── WardGrid.tsx     # Responsive ward-level grid
+│   │   ├── BedDetailModal.tsx # Pop-up with chart when you click a bed
 │   │   └── AlertBanner.tsx  # Top-of-screen alert strip
 │   ├── pages/
 │   │   ├── Dashboard.tsx    # Live monitoring view
 │   │   ├── History.tsx      # Session + telemetry history
+│   │   ├── Alerts.tsx       # Alert log table with resolve action
 │   │   └── Settings.tsx     # Serial port, MQTT config
-│   └── lib/
-│       └── tauriEvents.ts   # listen() wrappers for Tauri events
+│   ├── lib/
+│   │   └── tauriEvents.ts   # listen() wrappers for Tauri events
+│   └── mock/
+│       └── simulator.ts     # 16-bed fake data engine for testing
 └── package.json
 ```
 
@@ -442,7 +446,7 @@ e21-3yp-Smart-IV/
 │       │   └── serial_relay.cpp
 │       └── platformio.ini
 │
-├── desktop/                     # Tauri + React nurse station app
+├── Desktop-App-Rust/            # Tauri + React nurse station app
 │   ├── src-tauri/
 │   │   ├── src/
 │   │   │   ├── main.rs
@@ -459,12 +463,13 @@ e21-3yp-Smart-IV/
 │   │   └── lib/
 │   └── package.json
 │
-├── mobile/                      # React Native nurse/doctor app
+├── smart-iv-mobile/             # React Native (Expo) nurse/doctor app
+│   ├── app/                     # Expo Router screens & layouts
 │   ├── src/
-│   │   ├── screens/
 │   │   ├── components/
-│   │   ├── services/            # AWS IoT / Cognito integrations
-│   │   └── store/
+│   │   ├── services/            # AWS IoT / Amplify integrations
+│   │   ├── stores/              # Zustand state management
+│   │   └── types/
 │   └── package.json
 │
 ├── hardware/                    # PCB design & mechanical files
@@ -525,7 +530,7 @@ pio run --target upload
 ### 3. Run the Desktop App (Development)
 
 ```bash
-cd desktop
+cd Desktop-App-Rust
 npm install
 npm run tauri dev
 ```
@@ -546,7 +551,7 @@ Output installer is placed in `src-tauri/target/release/bundle/`.
 ### 5. Run the Mobile App
 
 ```bash
-cd mobile
+cd smart-iv-mobile
 npm install
 npx expo start      # or: npx react-native run-android / run-ios
 ```

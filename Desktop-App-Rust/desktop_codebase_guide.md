@@ -1,5 +1,9 @@
 # Smart IV Desktop App — Complete Codebase Guide
 
+This document provides an in-depth explanation of the `Desktop-App-Rust` application. It covers the technology stack, file and folder structure, architecture, data flow, and provides actionable guides on how to modify features and debug errors.
+
+---
+
 ## 1. Technology Stack
 
 | Layer | Technology | Why |
