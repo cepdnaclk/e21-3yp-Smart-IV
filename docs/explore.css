@@ -1,5 +1,5 @@
 /* ============================================================
-   chatbot.css  —  SmartIV Ask Page
+   explore.css  —  SmartIV Ask Page
    Full-screen Gemini-inspired dark chat interface
    ============================================================ */
 
@@ -389,7 +389,7 @@ nav#cb-navbar.scrolled {
     color: white;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 15px;
-    padding: 8px 4px;
+    padding: 8px 4px 8px 16px;
     min-width: 0;
 }
 

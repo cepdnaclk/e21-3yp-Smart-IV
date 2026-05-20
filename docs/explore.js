@@ -1,5 +1,5 @@
 /**
- * chatbot.js — SmartIV Ask Page
+ * explore.js — SmartIV Ask Page
  *
  * Architecture:
  *  - sendQuestionToBackend(question) is the single integration point.
