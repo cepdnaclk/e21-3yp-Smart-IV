@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask SmartIV – Intelligent IV Drip Monitoring</title>
+    <meta name="description"
+        content="Ask questions about SmartIV – an IoT-powered IV drip monitoring system. Explore hardware, software, architecture, budget, and team details through an intelligent assistant.">
+
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <!-- Google Fonts (same as index.html) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Chatbot styles -->
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+
+<body>
+
+    <!-- ===== MOBILE OVERLAY ===== -->
+    <div class="cb-mobile-overlay" id="cb-mobile-overlay"></div>
+
+    <!-- ===== MOBILE DRAWER NAV ===== -->
+    <div class="cb-mobile-nav" id="cb-mobile-nav">
+        <span class="cb-mobile-close" id="cb-mobile-close"><i class="fas fa-times"></i></span>
+        <a href="index.html#hero">Home</a>
+        <a href="index.html#problem">Problem</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#architecture">Architecture</a>
+        <a href="index.html#hardware">Hardware</a>
+        <a href="index.html#software">Software</a>
+        <a href="index.html#testing">Testing</a>
+        <a href="index.html#budget">Budget</a>
+        <a href="index.html#team">Team</a>
+        <a href="index.html#gallery">Gallery</a>
+        <a href="index.html#download">Download</a>
+        <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" target="_blank"
+            style="color: #00D4AA; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; padding-top: 16px;">
+            <i class="fab fa-github" style="margin-right:8px;"></i>GitHub
+        </a>
+    </div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav id="cb-navbar">
+        <div class="cb-nav-inner">
+
+            <!-- Logo — links back to main page hero -->
+            <a href="index.html#hero" class="cb-nav-logo">
+                <div class="logo-icon"><i class="fas fa-droplet"></i></div>
+                SmartIV
+            </a>
+
+            <!-- Desktop nav links — all point to index.html sections -->
+            <div class="cb-nav-links">
+                <a href="index.html#problem">Problem</a>
+                <a href="index.html#features">Features</a>
+                <a href="index.html#architecture">Architecture</a>
+                <a href="index.html#hardware">Hardware</a>
+                <a href="index.html#software">Software</a>
+                <a href="index.html#testing">Testing</a>
+                <a href="index.html#budget">Budget</a>
+                <a href="index.html#team">Team</a>
+                <a href="index.html#gallery">Gallery</a>
+                <a href="index.html#download">Download</a>
+            </div>
+
+            <!-- CTA -->
+            <div class="cb-nav-cta">
+                <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" class="cb-nav-github" target="_blank"
+                    rel="noopener">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+
+            <!-- Hamburger (mobile) -->
+            <div class="cb-hamburger" id="cb-hamburger" aria-label="Open navigation menu" role="button" tabindex="0">
+                <span></span><span></span><span></span>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- ===== MAIN PAGE CONTENT ===== -->
+    <main class="cb-page">
+
+        <!-- ── LANDING VIEW (before any message is sent) ── -->
+        <section class="cb-landing" id="cb-landing" aria-label="SmartIV assistant landing">
+
+            <!-- Background decoration -->
+            <div class="cb-grid-lines" aria-hidden="true"></div>
+            <div class="cb-orb cb-orb-1" aria-hidden="true"></div>
+            <div class="cb-orb cb-orb-2" aria-hidden="true"></div>
+            <div class="cb-orb cb-orb-3" aria-hidden="true"></div>
+
+            <div class="cb-landing-inner">
+
+                <!-- SmartIV icon mark -->
+                <div class="cb-logo-mark" aria-hidden="true">
+                    <i class="fas fa-droplet"></i>
+                </div>
+
+                <!-- Heading -->
+                <h1 class="cb-heading">
+                    Ask <span class="grad">SmartIV</span> about our project
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="cb-subheading">
+                    Explore the hardware, software, architecture, budget, testing, and team behind SmartIV — our IoT
+                    solution for intelligent IV drip monitoring.
+                </p>
+
+                <!-- Main input bar -->
+                <div class="cb-input-wrap">
+                    <div class="cb-input-bar" id="cb-main-bar">
+                        <button class="cb-input-icon-btn" aria-label="Project context" title="SmartIV assistant">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <input
+                            type="text"
+                            id="cb-main-input"
+                            class="cb-input-field"
+                            placeholder="Ask about SmartIV architecture, hardware, budget, or team…"
+                            autocomplete="off"
+                            spellcheck="false"
+                            aria-label="Type your question about SmartIV"
+                            maxlength="500">
+                        <button class="cb-send-btn" id="cb-main-send" aria-label="Send question" title="Send">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Suggestion chips -->
+                <div class="cb-chips" role="list" aria-label="Suggested questions">
+
+                    <button class="cb-chip" role="listitem"
+                        data-question="What problem does SmartIV solve?">
+                        <i class="fas fa-circle-exclamation"></i>
+                        What problem does SmartIV solve?
+                    </button>
+
+                    <button class="cb-chip" role="listitem"
+                        data-question="How does the hardware work?">
+                        <i class="fas fa-microchip"></i>
+                        How does the hardware work?
+                    </button>
+
+                    <button class="cb-chip" role="listitem"
+                        data-question="Explain the architecture">
+                        <i class="fas fa-diagram-project"></i>
+                        Explain the architecture
+                    </button>
+
+                    <button class="cb-chip" role="listitem"
+                        data-question="What is the budget?">
+                        <i class="fas fa-receipt"></i>
+                        What is the budget?
+                    </button>
+
+                    <button class="cb-chip" role="listitem"
+                        data-question="Who are the team members?">
+                        <i class="fas fa-users"></i>
+                        Who are the team members?
+                    </button>
+
+                    <button class="cb-chip" role="listitem"
+                        data-question="How does the mobile app receive alerts?">
+                        <i class="fas fa-mobile-screen"></i>
+                        How does the mobile app receive alerts?
+                    </button>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ── CONVERSATION VIEW (visible after first message) ── -->
+        <div class="cb-conversation" id="cb-conv" aria-live="polite" aria-label="Conversation with SmartIV assistant">
+            <!-- Messages are injected here by chatbot.js -->
+        </div>
+
+    </main>
+
+    <!-- ── STICKY BOTTOM INPUT (conversation mode) ── -->
+    <div class="cb-bottom-input" id="cb-bottom-input-bar">
+        <div class="cb-input-wrap">
+            <div class="cb-input-bar">
+                <button class="cb-input-icon-btn" aria-label="Project context" title="SmartIV assistant">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <input
+                    type="text"
+                    id="cb-bottom-field"
+                    class="cb-input-field"
+                    placeholder="Ask a follow-up question…"
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-label="Follow-up question"
+                    maxlength="500">
+                <button class="cb-send-btn" id="cb-bottom-send" aria-label="Send question" title="Send">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll-to-top -->
+    <div id="cb-scrolltop" aria-label="Scroll to top" role="button" tabindex="0">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Chatbot logic -->
+    <script src="chatbot.js"></script>
+
+</body>
+
+</html>

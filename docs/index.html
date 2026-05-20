@@ -462,6 +462,60 @@
             gap: 16px;
             flex-wrap: wrap;
             margin-bottom: 64px;
+
+        }
+
+        /* Ask SmartIV special button */
+        .btn-ask-smartiv {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--white);
+            padding: 13px 26px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 15px;
+            border: 1.5px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            /* Gradient border via pseudo-element */
+            isolation: isolate;
+        }
+        .btn-ask-smartiv::before {
+            content: '';
+            position: absolute;
+            inset: -1.5px;
+            border-radius: inherit;
+            background: var(--gradient);
+            z-index: -1;
+            transition: opacity 0.3s;
+        }
+        .btn-ask-smartiv::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: rgba(11, 106, 255, 0.08);
+            z-index: -1;
+            transition: background 0.3s;
+        }
+        .btn-ask-smartiv:hover::after {
+            background: rgba(11, 106, 255, 0.22);
+        }
+        .btn-ask-smartiv:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(11, 106, 255, 0.35);
+        }
+        .btn-ask-smartiv .btn-ask-sparkle {
+            font-size: 16px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .hero-stats {
@@ -2354,6 +2408,10 @@
                         <a href="#architecture" class="btn-outline"
                             style="color:rgba(255,255,255,0.8); border-color:rgba(255,255,255,0.2);">
                             <i class="fas fa-diagram-project"></i> View Architecture
+                        </a>
+                        <a href="chatbot.html" class="btn-ask-smartiv" id="btn-ask-smartiv">
+                            <span class="btn-ask-sparkle"><i class="fas fa-sparkles"></i></span>
+                            Ask SmartIV
                         </a>
                     </div>
                     <div class="hero-stats">
