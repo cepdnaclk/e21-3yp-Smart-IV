@@ -241,17 +241,15 @@
         }
 
         .nav-inner {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            justify-content: space-between;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
-            flex: 1;
             gap: 10px;
-            padding-right: 20px;
             font-family: 'Sora', sans-serif;
             font-weight: 800;
             font-size: 20px;
@@ -285,7 +283,7 @@
             color: rgba(255, 255, 255, 0.85);
             font-weight: 500;
             font-size: 14px;
-            padding: 8px 20px;
+            padding: 8px 14px;
             border-radius: 8px;
             transition: all 0.2s;
         }
@@ -308,9 +306,8 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            flex: 1;
-            gap: 0;
-            padding-left: 20px;
+            gap: 8px;
+            padding-left: 16px;
         }
 
         .nav-github {
@@ -342,11 +339,11 @@
             color: rgba(255, 255, 255, 0.85);
             font-size: 14px;
             font-weight: 600;
-            padding: 8px 20px;
+            padding: 8px 18px;
             border-radius: 100px;
             border: 1.5px solid rgba(255, 255, 255, 0.3);
             transition: all 0.2s;
-            margin-right: 12px;
+            white-space: nowrap;
         }
 
         nav.scrolled .nav-smartiv {
@@ -357,7 +354,7 @@
         .nav-smartiv:hover {
             background: rgba(255, 255, 255, 0.15);
         }
-        
+
         nav.scrolled .nav-smartiv:hover {
             background: var(--primary-light);
         }
@@ -2327,7 +2324,7 @@
             <i class="fab fa-github" style="margin-right:8px;"></i>GitHub</a>
         <a href="chatbot.html" onclick="closeMobileMenu()"
             style="color: var(--primary); margin-top: 8px;">
-            <i class="fas fa-sparkles" style="margin-right:8px;"></i>Ask SmartIV</a>
+            <i class="fas fa-sparkles" style="margin-right:8px;"></i>Explore</a>
     </div>
 
     <!-- ===== NAVBAR ===== -->
@@ -2352,7 +2349,7 @@
                 </div>
                 <div class="nav-cta">
                     <a href="chatbot.html" class="nav-smartiv">
-                        <i class="fas fa-sparkles"></i> Ask SmartIV
+                        <i class="fas fa-sparkles"></i> Explore
                     </a>
                     <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" class="nav-github" target="_blank">
                         <i class="fab fa-github"></i> GitHub

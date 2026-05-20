@@ -64,15 +64,14 @@ nav#cb-navbar.scrolled {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
 }
 
 .cb-nav-logo {
     display: flex;
     align-items: center;
-    flex: 1;
     gap: 10px;
     font-family: 'Sora', sans-serif;
     font-weight: 800;
@@ -114,8 +113,7 @@ nav#cb-navbar.scrolled {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    flex: 1;
-    gap: 12px;
+    gap: 8px;
     padding-left: 16px;
 }
 
@@ -147,7 +145,7 @@ nav#cb-navbar.scrolled {
     border-radius: 100px;
     border: 1.5px solid rgba(255, 255, 255, 0.25);
     transition: all 0.2s;
-    margin-right: 12px;
+    white-space: nowrap;
 }
 .cb-nav-smartiv:hover {
     background: rgba(255, 255, 255, 0.1);
