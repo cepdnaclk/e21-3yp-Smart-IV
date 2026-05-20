@@ -28,7 +28,7 @@ GND  → Common GND rail (both GND pins connected)
 3.3V → TMC2208 PDN (via 1kΩ resistor)
 3.3V → IR Sensor #1 VCC
 3.3V → IR Sensor #2 VCC
-3.3V → OLED VCC
+3.3V → LCD backpack VCC
 
 TMC2208 MOTOR DRIVER
 ---------------------
@@ -95,15 +95,28 @@ IR SENSOR #2 — RECEIVER ONLY (physically modified)
    GND → Common GND rail
    OUT → ESP32 GPIO 34
 
-OLED I2C DISPLAY
+I2C Backpack
 -----------------
-VCC → ESP32 3.3V
-GND → Common GND rail
-SDA → ESP32 GPIO 21
-SCL → ESP32 GPIO 22
+VCC → VIN in ESP32 & HV in Level shifter
+GND → GND in HV side of Level shifter
+SDA → HV1 in Level shifter
+SCL → HV2 in Level shifter
 
-(Note: Level Shifter removed from circuit.
- OLED is connected directly to ESP32 — no level shifter needed.)
+
+Level Shifter
+-----------------
+HV Side:
+HV -> VIN of ESP32 & VCC of I2C backpack
+GND -> GND of I2C backpack
+HV1 -> SDA
+HV2 -> SCL
+
+LV Side:
+LV -> 3V3 rail
+GND -> Common GND rail
+LV1 -> D21 in ESP32
+LV2 -> D22 in ESP32
+
 
 COMMON GND RAIL
 ---------------
@@ -117,4 +130,4 @@ MS1
 MS2
 IR Sensor #1 GND
 IR Sensor #2 GND
-OLED GND
+LCD backpack GND
