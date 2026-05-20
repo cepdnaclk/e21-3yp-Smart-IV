@@ -72,6 +72,7 @@ nav#cb-navbar.scrolled {
 .cb-nav-logo {
     display: flex;
     align-items: center;
+    flex: 1;
     gap: 10px;
     font-family: 'Sora', sans-serif;
     font-weight: 800;
@@ -112,6 +113,8 @@ nav#cb-navbar.scrolled {
 .cb-nav-cta {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    flex: 1;
     gap: 12px;
     padding-left: 16px;
 }
@@ -129,6 +132,24 @@ nav#cb-navbar.scrolled {
     transition: all 0.2s;
 }
 .cb-nav-github:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255,255,255,0.4);
+}
+
+.cb-nav-smartiv {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    transition: all 0.2s;
+    margin-right: 12px;
+}
+.cb-nav-smartiv:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255,255,255,0.4);
 }

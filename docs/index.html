@@ -249,6 +249,7 @@
         .nav-logo {
             display: flex;
             align-items: center;
+            flex: 1;
             gap: 10px;
             padding-right: 20px;
             font-family: 'Sora', sans-serif;
@@ -306,6 +307,8 @@
         .nav-cta {
             display: flex;
             align-items: center;
+            justify-content: flex-end;
+            flex: 1;
             gap: 0;
             padding-left: 20px;
         }
@@ -330,6 +333,33 @@
 
         .nav-github:hover {
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-smartiv {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 100px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            margin-right: 12px;
+        }
+
+        nav.scrolled .nav-smartiv {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .nav-smartiv:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        nav.scrolled .nav-smartiv:hover {
+            background: var(--primary-light);
         }
 
         .hamburger {
@@ -465,58 +495,7 @@
 
         }
 
-        /* Ask SmartIV special button */
-        .btn-ask-smartiv {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: transparent;
-            color: var(--white);
-            padding: 13px 26px;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 15px;
-            border: 1.5px solid transparent;
-            background-clip: padding-box;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            /* Gradient border via pseudo-element */
-            isolation: isolate;
-        }
-        .btn-ask-smartiv::before {
-            content: '';
-            position: absolute;
-            inset: -1.5px;
-            border-radius: inherit;
-            background: var(--gradient);
-            z-index: -1;
-            transition: opacity 0.3s;
-        }
-        .btn-ask-smartiv::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: rgba(11, 106, 255, 0.08);
-            z-index: -1;
-            transition: background 0.3s;
-        }
-        .btn-ask-smartiv:hover::after {
-            background: rgba(11, 106, 255, 0.22);
-        }
-        .btn-ask-smartiv:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(11, 106, 255, 0.35);
-        }
-        .btn-ask-smartiv .btn-ask-sparkle {
-            font-size: 16px;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+
 
         .hero-stats {
             display: flex;
@@ -2346,6 +2325,9 @@
         <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" onclick="closeMobileMenu()" target="_blank"
             style="color: var(--accent); border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; padding-top: 16px;">
             <i class="fab fa-github" style="margin-right:8px;"></i>GitHub</a>
+        <a href="chatbot.html" onclick="closeMobileMenu()"
+            style="color: var(--primary); margin-top: 8px;">
+            <i class="fas fa-sparkles" style="margin-right:8px;"></i>Ask SmartIV</a>
     </div>
 
     <!-- ===== NAVBAR ===== -->
@@ -2369,6 +2351,9 @@
                     <a href="#download">Download</a>
                 </div>
                 <div class="nav-cta">
+                    <a href="chatbot.html" class="nav-smartiv">
+                        <i class="fas fa-sparkles"></i> Ask SmartIV
+                    </a>
                     <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" class="nav-github" target="_blank">
                         <i class="fab fa-github"></i> GitHub
                     </a>
@@ -2408,10 +2393,6 @@
                         <a href="#architecture" class="btn-outline"
                             style="color:rgba(255,255,255,0.8); border-color:rgba(255,255,255,0.2);">
                             <i class="fas fa-diagram-project"></i> View Architecture
-                        </a>
-                        <a href="chatbot.html" class="btn-ask-smartiv" id="btn-ask-smartiv">
-                            <span class="btn-ask-sparkle"><i class="fas fa-sparkles"></i></span>
-                            Ask SmartIV
                         </a>
                     </div>
                     <div class="hero-stats">
