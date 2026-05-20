@@ -231,7 +231,7 @@ nav#cb-navbar.scrolled {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 80px 24px 40px;
+    padding: 40px 24px;
     position: relative;
     overflow: hidden;
 }
