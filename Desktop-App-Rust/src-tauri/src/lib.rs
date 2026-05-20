@@ -7,6 +7,9 @@ pub mod models;
 pub mod mqtt;
 pub mod serial;
 
+#[cfg(test)]
+mod serial_tests;
+
 use std::sync::Arc;
 use tauri::Manager;
 use tokio::sync::Mutex;

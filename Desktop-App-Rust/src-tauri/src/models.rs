@@ -106,3 +106,27 @@ pub struct MqttConfig {
     pub private_key_path: Option<String>,
     pub ca_cert_path: Option<String>,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bed_status_serialization() {
+        assert_eq!(serde_json::to_string(&BedStatus::Stable).unwrap(), "\"STABLE\"");
+        assert_eq!(serde_json::to_string(&BedStatus::Blockage).unwrap(), "\"BLOCKAGE\"");
+        assert_eq!(serde_json::to_string(&BedStatus::EmptyBag).unwrap(), "\"EMPTY_BAG\"");
+        assert_eq!(serde_json::to_string(&BedStatus::ConnLost).unwrap(), "\"CONN_LOST\"");
+        assert_eq!(serde_json::to_string(&BedStatus::Offline).unwrap(), "\"OFFLINE\"");
+
+        assert_eq!(BedStatus::Stable.as_str(), "STABLE");
+        assert_eq!(BedStatus::EmptyBag.as_str(), "EMPTY_BAG");
+    }
+
+    #[test]
+    fn test_bed_status_deserialization() {
+        assert_eq!(serde_json::from_str::<BedStatus>("\"STABLE\"").unwrap(), BedStatus::Stable);
+        assert_eq!(serde_json::from_str::<BedStatus>("\"EMPTY_BAG\"").unwrap(), BedStatus::EmptyBag);
+        assert_eq!(serde_json::from_str::<BedStatus>("\"CONN_LOST\"").unwrap(), BedStatus::ConnLost);
+    }
+}
