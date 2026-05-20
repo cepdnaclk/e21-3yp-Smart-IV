@@ -314,3 +314,134 @@ fn alert_from_row(r: &sqlx::sqlite::SqliteRow) -> Alert {
         resolved_by: r.get("resolved_by"),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use sqlx::sqlite::SqlitePoolOptions;
+
+    async fn setup_test_db() -> Result<Db> {
+        let pool = SqlitePoolOptions::new()
+            .max_connections(1)
+            .connect("sqlite::memory:")
+            .await?;
+        migrate(&pool).await?;
+        Ok(pool)
+    }
+
+    #[tokio::test]
+    async fn test_beds_crud() -> Result<()> {
+        let pool = setup_test_db().await?;
+
+        let bed = Bed {
+            bed_id: "bed-01".to_string(),
+            patient_name: "John Doe".to_string(),
+            ward: "ICU".to_string(),
+            drop_factor: 20,
+            mac_address: "AA:BB:CC:DD:EE".to_string(),
+            created_at: None,
+        };
+
+        upsert_bed(&pool, &bed).await?;
+
+        let beds = get_beds(&pool).await?;
+        assert_eq!(beds.len(), 1);
+        assert_eq!(beds[0].bed_id, "bed-01");
+        assert_eq!(beds[0].patient_name, "John Doe");
+
+        delete_bed(&pool, "bed-01").await?;
+        let beds_after = get_beds(&pool).await?;
+        assert!(beds_after.is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_sessions() -> Result<()> {
+        let pool = setup_test_db().await?;
+
+        let session_id = start_session(&pool, "bed-02", 500.0, 100.0).await?;
+        
+        let sessions = get_active_sessions(&pool).await?;
+        assert_eq!(sessions.len(), 1);
+        assert_eq!(sessions[0].session_id, session_id);
+        assert_eq!(sessions[0].bed_id, "bed-02");
+
+        end_session(&pool, &session_id, "Completed").await?;
+
+        let active_sessions = get_active_sessions(&pool).await?;
+        assert!(active_sessions.is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_telemetry() -> Result<()> {
+        let pool = setup_test_db().await?;
+        
+        let session_id = start_session(&pool, "bed-03", 1000.0, 50.0).await?;
+
+        let packet = BedPacket {
+            bed_id: "bed-03".to_string(),
+            status: crate::models::BedStatus::Stable,
+            flow_rate: 45.0,
+            vol_remaining: 950.0,
+            max_volume: 1000.0,
+            battery: 80,
+            drop_factor: 20,
+            target_mlhr: 50.0,
+            session_id: Some(session_id.clone()),
+            ts: None,
+        };
+
+        insert_telemetry(&pool, &packet).await?;
+
+        let telemetry = get_telemetry(&pool, "bed-03", 24).await?;
+        assert_eq!(telemetry.len(), 1);
+        assert_eq!(telemetry[0].flow_rate_ml, 45.0);
+        assert_eq!(telemetry[0].status, "STABLE");
+
+        // Make the telemetry row look like it was inserted yesterday
+        sqlx::query("UPDATE telemetry SET ts = datetime('now', '-1 day')")
+            .execute(&pool)
+            .await?;
+
+        let purged = purge_telemetry(&pool, 0).await?;
+        assert_eq!(purged, 1);
+        
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_alerts() -> Result<()> {
+        let pool = setup_test_db().await?;
+
+        // Create bed to satisfy foreign key constraint
+        let bed = Bed {
+            bed_id: "bed-04".to_string(),
+            patient_name: "".to_string(),
+            ward: "Ward A".to_string(),
+            drop_factor: 20,
+            mac_address: "".to_string(),
+            created_at: None,
+        };
+        upsert_bed(&pool, &bed).await?;
+
+        let alert_id = insert_alert(&pool, "bed-04", None, "BLOCKAGE").await?;
+
+        let active_alerts = get_active_alerts(&pool).await?;
+        assert_eq!(active_alerts.len(), 1);
+        assert_eq!(active_alerts[0].alert_type, "BLOCKAGE");
+
+        resolve_alert(&pool, alert_id, "Nurse Jane").await?;
+
+        let active_alerts_after = get_active_alerts(&pool).await?;
+        assert!(active_alerts_after.is_empty());
+
+        let all_alerts = get_alerts(&pool, 10).await?;
+        assert_eq!(all_alerts.len(), 1);
+        assert_eq!(all_alerts[0].resolved_by.as_deref(), Some("Nurse Jane"));
+
+        Ok(())
+    }
+}
