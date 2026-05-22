@@ -7,5 +7,5 @@ Gemfile
 
 # Add your own files to be ignored from git in here
 
-# Gemini API key configuration (contains secret key — never commit!)
+# Gemini API key configuration
 gemini_config.js
