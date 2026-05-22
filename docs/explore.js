@@ -12,15 +12,21 @@
    SECTION 1 — CONFIGURATION
    ===================================================================== */
 
-// API key is loaded from gemini_config.js (gitignored — never committed).
-// If that file is missing, GEMINI_API_KEY_CONFIG will be undefined and the UI
-// will show a friendly error asking the user to set up the config file.
-const GEMINI_API_KEY = (typeof GEMINI_API_KEY_CONFIG !== 'undefined')
-    ? GEMINI_API_KEY_CONFIG
-    : '';
+// API key management.
+// 1. In local dev, it loads from gemini_config.js (gitignored).
+// 2. In production / published pages, it uses a key stored in the browser's localStorage.
+function getApiKey() {
+    const stored = localStorage.getItem('SMARTIV_GEMINI_API_KEY');
+    if (stored && stored.trim() !== '') {
+        return stored.trim();
+    }
+    if (typeof GEMINI_API_KEY_CONFIG !== 'undefined' && GEMINI_API_KEY_CONFIG && GEMINI_API_KEY_CONFIG !== 'YOUR_ACTUAL_API_KEY_HERE') {
+        return GEMINI_API_KEY_CONFIG.trim();
+    }
+    return '';
+}
 
-const GEMINI_MODEL   = 'gemini-2.0-flash';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`;
+const GEMINI_MODEL = 'gemini-2.0-flash';
 
 /* =====================================================================
    SECTION 2 — EMBEDDED PROJECT KNOWLEDGE BASE
@@ -658,14 +664,17 @@ async function callGeminiAPI(question) {
             topP: 0.95,
         },
         safetySettings: [
-            { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-            { category: 'HARM_CATEGORY_HATE_SPEECH',       threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
             { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
             { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
         ]
     };
 
-    const response = await fetch(GEMINI_API_URL, {
+    const apiKey = getApiKey();
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${apiKey}`;
+
+    const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
@@ -679,7 +688,7 @@ async function callGeminiAPI(question) {
             if (errJson.error && errJson.error.message) {
                 errorMsg = errJson.error.message;
             }
-        } catch (_) {}
+        } catch (_) { }
         throw new Error(errorMsg);
     }
 
@@ -839,6 +848,90 @@ function renderErrorBubble(message) {
     scrollToBottom();
 }
 
+function renderSuccessBubble(message) {
+    const container = getEl('cb-conv');
+    const msg = document.createElement('div');
+    msg.className = 'cb-msg bot-msg';
+    msg.innerHTML = `
+        <div class="cb-msg-avatar" style="background:rgba(0,212,170,0.15);border-color:rgba(0,212,170,0.3);color:var(--accent);">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="cb-msg-bubble" style="border-color:rgba(0,212,170,0.25);">
+            ${escapeHtml(message)}
+        </div>`;
+    container.appendChild(msg);
+    scrollToBottom();
+}
+
+function renderApiKeySetupBubble(pendingQuestion) {
+    const container = getEl('cb-conv');
+    const msg = document.createElement('div');
+    msg.className = 'cb-msg bot-msg';
+    msg.id = 'cb-api-setup-msg';
+
+    msg.innerHTML = `
+        <div class="cb-msg-avatar" style="background:rgba(11,106,255,0.15);border-color:rgba(11,106,255,0.3);color:var(--primary);">
+            <i class="fas fa-key"></i>
+        </div>
+        <div class="cb-msg-bubble cb-setup-card">
+            <div class="cb-setup-title">
+                <i class="fas fa-lock"></i> API Key Required
+            </div>
+            <div class="cb-setup-text">
+                To explore SmartIV using the live AI assistant, a <strong>Gemini API Key</strong> is required.
+                Since this is a static site hosted on GitHub Pages, your key is processed entirely in your browser and never sent to any server.
+            </div>
+            <div class="cb-setup-field-group">
+                <input type="password" id="cb-key-input" class="cb-setup-input" placeholder="Paste your AIzaSy... key here" autocomplete="off" />
+                <button id="cb-key-save-btn" class="cb-setup-btn">Save Key</button>
+            </div>
+            <div class="cb-setup-status">
+                Get a free key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio <i class="fas fa-external-link-alt" style="font-size:10px;"></i></a>
+            </div>
+        </div>`;
+
+    container.appendChild(msg);
+    scrollToBottom();
+
+    // Wire up save button
+    const keyInput = document.getElementById('cb-key-input');
+    const saveBtn = document.getElementById('cb-key-save-btn');
+
+    if (keyInput) keyInput.focus();
+
+    if (saveBtn && keyInput) {
+        const handleSave = () => {
+            const rawKey = keyInput.value.trim();
+            if (!rawKey) {
+                alert('Please enter a valid Gemini API key.');
+                return;
+            }
+            if (!rawKey.startsWith('AIzaSy')) {
+                alert('Warning: Gemini API keys usually start with "AIzaSy". Please check your key.');
+            }
+
+            // Save to localStorage
+            localStorage.setItem('SMARTIV_GEMINI_API_KEY', rawKey);
+
+            // Remove the setup card bubble
+            msg.remove();
+
+            // Render a success bubble
+            renderSuccessBubble('API Key saved successfully! Resuming your question...');
+
+            // Retry the pending question!
+            submitQuestion(pendingQuestion);
+        };
+
+        saveBtn.addEventListener('click', handleSave);
+        keyInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                handleSave();
+            }
+        });
+    }
+}
+
 function scrollToBottom() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
@@ -852,7 +945,8 @@ async function submitQuestion(question) {
     if (!question) return;
 
     // Check if API key is configured
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_ACTUAL_API_KEY_HERE') {
+    const currentApiKey = getApiKey();
+    if (!currentApiKey) {
         if (!conversationStarted) {
             conversationStarted = true;
             getEl('cb-landing').style.display = 'none';
@@ -861,9 +955,7 @@ async function submitQuestion(question) {
         }
         renderUserBubble(question);
         clearInput();
-        renderErrorBubble(
-            'Gemini API key is not configured. Open docs/gemini_config.js and replace YOUR_ACTUAL_API_KEY_HERE with your key from https://aistudio.google.com/app/apikey'
-        );
+        renderApiKeySetupBubble(question);
         return;
     }
 
@@ -955,8 +1047,9 @@ async function submitQuestion(question) {
         if (err.message) {
             errorMessage = err.message;
         }
-        if (err.message && err.message.includes('API_KEY_INVALID')) {
-            errorMessage = 'Your Gemini API key is invalid. Please check your key and try again.';
+        if (err.message && (err.message.includes('API_KEY_INVALID') || err.message.includes('API key not valid'))) {
+            errorMessage = 'Your Gemini API key is invalid or expired. We have cleared the saved key from local storage. Please try again.';
+            localStorage.removeItem('SMARTIV_GEMINI_API_KEY');
         }
         renderErrorBubble(errorMessage);
     }
@@ -996,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Main landing input ──
     const mainInput = getEl('cb-main-input');
-    const mainSend  = getEl('cb-main-send');
+    const mainSend = getEl('cb-main-send');
 
     if (mainInput) {
         mainInput.addEventListener('keydown', e => {
@@ -1012,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Bottom sticky input (conversation mode) ──
     const bottomField = getEl('cb-bottom-field');
-    const bottomSend  = getEl('cb-bottom-send');
+    const bottomSend = getEl('cb-bottom-send');
 
     if (bottomField) {
         bottomField.addEventListener('keydown', e => {
@@ -1052,10 +1145,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Mobile nav ──
-    const hamburger     = getEl('cb-hamburger');
-    const mobileNav     = getEl('cb-mobile-nav');
+    const hamburger = getEl('cb-hamburger');
+    const mobileNav = getEl('cb-mobile-nav');
     const mobileOverlay = getEl('cb-mobile-overlay');
-    const mobileClose   = getEl('cb-mobile-close');
+    const mobileClose = getEl('cb-mobile-close');
 
     if (hamburger) hamburger.addEventListener('click', openMobileMenu);
     if (mobileClose) mobileClose.addEventListener('click', closeMobileMenu);
