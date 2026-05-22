@@ -6,3 +6,6 @@ Gemfile.lock
 Gemfile
 
 # Add your own files to be ignored from git in here
+
+# Gemini API key configuration (contains secret key — never commit!)
+gemini_config.js
