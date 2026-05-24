@@ -31,7 +31,7 @@ export const authService = {
         throw new Error(`Sign in failed - next step required: ${nextStep?.signInStep}`);
       }
     } catch (error: any) {
-      console.error('Detailed sign in error:', error.name, '||', error.message, '||', error);
+      console.error('Sign in error:', error.name, error.message);
       throw new Error(error.message || 'Login failed. Please check your credentials.');
     } finally {
       useAuthStore.getState().setLoading(false);

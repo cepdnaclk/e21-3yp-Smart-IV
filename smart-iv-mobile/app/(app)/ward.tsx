@@ -18,9 +18,11 @@ export default function WardScreen() {
   // Bring in the custom hook
   const { fetchBeds, onRefresh, refreshing } = useBeds();
 
-  // Fetch once on mount
+  // Fetch once on mount, then auto-refresh every 5 seconds
   useEffect(() => {
     fetchBeds();
+    const interval = setInterval(fetchBeds, 5000);
+    return () => clearInterval(interval); // cleanup on unmount
   }, [fetchBeds]);
 
   return (
