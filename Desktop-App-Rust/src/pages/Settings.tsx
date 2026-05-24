@@ -40,7 +40,8 @@ export default function Settings() {
     if (mqttConnected) {
       await commands.disconnectMqtt();
     } else {
-      await commands.connectMqtt(form.mqttBroker, form.mqttPort, form.awsThingName);
+      const broker = form.awsEndpoint.trim() !== '' ? form.awsEndpoint : form.mqttBroker;
+      await commands.connectMqtt(broker, form.mqttPort, form.awsThingName);
     }
   };
 

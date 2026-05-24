@@ -73,7 +73,7 @@ export default function BedDetailScreen() {
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Vol. Remaining</Text>
-            <Text style={styles.statValue}>{bedDetail.volumeRemaining} <Text style={styles.unit}>mL</Text></Text>
+            <Text style={styles.statValue}>{Number(bedDetail.volRemaining ?? 0).toFixed(0)} <Text style={styles.unit}>mL</Text></Text>
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Battery</Text>

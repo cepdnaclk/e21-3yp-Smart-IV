@@ -49,7 +49,7 @@ export const BedCard: React.FC<BedCardProps> = ({ bed, onPress }) => {
         </View>
         <View style={styles.statColumn}>
           <Text style={styles.statLabel}>Remaining</Text>
-          <Text style={styles.statValue}>{bed.volumeRemaining} <Text style={styles.unit}>mL</Text></Text>
+          <Text style={styles.statValue}>{Number(bed.volRemaining ?? 0).toFixed(0)} <Text style={styles.unit}>mL</Text></Text>
         </View>
         <View style={styles.statColumn}>
           <Text style={styles.statLabel}>Battery</Text>

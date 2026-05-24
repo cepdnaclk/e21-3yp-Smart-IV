@@ -16,7 +16,7 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({ alerts, onPress }) => 
     <TouchableOpacity style={styles.banner} onPress={onPress} activeOpacity={0.8}>
       <Ionicons name="notifications-outline" size={20} color={COLORS.bgPrimary} style={styles.icon} />
       <Text style={styles.text}>
-        {alerts.length} active alert(s) require attention // [cite: 623]
+        {alerts.length} active alert(s) require attention
       </Text>
       <Ionicons name="chevron-forward" size={20} color={COLORS.bgPrimary} />
     </TouchableOpacity>

@@ -6,8 +6,14 @@
 
 use anyhow::{Context, Result};
 use rumqttc::{AsyncClient, MqttOptions, QoS, TlsConfiguration, Transport};
+use std::fs;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter};
+
+// Paths to your cert files (ensure these match exactly what you named them in certs/)
+const CA_PATH: &str = "certs/AmazonRootCA1.pem";
+const CERT_PATH: &str = "certs/device-certificate.pem.crt";
+const KEY_PATH: &str = "certs/private.pem.key";
 
 use crate::models::{Alert, BedPacket};
 
@@ -31,12 +37,17 @@ impl MqttPublisher {
         opts.set_clean_session(true);
 
         if use_tls {
-            // For AWS IoT Core: load cert + key from app data dir
-            // In production, paths should come from settings
+            // Load CA cert
+            let ca_bytes = fs::read(CA_PATH).expect("Cannot read CA cert. Ensure certs/AmazonRootCA1.pem exists.");
+            // Load device cert
+            let cert_bytes = fs::read(CERT_PATH).expect("Cannot read device cert. Ensure certs/device-certificate.pem.crt exists.");
+            // Load private key
+            let key_bytes = fs::read(KEY_PATH).expect("Cannot read private key. Ensure certs/private.pem.key exists.");
+
             let tls_config = TlsConfiguration::Simple {
-                ca: vec![], // load from file in production
+                ca: ca_bytes,
                 alpn: None,
-                client_auth: None,
+                client_auth: Some((cert_bytes, key_bytes)),
             };
             opts.set_transport(Transport::tls_with_config(tls_config.into()));
         }

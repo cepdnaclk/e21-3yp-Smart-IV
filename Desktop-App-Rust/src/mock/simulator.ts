@@ -1,5 +1,6 @@
 import { useBedsStore, useAlertsStore, useSerialStore } from '../store';
 import { BedPacket } from '../types';
+import { invokeCmd } from '../lib/tauriEvents';
 
 interface MockBed {
   packet: BedPacket & { patientName: string; ward: string };
@@ -46,7 +47,7 @@ export function startSimulation() {
         flowRate: scenario === 'BLOCKAGE' || scenario === 'EMPTY_BAG' ? 0 : 80 + (Math.random() * 10 - 5),
         volRemaining,
         maxVolume: 500,
-        battery: scenario === 'LOW_BATTERY' ? 12 : 80 + Math.random() * 20,
+        battery: scenario === 'LOW_BATTERY' ? 12 : Math.round(80 + Math.random() * 20),
         dropFactor: 20,
         targetMlhr: 80,
         sessionId: `sess-mock-${i + 1}`,
@@ -65,29 +66,31 @@ export function startSimulation() {
     const now = new Date().toISOString();
     useSerialStore.getState().incrementPacket();
 
+    // Collect active bed packets first (sync)
+    const packetsToSend: BedPacket[] = [];
     beds.forEach(b => {
-      // Don't update disconnected beds
       if (b.scenario === 'CONN_LOST') return;
 
       const p = b.packet;
       p.ts = now;
 
       if (b.scenario === 'NORMAL' || b.scenario === 'LOW_BATTERY') {
-        // Decrease volume based on flow rate (2 seconds elapsed)
-        // 80 mL/hr = 80 / 3600 mL/sec = 0.022 mL/sec * 2 = 0.044 mL per tick
         const consumed = (p.flowRate / 3600) * 2;
         p.volRemaining = Math.max(0, p.volRemaining - consumed);
-        
-        // Slight fluctuation in flow rate
-        p.flowRate = Math.max(0, 80 + (Math.random() * 4 - 2));
-
-        if (p.volRemaining === 0) {
-          p.status = 'EMPTY_BAG';
-        }
+        p.flowRate = Math.max(0, parseFloat((80 + (Math.random() * 4 - 2)).toFixed(2)));
+        if (p.volRemaining === 0) p.status = 'EMPTY_BAG';
       }
 
       upsertBed(p);
+      packetsToSend.push({ ...p });
     });
+
+    // Publish to Rust backend sequentially with small delay to avoid IPC overload
+    (async () => {
+      for (const packet of packetsToSend) {
+        await invokeCmd('publish_mock_packet', { packet });
+      }
+    })();
 
     // Fire simulated alerts if needed
     const alertsStore = useAlertsStore.getState();

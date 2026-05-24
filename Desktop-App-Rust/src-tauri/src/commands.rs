@@ -212,3 +212,17 @@ pub async fn disconnect_mqtt(
     let _ = app.emit("mqtt-disconnected", ());
     Ok(())
 }
+
+// ── Mock / Simulator MQTT bridge ──────────────────────────────────────────────
+
+#[command]
+pub async fn publish_mock_packet(
+    packet: crate::models::BedPacket,
+    state: State<'_, AppState>,
+) -> Result<(), String> {
+    let guard = state.mqtt.lock().await;
+    if let Some(pub_) = guard.as_ref() {
+        pub_.publish_telemetry(&packet).await.map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}

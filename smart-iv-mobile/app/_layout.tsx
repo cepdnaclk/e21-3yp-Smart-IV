@@ -6,6 +6,22 @@ import { notifService } from '../src/services/notifService';
 import { useMqtt } from '../src/hooks/useMqtt';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { COLORS } from '../src/constants/colors';
+import { Amplify } from 'aws-amplify';
+
+// Configure AWS Amplify
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolId: 'ap-south-1_XXXXXXXXX', // Replace with your User Pool ID from Step 6.1
+      userPoolClientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx', // Replace with your App Client ID from Step 6.1
+      identityPoolId: 'ap-south-1:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', // Replace with your Identity Pool ID from Step 6.2
+      region: 'ap-south-1',
+      loginWith: {
+        email: true,
+      }
+    }
+  }
+});
 
 export default function RootLayout() {
   const { isAuthenticated, nurse } = useAuthStore();

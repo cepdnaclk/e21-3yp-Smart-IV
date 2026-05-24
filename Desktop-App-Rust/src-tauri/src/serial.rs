@@ -121,8 +121,9 @@ impl SerialReader {
                                     {
                                         let guard = mqtt.lock().await;
                                         if let Some(pub_) = guard.as_ref() {
-                                            if let Err(e) = pub_.publish_telemetry(&packet).await {
-                                                log::debug!("[MQTT] publish failed: {e}");
+                                            match pub_.publish_telemetry(&packet).await {
+                                                Ok(_) => log::info!("[MQTT] Successfully published packet for bed {}", packet.bed_id),
+                                                Err(e) => log::warn!("[MQTT] publish failed: {e}"),
                                             }
                                         }
                                     }
