@@ -17,7 +17,7 @@ export default defineConfig({
     sourcemap: !!process.env.TAURI_DEBUG,
   },
 
-  test:{
+  test: {
     globals: true,
     environment: "jsdom",
   },
