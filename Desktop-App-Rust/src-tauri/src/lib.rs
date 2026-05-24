@@ -74,6 +74,7 @@ pub fn run() {
             commands::resolve_alert,
             commands::connect_mqtt,
             commands::disconnect_mqtt,
+            commands::publish_mock_packet,
         ])
         .run(tauri::generate_context!())
         .expect("Error while running Smart IV application");

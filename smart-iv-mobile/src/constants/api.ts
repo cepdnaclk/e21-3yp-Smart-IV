@@ -1,24 +1,20 @@
-export const API_BASE_URL = 'http://YOUR_SPRING_BOOT_IP:8080/api/v1';
+export const API_BASE_URL = 'https://0mt22a6os9.execute-api.ap-south-1.amazonaws.com/prod';
 
 export const ENDPOINTS = {
-  // Auth
-  LOGIN:          '/auth/login',
-  REFRESH:        '/auth/refresh',
-  LOGOUT:         '/auth/logout',
-  REGISTER_DEVICE:'/auth/register-device',
+  // Beds — latest reading per bed from DynamoDB telemetry table
+  // Appending cachebuster to bypass aggressively cached 502 errors on mobile
+  BEDS:           `/beds?_t=${Date.now()}`,
 
-  // Ward
-  WARD_BEDS:      '/ward/beds',
-  WARD_SUMMARY:   '/ward/beds/summary',
+  // Alerts — active unresolved alerts from DynamoDB alerts table
+  ALERTS_ACTIVE:  `/alerts?_t=${Date.now()}`,
 
-  // Bed
-  BED_DETAIL:     (bedId: string) => `/bed/${bedId}`,
-  BED_HISTORY:    (bedId: string) => `/bed/${bedId}/history`,
-  BED_VOLUME:     (bedId: string) => `/bed/${bedId}/volume`,
-
-  // Alerts
-  ALERTS_ACTIVE:  '/alerts/active',
-  ALERTS_BED:     (bedId: string) => `/alerts/${bedId}`,
-  ALERT_ACK:      (alertId: number) => `/alerts/${alertId}/ack`,
+  // Telemetry history — pass ?bedId=XX as query param
   TELEMETRY:      '/telemetry',
+
+  // Bed detail (uses BEDS + client-side filter)
+  BED_DETAIL:     (bedId: string) => `/beds?bedId=${bedId}`,
+  BED_HISTORY:    (bedId: string) => `/telemetry?bedId=${bedId}`,
+
+  // Alerts per bed
+  ALERTS_BED:     (bedId: string) => `/alerts?bedId=${bedId}`,
 };

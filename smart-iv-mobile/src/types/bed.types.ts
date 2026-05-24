@@ -8,6 +8,7 @@ export interface Bed {
   status: BedStatus;
   targetFlowRate: number;  
   batteryLevel: number;    
+  volRemaining?: number;   // mL remaining in the IV bag
   lastUpdated: string;     
 }
 

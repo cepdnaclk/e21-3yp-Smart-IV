@@ -7,15 +7,19 @@ import { Nurse, NurseRole } from '../types/auth.types';
 export const authService = {
   async login(email: string, password: string): Promise<void> {
     useAuthStore.getState().setLoading(true);
-    // TEMPORARY DUMMY LOGIN
-    setTimeout(() => {
-      const dummyNurse: Nurse = {
-        id: 1, cognitoId: 'dummy123', name: 'Nurse Sarah', email: email, ward: 'ICU', role: 'NURSE'
-      };
-      useAuthStore.getState().setAuth('dummy-token', dummyNurse);
+    try {
+      const { isSignedIn } = await signIn({ username: email, password });
+      if (isSignedIn) {
+        await this.checkSession();
+      } else {
+        throw new Error('Sign in failed - additional steps may be required.');
+      }
+    } catch (error: any) {
+      console.error('Sign in error', error);
+      throw new Error(error.message || 'Login failed. Please check your credentials.');
+    } finally {
       useAuthStore.getState().setLoading(false);
-    }, 1000); // 1-second fake loading delay
-  
+    }
   },
 
   async logout(): Promise<void> {

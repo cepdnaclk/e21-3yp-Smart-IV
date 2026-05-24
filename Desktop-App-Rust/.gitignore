@@ -45,3 +45,5 @@ src-tauri/certs/
 *.pem
 *.key
 *.crt
+
+
