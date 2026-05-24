@@ -1,4 +1,4 @@
-import { signIn, signOut, fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
+import { signIn, confirmSignIn, signOut, fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 import { useAuthStore } from '../stores/authStore';
 import { useBedStore } from '../stores/bedStore';
 import { useAlertStore } from '../stores/alertStore';
@@ -8,14 +8,30 @@ export const authService = {
   async login(email: string, password: string): Promise<void> {
     useAuthStore.getState().setLoading(true);
     try {
-      const { isSignedIn } = await signIn({ username: email, password });
+      const { isSignedIn, nextStep } = await signIn({
+        username: email,
+        password,
+        options: {
+          authFlowType: 'USER_PASSWORD_AUTH'
+        }
+      });
       if (isSignedIn) {
         await this.checkSession();
+      } else if (nextStep && nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
+        // Automatically confirm and transition the temporary password into a permanent one!
+        const confirmResult = await confirmSignIn({
+          challengeResponse: password
+        });
+        if (confirmResult.isSignedIn) {
+          await this.checkSession();
+        } else {
+          throw new Error(`Sign in failed - next step required: ${confirmResult.nextStep.signInStep}`);
+        }
       } else {
-        throw new Error('Sign in failed - additional steps may be required.');
+        throw new Error(`Sign in failed - next step required: ${nextStep?.signInStep}`);
       }
     } catch (error: any) {
-      console.error('Sign in error', error);
+      console.error('Detailed sign in error:', error.name, '||', error.message, '||', error);
       throw new Error(error.message || 'Login failed. Please check your credentials.');
     } finally {
       useAuthStore.getState().setLoading(false);
