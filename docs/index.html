@@ -391,6 +391,15 @@
             padding-top: 80px;
         }
 
+        .hero-grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            padding: 60px 0;
+            width: 100%;
+        }
+
         .hero-bg-orb {
             position: absolute;
             border-radius: 50%;
@@ -1642,7 +1651,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: gap;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .footer-logo {
@@ -1788,8 +1798,20 @@
                 display: none;
             }
 
+            .nav-inner {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
             .hamburger {
                 display: flex;
+            }
+
+            .hero-grid-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 40px 0;
             }
 
             .hero-grid {
@@ -1835,6 +1857,12 @@
             }
         }
 
+        @media (max-width: 768px) {
+            .hero-title br {
+                display: none;
+            }
+        }
+
         @media (max-width: 640px) {
             .section-pad {
                 padding: 70px 0;
@@ -1853,7 +1881,11 @@
             }
 
             .problem-stat-cards {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
+            }
+
+            .sw-screen {
+                margin: 0 auto;
             }
 
             .hero-stats {
@@ -1880,6 +1912,34 @@
             .arch-layer-label {
                 writing-mode: horizontal-tb;
                 transform: none;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dl-checksum-row {
+                flex-direction: column;
+                border-radius: 12px;
+                padding: 12px 16px;
+                gap: 8px;
+                text-align: center;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .footer-meta {
+                text-align: center;
             }
         }
 
@@ -2373,7 +2433,7 @@
         <div class="hero-bg-orb orb2"></div>
         <div class="hero-grid-lines"></div>
         <div class="container">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 60px 0;">
+            <div class="hero-grid-container">
                 <div class="hero-content">
                     <div class="hero-badge">
                         <span></span>
@@ -3327,7 +3387,7 @@
     <!-- ===== FOOTER ===== -->
     <footer>
         <div class="container">
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div class="footer-inner">
                 <div class="footer-logo">
                     <div class="logo-icon"><i class="fas fa-droplet"></i></div>
                     SmartIV

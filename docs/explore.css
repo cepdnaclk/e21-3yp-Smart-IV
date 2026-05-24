@@ -642,6 +642,7 @@ nav#cb-navbar.scrolled {
     .cb-msg-bubble { max-width: 90%; font-size: 14px; }
     .cb-landing { padding: 80px 16px 40px; }
     .cb-conversation { padding: 80px 16px 200px; }
+    .cb-bottom-input { padding: 12px 16px 16px; }
 }
 
 /* ===== MARKDOWN RENDERING STYLES ===== */
