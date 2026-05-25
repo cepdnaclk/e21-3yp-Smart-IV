@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Integration Journal – SmartIV</title>
+    <meta name="description"
+        content="A detailed technical log of the SmartIV AWS Serverless Cloud integration. Step-by-step walks, hurdles, and resolutions.">
+
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* ===== CSS VARIABLES & GENERAL ===== */
+        :root {
+            --primary: #0B6AFF;
+            --primary-dark: #0047CC;
+            --primary-light: #E8F0FF;
+            --accent: #00D4AA;
+            --accent2: #FF6B35;
+            --dark: #0A0F1E;
+            --dark2: #121929;
+            --mid: #1E2A45;
+            --text: #333F54;
+            --text-light: #64748B;
+            --white: #FFFFFF;
+            --border: #E2E8F0;
+            --bg-light: #F8FAFC;
+            --gradient: linear-gradient(135deg, #0B6AFF 0%, #00D4AA 100%);
+            --gradient-dark: linear-gradient(135deg, #0A0F1E 0%, #1E2A45 100%);
+            --shadow: 0 4px 24px rgba(11, 106, 255, 0.08);
+            --shadow-lg: 0 12px 48px rgba(11, 106, 255, 0.14);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text);
+            background: var(--bg-light);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Sora', sans-serif;
+            color: var(--dark);
+            line-height: 1.25;
+            font-weight: 700;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.05);
+            padding: 14px 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--dark);
+        }
+
+        .nav-logo .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .nav-cta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-github {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 100px;
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .nav-github:hover {
+            background: var(--bg-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .nav-smartiv {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 100px;
+            border: 1.5px solid var(--primary);
+            transition: all 0.2s;
+        }
+
+        .nav-smartiv:hover {
+            background: var(--primary-light);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--dark);
+            border-radius: 2px;
+        }
+
+        /* ===== HERO HEADER ===== */
+        .journal-hero {
+            background: var(--gradient-dark);
+            position: relative;
+            padding: 140px 0 80px;
+            overflow: hidden;
+            color: white;
+        }
+
+        .journal-hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .journal-hero-orb {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: var(--primary);
+            filter: blur(120px);
+            opacity: 0.15;
+            top: -200px;
+            right: -100px;
+        }
+
+        .journal-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .journal-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 212, 170, 0.15);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .journal-title {
+            font-size: clamp(32px, 5vw, 54px);
+            font-weight: 800;
+            color: white;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .journal-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        /* ===== MAIN JOURNAL CONTENT ===== */
+        .journal-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            padding: 60px 0 100px;
+        }
+
+        /* Sidebar navigation */
+        .journal-sidebar {
+            position: sticky;
+            top: 100px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: thin;
+        }
+
+        .journal-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .journal-sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .sidebar-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-link a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 500;
+            border-left: 2px solid transparent;
+        }
+
+        .sidebar-link.active a,
+        .sidebar-link a:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Reading View */
+        .journal-body {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 50px 48px;
+            box-shadow: var(--shadow);
+            max-width: 860px;
+        }
+
+        .journal-section {
+            padding-top: 40px;
+            margin-bottom: 60px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .journal-section:first-child {
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .section-header-tag {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .section-title-text {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: var(--dark);
+        }
+
+        .journal-body p {
+            margin-bottom: 20px;
+            color: var(--text);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .journal-body h3 {
+            font-size: 20px;
+            margin: 32px 0 16px;
+            color: var(--dark);
+        }
+
+        .journal-body h4 {
+            font-size: 16px;
+            margin: 24px 0 12px;
+            color: var(--mid);
+        }
+
+        /* Lists */
+        .journal-body ul, .journal-body ol {
+            margin: 0 0 24px 20px;
+            color: var(--text);
+        }
+
+        .journal-body li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--dark);
+            color: #E2E8F0;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            margin: 20px 0 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        pre::after {
+            content: "CODE";
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(11, 106, 255, 0.08);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 90%;
+            font-weight: 500;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+            font-size: inherit;
+        }
+
+        /* Diagrams */
+        .diagram-container {
+            background: var(--dark);
+            color: #94A3B8;
+            padding: 30px;
+            border-radius: var(--radius);
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 28px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Hurdles (Accordion) */
+        .hurdle-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .hurdle-header {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            background: white;
+            font-weight: 700;
+            font-size: 15px;
+            gap: 12px;
+        }
+
+        .hurdle-header .hurdle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent2);
+        }
+
+        .hurdle-header .hurdle-toggle-icon {
+            font-size: 12px;
+            color: var(--text-light);
+            transition: transform 0.3s ease;
+        }
+
+        .hurdle-card.open .hurdle-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .hurdle-card.open {
+            border-color: var(--accent2);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.08);
+        }
+
+        .hurdle-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+            background: var(--bg-light);
+        }
+
+        .hurdle-card.open .hurdle-body {
+            max-height: 1000px; /* arbitrary high value for fluid height */
+        }
+
+        .hurdle-body-inner {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .hurdle-item {
+            margin-bottom: 14px;
+        }
+
+        .hurdle-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .hurdle-item strong {
+            display: block;
+            color: var(--dark);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .hurdle-item.cause strong {
+            color: #DC2626;
+        }
+
+        .hurdle-item.resolution strong {
+            color: #16A34A;
+        }
+
+        /* Custom alert boxes */
+        .info-box {
+            display: flex;
+            gap: 16px;
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 28px 0;
+        }
+
+        .info-box i {
+            font-size: 20px;
+            color: var(--primary);
+            margin-top: 2px;
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+            font-size: 14.5px;
+            color: var(--mid);
+        }
+
+        /* Custom Table formatting */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin: 28px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14.5px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--dark);
+            color: white;
+            padding: 12px 18px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--dark2);
+            color: white;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .footer-logo .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .footer-meta {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ===== MOBILE STYLING ===== */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        @media (max-width: 991px) {
+            .journal-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .journal-sidebar {
+                display: none;
+            }
+
+            .mobile-nav-toggle {
+                display: flex;
+            }
+
+            .journal-body {
+                padding: 30px 24px;
+            }
+
+            .nav-github,
+            .nav-smartiv {
+                font-size: 13px;
+                padding: 6px 14px;
+            }
+        }
+
+        /* Mobile Sidebar Modal overlay */
+        .mobile-sidebar-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            align-items: flex-end;
+        }
+
+        .mobile-sidebar-modal.open {
+            display: flex;
+        }
+
+        .mobile-sidebar-content {
+            background: white;
+            width: 100%;
+            border-radius: var(--radius) var(--radius) 0 0;
+            padding: 32px 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .mobile-sidebar-close {
+            text-align: right;
+            margin-bottom: 16px;
+            font-size: 18px;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav>
+        <div class="container">
+            <div class="nav-inner">
+                <a href="index.html" class="nav-logo">
+                    <div class="logo-icon"><i class="fas fa-droplet"></i></div>
+                    SmartIV
+                </a>
+                <div class="nav-cta">
+                    <a href="https://github.com/cepdnaclk/e21-3yp-Smart-IV" class="nav-github" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                    <a href="explore.html" class="nav-smartiv">
+                        <i class="fas fa-sparkles"></i> Explore
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO HEADER ===== -->
+    <header class="journal-hero">
+        <div class="journal-hero-grid"></div>
+        <div class="journal-hero-orb"></div>
+        <div class="container">
+            <div class="journal-hero-content">
+                <div class="journal-tag">Engineering Log</div>
+                <h1 class="journal-title">AWS Serverless Cloud Integration Journal</h1>
+                <p class="journal-subtitle">A Complete Phase-by-Phase Technical Walkthrough, Challenges Encountered, and
+                    Engineering Solutions for a Serverless Clinical Monitoring Infrastructure.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT LAYOUT ===== -->
+    <div class="container">
+        <div class="journal-layout">
+
+            <!-- Sticky Sidebar (TOC) -->
+            <aside class="journal-sidebar">
+                <div class="sidebar-title">Journal Contents</div>
+                <ul class="sidebar-links">
+                    <li class="sidebar-link active"><a href="#overview"><i class="fas fa-diagram-project"></i> System Overview</a></li>
+                    <li class="sidebar-link"><a href="#phase1"><i class="fas fa-key"></i> Phase 1: TLS mTLS</a></li>
+                    <li class="sidebar-link"><a href="#phase2"><i class="fas fa-database"></i> Phase 2: Rules & DB</a></li>
+                    <li class="sidebar-link"><a href="#phase3"><i class="fas fa-bell"></i> Phase 3 & 4: Alerts</a></li>
+                    <li class="sidebar-link"><a href="#phase5"><i class="fas fa-route"></i> Phase 5: API Gateway</a></li>
+                    <li class="sidebar-link"><a href="#phase6"><i class="fas fa-shield-halved"></i> Phase 6: Auth</a></li>
+                    <li class="sidebar-link"><a href="#phase7"><i class="fas fa-wifi"></i> Phase 7: Mobile MQTT</a></li>
+                    <li class="sidebar-link"><a href="#phase8"><i class="fas fa-circle-check"></i> Phase 8: Hardcode</a></li>
+                    <li class="sidebar-link"><a href="#verification"><i class="fas fa-heartbeat"></i> Health Verification</a></li>
+                    <li class="sidebar-link"><a href="#resources"><i class="fas fa-folder-open"></i> Cloud Map</a></li>
+                </ul>
+
+            </aside>
+
+            <!-- Main Documentation Reading Pane -->
+            <main class="journal-body">
+
+                <!-- Section: System Overview -->
+                <section id="overview" class="journal-section">
+                    <span class="section-header-tag">Architecture</span>
+                    <h2 class="section-title-text">System Overview & Architecture</h2>
+                    <p>The <strong>SmartIV</strong> cloud integration creates a robust, real-time, serverless medical monitoring system. The pipeline enables high-frequency bedside telemetry ingestion, automated cloud-level alert routing, push notifications, and a responsive nursing dashboard on both desktop and mobile apps.</p>
+
+                    <div class="diagram-container">
+[ Bedside Units (ESP32) ]
+          │ (BLE / RF)
+[ Receiver Dongle (ESP32) ]
+          │ (USB Serial Ingestion)
+[ Tauri Desktop App (Rust Backend) ]
+          │ (Mutual TLS (mTLS) over MQTT)
+     [ AWS IoT Core ]
+          │ (IoT Rules Engine SQL Routing)
+     ┌────┴────────────────────────┐
+     ▼                             ▼
+[ DynamoDB Telemetry Table ]  [ AWS Lambda Alert Engine ]
+     ▲                             │ (SNS API)
+     │ (API Gateway REST)          ▼
+     │                         [ AWS SNS / Firebase Cloud Messaging (FCM) ]
+     │                             │ (Push Notification)
+[ React Native Mobile App ] ◄──────┘
+     │ (AWS Amplify & Cognito Auth)
+     ▼
+[ Real-time Nurse Dashboard ]</div>
+                </section>
+
+                <!-- Section: Phase 1 -->
+                <section id="phase1" class="journal-section">
+                    <span class="section-header-tag">Phase 1</span>
+                    <h2 class="section-title-text">AWS IoT Core & mTLS Connectivity</h2>
+                    <p>To connect the local Tauri desktop monitoring station to the cloud, we migrated the desktop app from a mock local broker to <strong>AWS IoT Core</strong> using mutual TLS (mTLS) for authorization. The desktop app must authenticate itself using a unique cryptographic identity consisting of three files: Amazon Root CA 1, Device Certificate, and a Private Key.</p>
+
+                    <h3>⚙️ Implementation Steps</h3>
+                    <ol>
+                        <li><strong>IoT Thing Setup:</strong> Created a single IoT Thing named <code>smartiv-desktop-station-1</code> in AWS IoT Core (<code>ap-south-1</code> Mumbai region).</li>
+                        <li><strong>Security Credentials:</strong> Generated and downloaded the mutual TLS keys.</li>
+                        <li><strong>IoT Policy:</strong> Attached a restrictive IoT Policy named <code>SmartIVDesktopPolicy</code> allowing secure <code>iot:Connect</code>, <code>iot:Publish</code>, and <code>iot:Subscribe</code> actions under the <code>smartiv/*</code> resource namespace.</li>
+                        <li><strong>Rust Backend Connection:</strong> Configured <code>mqtt.rs</code> in the Tauri app to load certificate bytes using <code>std::fs::read</code> and pass them into <code>rumqttc</code> AsyncClient.</li>
+                    </ol>
+
+                    <h3>🚨 Hurdles & Resolutions</h3>
+
+                    <!-- Hurdle 1.1 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 1.1: Missing Rust Compiler Environment</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>The desktop development machine did not have the Rust compiler (rustc / cargo) installed or added to the path, blocking Tauri builds.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Downloaded and initialized the rustup installer, configured the stable toolchain, and refreshed environment path variables by restarting the shells.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 1.2 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 1.2: Missing MSVC C++ Linker link.exe</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Rust builds on Windows require the MSVC C++ Linker tool to pack system DLLs and execute compilation.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Orchestrated the installation of Visual Studio Build Tools with the C++ desktop workload, forcing compiler registration and setting the toolchain default:</p>
+                                    <pre><code>rustup default stable-x86_64-pc-windows-msvc</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 1.3 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 1.3: Certificate Path Mismatch & Key Exposure</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Relative paths like certs/ cert solved incorrectly during tauri dev modes because the binary working directory runs inside <code>src-tauri/</code>. Also risk of committing keys to Git.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Decoupled the binary from compile-time embedding. Moved the certificate folder under <code>src-tauri/certs/</code>, modified Rust code to dynamically read bytes at runtime, and updated <code>.gitignore</code> immediately to block certificate file tracking.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Phase 2 -->
+                <section id="phase2" class="journal-section">
+                    <span class="section-header-tag">Phase 2</span>
+                    <h2 class="section-title-text">Data Routing: Rules Engine & DynamoDB</h2>
+                    <p>A telemetry packet arriving at AWS IoT Core must be processed and persisted with zero latency. Running an active virtual machine (EC2) to read and store these packets is expensive and prone to downtime. Instead, we utilized the serverless **IoT Rules Engine** and **Amazon DynamoDB** to automatically intercept MQTT messages and route them directly into the database.</p>
+
+                    <h3>⚙️ Implementation Steps</h3>
+                    <ol>
+                        <li><strong>Database Tables:</strong> Created <code>smartiv-telemetry</code> and <code>smartiv-alerts</code> tables using a partition key of <code>bedId</code> (String) and a sort key of <code>ts</code> (String).</li>
+                        <li><strong>IoT Rules:</strong> Created <code>SmartIVStoreTelemetry</code> to extract streams:
+                            <pre><code>SELECT *, timestamp() AS receivedAt FROM 'smartiv/+/+/telemetry'</code></pre>
+                        </li>
+                        <li><strong>IAM Roles:</strong> Formulated <code>SmartIVIoTRulesRole</code> giving IoT Core permission to perform <code>dynamodb:PutItem</code> on the database.</li>
+                    </ol>
+
+                    <h3>🚨 Hurdles & Resolutions</h3>
+
+                    <!-- Hurdle 2.1 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 2.1: Schema Mismatch Silently Dropping Packets</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>The IoT Rule SQL expected exact property mappings like <code>bedId</code> and <code>ts</code>, but Rust models serialized with varying camelCase shapes, while the simulator published mismatch properties.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Decorated the Rust structures in Tauri with <code>#[serde(rename_all = "camelCase")]</code> and validated matching attributes in TypeScript to ensure perfect serializability.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 2.2 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 2.2: DynamoDB Composite Key Sorting Performance</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Querying historical telemetry for a single bed took too long or required expensive full-table scans.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Configured <code>bedId</code> as Partition Key and <code>ts</code> (ISO 8601 timestamp string) as Sort Key. Because ISO strings sort alphabetically, querying history chronologically uses simple fast <code>query</code> operations instead of full-table scans.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Phase 3 & 4 -->
+                <section id="phase3" class="journal-section">
+                    <span class="section-header-tag">Phase 3 & 4</span>
+                    <h2 class="section-title-text">AWS Lambda & Push Alerts (SNS/FCM)</h2>
+                    <p>To run real-time background processing on bedside telemetry, we connected a Python 3.12 Lambda function (<code>SmartIVAlertHandler</code>) to the IoT Rules engine trigger. If the incoming payload reports a blockage or empty bag, the Lambda writes it to the alerts database and pushes an urgent notification to nurse smartphones via Amazon SNS and Firebase Cloud Messaging (FCM).</p>
+
+                    <h3>🚨 Hurdles & Resolutions</h3>
+
+                    <!-- Hurdle 3.1 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 3.1: The Duplicate Alert Notification Storm</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Because ESP32 bedside units stream telemetry continuously (every 5 seconds), a sustained blockage would trigger duplicate push notifications to the nurses every 5 seconds, causing severe notification fatigue.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Implemented a database-driven deduplication lookup inside the Lambda function using the <code>boto3</code> SDK before triggering notifications:</p>
+                                    <pre><code>existing = table.query(
+    KeyConditionExpression='bedId = :bid',
+    FilterExpression='alertType = :at AND attribute_not_exists(resolvedAt)',
+    ExpressionAttributeValues={':bid': bed_id, ':at': alert_type},
+    Limit=1
+)
+if existing['Items']:
+    print("[DEDUP] Alert already active. Skipping.")
+    return {'statusCode': 200, 'body': 'Duplicate alert suppressed'}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Phase 5 -->
+                <section id="phase5" class="journal-section">
+                    <span class="section-header-tag">Phase 5</span>
+                    <h2 class="section-title-text">API Gateway REST Endpoints</h2>
+                    <p>We built a serverless public REST API using Amazon API Gateway (HTTP API) to expose endpoints to the mobile app. The endpoints proxy calls to specific Lambda functions retrieving DynamoDB history or acknowledging active alerts.</p>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Route</th>
+                                    <th>Method</th>
+                                    <th>Lambda Function</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>/beds/{bedId}/history</code></td>
+                                    <td><code>GET</code></td>
+                                    <td><code>SmartIVGetTelemetryHistory</code></td>
+                                    <td>Fetches historical charts</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/alerts/acknowledge</code></td>
+                                    <td><code>POST</code></td>
+                                    <td><code>SmartIVAcknowledgeAlert</code></td>
+                                    <td>Nurse resolves active alerts</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/notifications/register</code></td>
+                                    <td><code>POST</code></td>
+                                    <td><code>SmartIVRegisterPushToken</code></td>
+                                    <td>Registers mobile push tokens</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>🚨 Hurdles & Resolutions</h3>
+
+                    <!-- Hurdle 5.1 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 5.1: 502 Bad Gateway Proxy Errors</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>API Gateway expects integration proxy responses to be structured with strict JSON keys containing <code>statusCode</code> and <code>headers</code>, but Lambdas initially returned flat JSON objects.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Structured all Lambda return dictionaries to strictly comply with API Gateway Proxy requirements, returning status codes and explicit headers.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 5.2 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 5.2: CORS Permission Blocks on Mobile Clients</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>HTTP requests to the API from React Native clients were rejected by the browser or mobile sandbox due to missing Cross-Origin Resource Sharing (CORS) headers.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Enabled CORS in the API Gateway dashboard and explicitly injected CORS header dictionaries inside the Lambda response payloads:</p>
+                                    <pre><code>'headers': {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 5.3 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 5.3: Composite Keys Preventing Simple Alert Resolves</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>The alerts table in DynamoDB requires both Partition Key (<code>bedId</code>) and Sort Key (<code>ts</code>). The mobile app initially tried to resolve alerts using a flat numeric ID, causing database validation crashes.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Re-designed the backend `/alerts/acknowledge` endpoint and updated `apiService.ts` to pass the unique compound composite keys (both <code>bedId</code> and <code>ts</code>). This allowed the Lambda to perform explicit, validated database updates:</p>
+                                    <pre><code>table.update_item(
+    Key={'bedId': bed_id, 'ts': ts},
+    UpdateExpression='SET resolvedAt = :r, resolvedBy = :n',
+    ExpressionAttributeValues={':r': datetime.now().isoformat(), ':n': resolved_by}
+)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Phase 6 -->
+                <section id="phase6" class="journal-section">
+                    <span class="section-header-tag">Phase 6</span>
+                    <h2 class="section-title-text">AWS Cognito: Nurse Authentication</h2>
+                    <p>To secure patient telemetry and audit alert responses, we integrated <strong>AWS Cognito</strong>. We configured a User Pool to handle nurse registration/attributes and an Identity Pool to federate those logins into temporary IAM credentials. These temporary credentials grant the mobile app secure access to the AWS IoT broker over WebSockets.</p>
+
+                    <h3>⚙️ Implementation Steps</h3>
+                    <ol>
+                        <li><strong>User Pool Setup:</strong> Configured a User Pool named <code>SmartIVUserPool</code> with <code>custom:ward</code> and <code>custom:role</code> attributes.</li>
+                        <li><strong>Identity Pool Setup:</strong> Created <code>SmartIVIdentityPool</code> to exchange Cognito User Pool tokens for temporary AWS temporary keys.</li>
+                        <li><strong>Amplify Configuration:</strong> Integrated the AWS Amplify client block inside `app/_layout.tsx` to handle authentication states automatically.</li>
+                    </ol>
+
+                    <h3>🚨 Hurdles & Resolutions</h3>
+
+                    <!-- Hurdle 6.1 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 6.1: Cognito Client Secret Incompatibility on Mobile</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Initial Cognito App Client generation was configured with "Generate client secret" checked, causing Amplify connections on mobile to crash immediately due to missing secure secret stores.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Reconfigured the Cognito App Client, ensuring that **"Generate client secret"** was **disabled** during creation since React Native compiled binaries cannot securely store application client secrets.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 6.2 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 6.2: Enforced "Force Change Password" Challenge Hang</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Users created via the AWS Console are assigned a status of <code>FORCE_CHANGE_PASSWORD</code>, which caused mobile sign-ins to hang on a loading screen because the interface had no panel to accept a new password.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Handled this transitional state programmatically inside <code>authService.ts</code>. If the next auth step requires a new password, the service programmatically confirms the transition by re-submitting the temporary password as the new permanent password to bypass this friction during development:</p>
+                                    <pre><code>} else if (nextStep && nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
+    const confirmResult = await confirmSignIn({ challengeResponse: password });
+    if (confirmResult.isSignedIn) {
+        await this.checkSession();
+    }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Phase 7 -->
+                <section id="phase7" class="journal-section">
+                    <span class="section-header-tag">Phase 7</span>
+                    <h2 class="section-title-text">Mobile MQTT via WebSockets (SigV4)</h2>
+                    <p>To make the mobile app truly responsive and replace high-overhead REST polling, we implemented a direct MQTT over WebSocket connection to AWS IoT Core using the nurse's Cognito credentials via the <code>@aws-amplify/pubsub</code> plugin. WebSocket URLs are mathematically signed with temporary credentials, providing secure, real-time telemetry streaming.</p>
+
+                    <h3>🚨 Hurdles & Resolutions</h3>
+
+                    <!-- Hurdle 7.1 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 7.1: Node.js Native Module Network Crashes</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>Standard npm <code>mqtt</code> libraries rely on Node.js native <code>net</code> and <code>tls</code> socket modules, causing instant crashes inside mobile React Native/Expo Go runtimes.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Switched to `@aws-amplify/pubsub` using WebSockets, which compiles smoothly on mobile runtimes and establishes signed web connections to the IoT Broker endpoint.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 7.2 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 7.2: Cognito IoT "Not Authorized" Connect Failures</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>The Cognito Identity Pool's authenticated IAM role had no explicit rights to connect, subscribe, or publish to AWS IoT Core, throwing silent auth rejections.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Attached an inline IAM policy named <code>SmartIVMobileIoTPolicy</code> directly to the `Cognito_SmartIVIdentityPoolAuth_Role` role, granting connect and subscribe rights for the <code>smartiv/*</code> topic path.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 7.3 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 7.3: The Reconnect Loop & Paho AMQJS0011E Crash</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>The React Native <code>useMqtt.ts</code> hook listened to the entire <code>nurse</code> object in its dependency array. Since objects are recreated on every state shift, the effect triggered continuously, initiating a rapid connect-disconnect storm. Paho MQTT crashed with <code>AMQJS0011E Invalid state not connected</code>, rendering a white screen.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>First, we optimized <code>useMqtt.ts</code> to listen only to the primitive <code>ward</code> string rather than the full object. Second, we added a concurrency lock in <code>mqttService.ts</code> to block double-handshakes:</p>
+                                    <pre><code>if (subscription || isConnecting) return;
+isConnecting = true;</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hurdle 7.4 -->
+                    <div class="hurdle-card">
+                        <div class="hurdle-header">
+                            <span class="hurdle-label"><i class="fas fa-circle-exclamation"></i> Hurdle 7.4: Blue/White Loading Screen Routing Guard Hang</span>
+                            <span class="hurdle-toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="hurdle-body">
+                            <div class="hurdle-body-inner">
+                                <div class="hurdle-item cause">
+                                    <strong>Cause</strong>
+                                    <p>If an authenticated user opened the app, they landed on the root route `/` (the loading spinner `index.tsx`) which sits outside both standard groups. Lacking a redirection rule, they remained stuck on the loading page.</p>
+                                </div>
+                                <div class="hurdle-item resolution">
+                                    <strong>Resolution</strong>
+                                    <p>Updated `_layout.tsx` routing guard to track `inAppGroup`. When an authenticated user is detected outside the app folder, they are programmatically pushed directly to the Ward Dashboard (`/(app)/ward`), clearing the hang.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Phase 8 -->
+                <section id="phase8" class="journal-section">
+                    <span class="section-header-tag">Phase 8</span>
+                    <h2 class="section-title-text">Hardcoding Endpoints & Production Polish</h2>
+                    <p>To eliminate developer and operator friction during deployments, we integrated the production-ready AWS IoT Core endpoint <code>a2qzkepylp0vfe-ats.iot.ap-south-1.amazonaws.com</code> and Thing Name <code>smartiv-desktop-station-1</code> as compile-time defaults in Tauri Rust. We also added an auto-refresh hook to the ward status dashboard to seamlessly synchronize DynamoDB state changes.</p>
+                </section>
+
+                <!-- Section: Health Verification -->
+                <section id="verification" class="journal-section">
+                    <span class="section-header-tag">Verification</span>
+                    <h2 class="section-title-text">Live Health Check & E2E Validation</h2>
+                    <p>The entire pipeline is **100% verified and operational** in the Mumbai region (<code>ap-south-1</code>):</p>
+                    <ul>
+                        <li><strong>mTLS Desktop Ingestion:</strong> Tauri desktop connects successfully to the cloud broker using TLS certificates over port 8883.</li>
+                        <li><strong>Database logging:</strong> Simulator data flows through AWS IoT Core and logs composite key records in DynamoDB.</li>
+                        <li><strong>API Gateway Health:</strong> Endpoints are operational and serve database queries with CORS headers:
+                            <ul>
+                                <li>Beds Status API: <a href="https://0mt22a6os9.execute-api.ap-south-1.amazonaws.com/prod/beds" target="_blank">`/beds` Endpoint</a> 🟢 <strong>200 OK</strong></li>
+                                <li>Alerts Status API: <a href="https://0mt22a6os9.execute-api.ap-south-1.amazonaws.com/prod/alerts" target="_blank">`/alerts` Endpoint</a> 🟢 <strong>200 OK</strong></li>
+                            </ul>
+                        </li>
+                        <li><strong>Mobile Dashboard:</strong> React Native app correctly fetches live beds, renders historical chart SVGs, receives real-time alert triggers, and posts successful compound acknowledges to DynamoDB alerts table.</li>
+                    </ul>
+                </section>
+
+                <!-- Section: Resources Map -->
+                <section id="resources" class="journal-section">
+                    <span class="section-header-tag">Map</span>
+                    <h2 class="section-title-text">AWS Cloud Resource Map</h2>
+                    <p>The following table lists all created AWS resources, configurations, and their design roles:</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>AWS Service</th>
+                                    <th>Resource Identifier</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>IoT Core</strong></td>
+                                    <td><code>smartiv-desktop-station-1</code></td>
+                                    <td>mTLS Thing identity for Tauri desktop station</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>IoT Core</strong></td>
+                                    <td><code>SmartIVStoreTelemetry</code></td>
+                                    <td>SQL Ingestion: `SELECT *, timestamp() AS receivedAt`</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>IoT Core</strong></td>
+                                    <td><code>SmartIVAlertTrigger</code></td>
+                                    <td>SQL Ingestion: Filters error states to trigger Lambda</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DynamoDB</strong></td>
+                                    <td><code>smartiv-telemetry</code></td>
+                                    <td>High-speed time-series bed telemetry storage</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DynamoDB</strong></td>
+                                    <td><code>smartiv-alerts</code></td>
+                                    <td>Unresolved and resolved alert event audit table</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lambda</strong></td>
+                                    <td><code>SmartIVAlertHandler</code></td>
+                                    <td>Python 3.12 alert deduplicator and SNS FCM trigger</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lambda</strong></td>
+                                    <td><code>SmartIVGetTelemetryHistory</code></td>
+                                    <td>Fetches historical records with CORS proxy headers</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lambda</strong></td>
+                                    <td><code>SmartIVAcknowledgeAlert</code></td>
+                                    <td>POST endpoint: Nurse resolves alerts in database</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SNS</strong></td>
+                                    <td><code>SmartIVAndroid</code></td>
+                                    <td>Platform app holding Firebase FCM legacy key</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SNS</strong></td>
+                                    <td><code>smartiv-alerts-icu</code></td>
+                                    <td>Fan-out ward push notification topic channel</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cognito</strong></td>
+                                    <td><code>SmartIVUserPool</code></td>
+                                    <td>Nurse registration, profiles, and JWT tokens</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cognito</strong></td>
+                                    <td><code>SmartIVIdentityPool</code></td>
+                                    <td>Exchanges JWTs for temporary WebSocket credentials</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div class="info-box">
+                    <i class="fas fa-shield-halved"></i>
+                    <p><strong>Clinical Security Standards:</strong> Telemetry paths are encrypted end-to-end. Access to medical dashboard resources requires valid Cognito JWT handshakes and tightly scopes authorized client permissions via Cognito Identity IAM roles.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-logo">
+                    <div class="logo-icon"><i class="fas fa-droplet"></i></div>
+                    SmartIV
+                </div>
+                <div class="footer-meta">
+                    Department of Computer Engineering, University of Peradeniya. e21-3yp-Smart-IV.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Navigation Toggle -->
+    <div class="mobile-nav-toggle" onclick="toggleMobileSidebar()"><i class="fas fa-bars"></i></div>
+
+    <!-- Mobile Sidebar Modal -->
+    <div class="mobile-sidebar-modal" id="mobileSidebar" onclick="toggleMobileSidebar()">
+        <div class="mobile-sidebar-content" onclick="event.stopPropagation()">
+            <div class="mobile-sidebar-close" onclick="toggleMobileSidebar()"><i class="fas fa-times"></i></div>
+            <div class="sidebar-title">Journal Contents</div>
+            <ul class="sidebar-links" style="list-style:none;">
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#overview">System Overview</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase1">Phase 1: TLS mTLS</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase2">Phase 2: Rules & DB</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase3">Phase 3 & 4: Alerts</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase5">Phase 5: API Gateway</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase6">Phase 6: Cognito</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase7">Phase 7: Mobile MQTT</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#phase8">Phase 8: Polish</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#verification">Verification</a></li>
+                <li class="sidebar-link" onclick="toggleMobileSidebar()"><a href="#resources">Cloud Map</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scroll spy and accordion toggling
+        document.querySelectorAll('.hurdle-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const card = header.parentElement;
+                card.classList.toggle('open');
+            });
+        });
+
+        // Mobile sidebar toggle
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Highlight active sidebar links on scroll
+        const sections = document.querySelectorAll('.journal-section');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.querySelector('a').getAttribute('href');
+                if (href === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

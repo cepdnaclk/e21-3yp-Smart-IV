@@ -1,2 +1,7 @@
 # Root build/setup files
 vs_buildtools.exe
+
+# Reference/History logs
+full_conversation_history.md
+docs/history.html
+docs/history.md
