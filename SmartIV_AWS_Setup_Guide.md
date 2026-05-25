@@ -907,3 +907,91 @@ scale to a full hospital ward with hundreds of beds running 24/7.
 ---
 
 *Guide prepared for the SmartIV project — Department of Computer Engineering, University of Peradeniya.*
+
+---
+
+## Phase 7 — Mobile MQTT (Real-Time Live Telemetry)
+
+**Goal:** The mobile app subscribes directly to AWS IoT Core over WebSocket using the nurse's
+Cognito credentials. Every time an ESP32 device publishes a telemetry packet, the mobile screen
+updates instantly — no more polling!
+
+**How it works:**
+```
+[ESP32] → MQTT → [IoT Core] → Rule → [DynamoDB]
+                      ↓
+               (same MQTT message)
+                      ↓
+             [Mobile App via WebSocket]   ← Phase 7 adds this path
+```
+
+The mobile app connects using **Cognito Identity Pool temporary credentials** (SigV4 signed
+WebSocket). The Identity Pool's authenticated IAM role must grant IoT subscribe/receive
+permissions.
+
+---
+
+### Step 7.1 — Attach IoT Policy to the Cognito Identity Pool Role
+
+The nurse's Cognito authenticated role needs permission to connect, subscribe, and receive
+messages from IoT Core.
+
+1. Open **IAM Console** → **Roles**
+2. Search for the authenticated role attached to your Identity Pool.
+   - Go to **Cognito → Identity Pools → SmartIVIdentityPool → Edit → Authenticated role**
+   - The role name will be something like `Cognito_SmartIVIdentityPoolAuth_Role`
+3. Click the role → **Add permissions → Create inline policy**
+4. Click the **JSON** tab and paste this policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Connect",
+        "iot:Subscribe",
+        "iot:Receive",
+        "iot:Publish"
+      ],
+      "Resource": [
+        "arn:aws:iot:ap-south-1:017118230010:client/*",
+        "arn:aws:iot:ap-south-1:017118230010:topicfilter/smartiv/*",
+        "arn:aws:iot:ap-south-1:017118230010:topic/smartiv/*"
+      ]
+    }
+  ]
+}
+```
+
+5. Click **Next** → Name it `SmartIVMobileIoTPolicy` → **Create policy**
+
+---
+
+### Step 7.2 — Verify Amplify PubSub Connection in App
+
+1. Start your simulator (Tauri app → **Simulate Ward ON**)
+2. Open the Expo app on your phone and log in
+3. Check the **Expo terminal** for these log lines:
+   ```
+   [MQTT] Subscribing to AWS IoT Core via Amplify PubSub...
+   [MQTT] Subscribed to smartiv/+/+/telemetry ✅
+   ```
+4. Watch the bed cards — values should update **immediately** as packets arrive
+   (no more 5-second polling delay)
+
+> **Note:** Once MQTT is confirmed working, you can optionally remove the 5-second
+> `setInterval` from `ward.tsx` (the MQTT updates replace it). Keep both for now as a fallback.
+
+---
+
+### Troubleshooting Phase 7
+
+| Symptom | Likely Cause | Fix |
+|---------|-------------|-----|
+| `[MQTT] Subscription error: Not Authorized` | IAM role missing IoT policy | Re-do Step 7.1 |
+| `[MQTT] Subscription error: Connection refused` | Wrong endpoint URL | Verify endpoint in IoT Core → Settings → Device data endpoint |
+| No `[MQTT]` logs at all | `useMqtt` hook not called | Ensure `useMqtt()` is called in `_layout.tsx` |
+| Data shows but doesn't update | MQTT connected but store not updating | Check `updateBed` action in `bedStore.ts` |
+

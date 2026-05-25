@@ -11,7 +11,8 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { COLORS } from '../src/constants/colors';
 import { Amplify } from 'aws-amplify';
 
-// Configure AWS Amplify
+
+// Configure AWS Amplify (Cognito Auth)
 Amplify.configure({
   Auth: {
     Cognito: {
@@ -35,13 +36,16 @@ export default function RootLayout() {
   // 1. App Initialization
   useEffect(() => {
     const initApp = async () => {
+      console.log('[App] Starting session check...');
       try {
         await authService.checkSession();
         notifService.setupHandlers();
+        console.log('[App] Session check done. isAuthenticated:', useAuthStore.getState().isAuthenticated);
       } catch (error) {
         console.error('Failed to initialize app state:', error);
       } finally {
         setIsInitializing(false);
+        console.log('[App] Initialization complete.');
       }
     };
     initApp();
@@ -50,12 +54,15 @@ export default function RootLayout() {
   // 2. Authentication Routing Guard
   useEffect(() => {
     if (isInitializing) return;
-
     const inAuthGroup = segments[0] === '(auth)';
+    const inAppGroup = segments[0] === '(app)';
+    console.log('[App] Routing guard:', { isAuthenticated, inAuthGroup, segments });
 
     if (!isAuthenticated && !inAuthGroup) {
+      console.log('[App] → Redirecting to login');
       router.replace('/(auth)/login');
-    } else if (isAuthenticated && inAuthGroup) {
+    } else if (isAuthenticated && !inAppGroup) {
+      console.log('[App] → Redirecting to ward');
       router.replace('/(app)/ward');
     }
   }, [isAuthenticated, segments, isInitializing]);
@@ -92,6 +99,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.bgPrimary,
+    backgroundColor: COLORS.brand,   // dark blue — spinner always visible
   },
 });

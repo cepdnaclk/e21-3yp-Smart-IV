@@ -3,11 +3,12 @@ import { mqttService } from '../services/mqttService';
 import { useAuthStore } from '../stores/authStore';
 
 export const useMqtt = () => {
-  const { isAuthenticated, nurse } = useAuthStore();
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+  const ward = useAuthStore(s => s.nurse?.ward);  // primitive string — stable reference
 
   useEffect(() => {
-    if (isAuthenticated && nurse?.ward) {
-      mqttService.connect(nurse.ward);
+    if (isAuthenticated && ward) {
+      mqttService.connect(ward);
     } else {
       mqttService.disconnect();
     }
@@ -15,5 +16,5 @@ export const useMqtt = () => {
     return () => {
       mqttService.disconnect();
     };
-  }, [isAuthenticated, nurse]);
+  }, [isAuthenticated, ward]);  // only re-run if auth state or ward name actually changes
 };

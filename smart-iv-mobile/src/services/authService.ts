@@ -51,10 +51,13 @@ export const authService = {
   },
 
   async checkSession(): Promise<void> {
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Session check timed out')), 5000)
+    );
     try {
-      const session = await fetchAuthSession();
-      const token = session.tokens?.accessToken?.toString();
-      
+      const session = await Promise.race([fetchAuthSession(), timeout]);
+      const token = (session as any).tokens?.accessToken?.toString();
+
       if (token) {
         const attributes = await fetchUserAttributes();
         const nurse: Nurse = {
@@ -70,6 +73,7 @@ export const authService = {
         useAuthStore.getState().clearAuth();
       }
     } catch (error) {
+      // Session expired, no network, or timed out — go to login
       useAuthStore.getState().clearAuth();
     }
   },
