@@ -1,7 +1,9 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
 import { useAlertStore } from '../../src/stores/alertStore';
 import { COLORS } from '../../src/constants/colors';
+import { authService } from '../../src/services/authService';
 
 export default function AppLayout() {
   const { unreadCount } = useAlertStore();
@@ -18,6 +20,15 @@ export default function AppLayout() {
         options={{
           title: 'Ward Dashboard',
           tabBarIcon: ({ color, size }) => <Ionicons name="medical" size={size} color={color} />,
+          headerRight: () => (
+            <TouchableOpacity 
+              onPress={() => authService.logout()}
+              style={{ marginRight: 16, padding: 4 }}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="log-out-outline" size={24} color={COLORS.critical} />
+            </TouchableOpacity>
+          )
         }}
       />
       <Tabs.Screen
