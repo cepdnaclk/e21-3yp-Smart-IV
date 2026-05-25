@@ -32,9 +32,9 @@ export default function BedDetailScreen() {
   const handleAcknowledge = async () => {
     if (bedDetail?.activeAlert) {
       try {
-        const alertId = bedDetail.activeAlert.id;
-        acknowledgeAlert(alertId);
-        await apiService.acknowledgeAlert(alertId);
+        const alert = bedDetail.activeAlert;
+        acknowledgeAlert(alert.id);
+        await apiService.acknowledgeAlert(String(alert.bedId), alert.createdAt);
         // Remove alert from local detail state
         setBedDetail({ ...bedDetail, activeAlert: null });
       } catch (error) {

@@ -13,6 +13,36 @@ const statusMap: Record<string, string> = {
   CONN_LOST: 'OFFLINE',
 };
 
+const alertTypeMap: Record<string, string> = {
+  BLOCKAGE: 'BLOCKAGE',
+  EMPTY_BAG: 'EMPTY_BAG',
+  BATTERY_LOW: 'LOW_BATTERY',
+  CONN_LOST: 'DEVICE_OFFLINE',
+};
+
+function mapAlertRow(row: any, index: number) {
+  const type = alertTypeMap[row.alertType] ?? 'BLOCKAGE';
+  
+  let message = `Alert on Bed ${row.bedId}`;
+  if (type === 'BLOCKAGE') message = `IV line blockage detected on Bed ${row.bedId}`;
+  if (type === 'EMPTY_BAG') message = `IV bag is empty on Bed ${row.bedId}`;
+  if (type === 'LOW_BATTERY') message = `Low battery warning on Bed ${row.bedId}`;
+  if (type === 'DEVICE_OFFLINE') message = `Device connection lost on Bed ${row.bedId}`;
+  
+  return {
+    id: index + 1, // Generate a numeric ID for the FlatList keyExtractor
+    bedId: Number(row.bedId ?? 0),
+    bedLabel: `Bed ${row.bedId ?? '??'}`,
+    patientName: `Patient (Bed ${row.bedId})`,
+    ward: 'General Ward',
+    type: type,
+    message: message,
+    resolved: row.resolved ?? false,
+    createdAt: row.ts ?? new Date().toISOString(),
+    resolvedAt: row.resolvedAt ?? null,
+  };
+}
+
 export const apiService = {
 
   /** Fetch latest telemetry snapshot for every bed — mapped to mobile Bed type */
@@ -40,36 +70,7 @@ export const apiService = {
   async getActiveAlerts(): Promise<any[]> {
     const response = await apiClient.get(ENDPOINTS.ALERTS_ACTIVE);
     const rows: any[] = Array.isArray(response.data) ? response.data : [];
-    
-    return rows.map((row, i) => {
-      // Map DynamoDB fields to mobile Alert type
-      const alertTypeMap: Record<string, string> = {
-        BLOCKAGE: 'BLOCKAGE',
-        EMPTY_BAG: 'EMPTY_BAG',
-        BATTERY_LOW: 'LOW_BATTERY',
-        CONN_LOST: 'DEVICE_OFFLINE',
-      };
-      
-      const type = alertTypeMap[row.alertType] ?? 'BLOCKAGE';
-      
-      let message = `Alert on Bed ${row.bedId}`;
-      if (type === 'BLOCKAGE') message = `IV line blockage detected on Bed ${row.bedId}`;
-      if (type === 'EMPTY_BAG') message = `IV bag is empty on Bed ${row.bedId}`;
-      if (type === 'LOW_BATTERY') message = `Low battery warning on Bed ${row.bedId}`;
-      
-      return {
-        id: i + 1, // Generate a numeric ID for the FlatList keyExtractor
-        bedId: Number(row.bedId ?? 0),
-        bedLabel: `Bed ${row.bedId ?? '??'}`,
-        patientName: `Patient (Bed ${row.bedId})`,
-        ward: 'General Ward',
-        type: type,
-        message: message,
-        resolved: row.resolved ?? false,
-        createdAt: row.ts ?? new Date().toISOString(),
-        resolvedAt: row.resolvedAt ?? null,
-      };
-    });
+    return rows.map((row, i) => mapAlertRow(row, i));
   },
 
   /** Fetch full detail for a single bed: snapshot + flow history + active alert */
@@ -108,21 +109,31 @@ export const apiService = {
     return { ...bed, flowHistory, activeAlert };
   },
 
-  /** Acknowledge/resolve an alert (stub — add DELETE /alerts endpoint to Lambda to fully implement) */
-  async acknowledgeAlert(alertId: number): Promise<void> {
-    console.log(`[Alert] Acknowledge alert ${alertId} — stub (no server-side resolve endpoint yet)`);
+  /** Acknowledge/resolve an alert in the cloud DynamoDB alerts table */
+  async acknowledgeAlert(bedId: string, ts: string): Promise<void> {
+    try {
+      await apiClient.post('/alerts/acknowledge', {
+        bedId,
+        ts,
+        resolvedBy: 'Nurse'
+      });
+      console.log(`[Alert] Successfully acknowledged alert for bed ${bedId} at ${ts}`);
+    } catch (error) {
+      console.error('[Alert] Failed to acknowledge alert:', error);
+      throw error;
+    }
   },
-
 
   async getBedHistory(bedId: string): Promise<any[]> {
     const response = await apiClient.get(ENDPOINTS.BED_HISTORY(bedId));
     return Array.isArray(response.data) ? response.data : [];
   },
 
-  /** Fetch alerts for a specific bed */
+  /** Fetch alerts for a specific bed and map them properly */
   async getBedAlerts(bedId: string): Promise<any[]> {
     const response = await apiClient.get(ENDPOINTS.ALERTS_BED(bedId));
-    return Array.isArray(response.data) ? response.data : [];
+    const rows: any[] = Array.isArray(response.data) ? response.data : [];
+    return rows.map((row, i) => mapAlertRow(row, i));
   },
 
   /** Register device push token (no-op until SNS subscription is configured) */

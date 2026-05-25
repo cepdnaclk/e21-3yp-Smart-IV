@@ -19,10 +19,10 @@ export default function AlertsScreen() {
     clearUnread();
   }, [fetchAlerts, clearUnread]);
 
-  const handleAcknowledge = async (id: number) => {
+  const handleAcknowledge = async (item: Alert) => {
     try {
-      acknowledgeAlert(id);
-      await apiService.acknowledgeAlert(id);
+      acknowledgeAlert(item.id);
+      await apiService.acknowledgeAlert(String(item.bedId), item.createdAt);
     } catch (error) {
       console.error('Failed to acknowledge alert', error);
     }
@@ -36,7 +36,7 @@ export default function AlertsScreen() {
         <Text style={styles.timeText}>{formatTime(item.createdAt)}</Text>
       </View>
       <Text style={styles.messageText}>{item.message}</Text>
-      <TouchableOpacity style={styles.ackButton} onPress={() => handleAcknowledge(item.id)}>
+      <TouchableOpacity style={styles.ackButton} onPress={() => handleAcknowledge(item)}>
         <Text style={styles.ackButtonText}>Acknowledge</Text>
       </TouchableOpacity>
     </View>
