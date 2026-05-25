@@ -25,6 +25,23 @@ export default function WardScreen() {
     return () => clearInterval(interval); // cleanup on unmount
   }, [fetchBeds]);
 
+  // Filter only beds requiring active clinical attention (ALERT, CRITICAL, OFFLINE)
+  const alertingBeds = beds.filter(bed => bed.status !== 'STABLE');
+  const hasNoBedsAssigned = beds.length === 0;
+
+  const renderEmptyComponent = () => {
+    if (hasNoBedsAssigned) {
+      return <Text style={styles.emptyText}>No beds assigned to your ward</Text>;
+    }
+    return (
+      <View style={styles.stableContainer}>
+        <Text style={styles.stableIcon}>✓</Text>
+        <Text style={styles.stableText}>All Patients Stable</Text>
+        <Text style={styles.stableSubtext}>There are currently no active alerts in Ward {nurse?.ward}.</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <AlertBanner alerts={alerts} onPress={() => router.push('/alerts')} />
@@ -34,11 +51,11 @@ export default function WardScreen() {
       </View>
 
       <FlatList
-        data={beds}
+        data={alertingBeds}
         keyExtractor={(item) => item.bedId}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.brand} />}
         contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={<Text style={styles.emptyText}>No beds assigned to your ward</Text>}
+        ListEmptyComponent={renderEmptyComponent}
         renderItem={({ item }) => (
           <BedCard bed={item} onPress={() => router.push(`/bed/${item.bedId}`)} />
         )}
@@ -53,4 +70,31 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 16, paddingTop: 16 },
   headerText: { fontSize: 16, color: COLORS.textSecondary, fontWeight: '600' },
   emptyText: { textAlign: 'center', marginTop: 40, color: COLORS.textMuted, fontSize: 16 },
+  stableContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 32,
+    marginTop: 40,
+    backgroundColor: '#E6F4EA', // soft stable green background
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#CEEAD6', // soft green border
+  },
+  stableIcon: {
+    fontSize: 48,
+    color: COLORS.stable,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  stableText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.brand,
+    marginBottom: 6,
+  },
+  stableSubtext: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+  },
 });
