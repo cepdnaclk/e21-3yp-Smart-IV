@@ -45,7 +45,7 @@ export const BedCard: React.FC<BedCardProps> = ({ bed, onPress }) => {
       <View style={styles.statsRow}>
         <View style={styles.statColumn}>
           <Text style={styles.statLabel}>Flow Rate</Text>
-          <Text style={styles.statValue}>{bed.targetFlowRate} <Text style={styles.unit}>mL/hr</Text></Text>
+          <Text style={styles.statValue}>{Number(bed.targetFlowRate ?? 0).toFixed(2)} <Text style={styles.unit}>mL/hr</Text></Text>
         </View>
         <View style={styles.statColumn}>
           <Text style={styles.statLabel}>Remaining</Text>

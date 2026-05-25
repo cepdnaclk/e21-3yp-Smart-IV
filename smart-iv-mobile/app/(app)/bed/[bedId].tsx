@@ -69,7 +69,7 @@ export default function BedDetailScreen() {
         <View style={styles.statsGrid}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Target Rate</Text>
-            <Text style={styles.statValue}>{bedDetail.targetFlowRate} <Text style={styles.unit}>mL/hr</Text></Text>
+            <Text style={styles.statValue}>{Number(bedDetail.targetFlowRate ?? 0).toFixed(2)} <Text style={styles.unit}>mL/hr</Text></Text>
           </View>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Vol. Remaining</Text>
