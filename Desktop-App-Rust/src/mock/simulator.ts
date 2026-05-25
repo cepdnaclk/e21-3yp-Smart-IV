@@ -69,8 +69,6 @@ export function startSimulation() {
     // Collect active bed packets first (sync)
     const packetsToSend: BedPacket[] = [];
     beds.forEach(b => {
-      if (b.scenario === 'CONN_LOST') return;
-
       const p = b.packet;
       p.ts = now;
 
@@ -104,6 +102,11 @@ export function startSimulation() {
       alertsStore.addAlert({
         id: Date.now() + 1, bedId: b7.bedId, sessionId: b7.sessionId,
         ts: now, alertType: 'EMPTY_BAG', resolvedAt: null, resolvedBy: null
+      });
+      const b15 = beds[15].packet;
+      alertsStore.addAlert({
+        id: Date.now() + 2, bedId: b15.bedId, sessionId: b15.sessionId,
+        ts: now, alertType: 'CONN_LOST', resolvedAt: null, resolvedBy: null
       });
     }
 
