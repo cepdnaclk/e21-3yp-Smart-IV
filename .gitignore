@@ -5,3 +5,6 @@ vs_buildtools.exe
 full_conversation_history.md
 docs/history.html
 docs/history.md
+
+# dependencies
+node_modules/
