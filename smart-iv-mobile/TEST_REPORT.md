@@ -1,6 +1,6 @@
 # Smart IV Mobile Application - Test Execution Report
 
-**Date of Execution**: June 8, 2026  
+**Date of Execution**: June 13, 2026  
 **Execution Environment**: Expo SDK 54 / React Native 0.81 / React 19.1.0  
 **Testing Framework**: Jest 29 + React Native Testing Library (RNTL) v14  
 **Status**: 🟢 **100% PASSING (27/27 Tests)**
@@ -61,16 +61,16 @@ To establish compatibility between **React 19**, **Jest 29**, and **React Native
 > smart-iv-mobile@1.0.0 test
 > jest
 
-PASS src/tests/stores/authStore.test.ts
 PASS src/tests/stores/bedStore.test.ts
-PASS src/tests/stores/alertStore.test.ts
 PASS src/tests/components/StatusBadge.test.tsx
 PASS src/tests/components/AlertBanner.test.tsx
 PASS src/tests/components/BedCard.test.tsx
+PASS src/tests/stores/alertStore.test.ts
+PASS src/tests/stores/authStore.test.ts
 
 Test Suites: 6 passed, 6 total
 Tests:       27 passed, 27 total
 Snapshots:   0 total
-Time:        10.357 s
+Time:        3.911 s
 Ran all test suites.
 ```
