@@ -11,6 +11,8 @@ export default function Settings() {
   const [ports, setPorts] = useState<string[]>(['COM3', 'COM4', 'COM5']);
   const [saved, setSaved] = useState(false);
   const [loadingPorts, setLoadingPorts] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanMsg, setScanMsg] = useState('');
 
   const patch = (k: keyof AppSettings, v: AppSettings[keyof AppSettings]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -33,6 +35,27 @@ export default function Settings() {
       await commands.disconnectSerial();
     } else {
       await commands.connectSerial(form.serialPort, form.baudRate);
+    }
+  };
+
+  const handleAutoDetect = async () => {
+    setScanning(true);
+    setScanMsg('');
+    try {
+      const detectedPort = await commands.scanAndConnectSerial(form.baudRate);
+      if (detectedPort) {
+        // Update the saved port so it shows correctly after detection
+        updateSettings({ serialPort: detectedPort });
+        setForm((f) => ({ ...f, serialPort: detectedPort }));
+        setScanMsg(`Connected on ${detectedPort}`);
+      } else {
+        setScanMsg('No accessible port found. Check device & drivers.');
+      }
+    } catch {
+      setScanMsg('Scan failed. Is the receiver plugged in?');
+    } finally {
+      setScanning(false);
+      setTimeout(() => setScanMsg(''), 5000);
     }
   };
 
@@ -99,12 +122,28 @@ export default function Settings() {
                   </select>
                 </div>
               </div>
-              <div style={{ marginTop: 14 }}>
+              <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <button
                   className={`btn ${connected ? 'btn-danger' : 'btn-primary'}`}
                   onClick={handleConnect}>
                   {connected ? 'Disconnect Serial' : 'Connect Serial'}
                 </button>
+                {!connected && (
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={handleAutoDetect}
+                    disabled={scanning}
+                    title="Scan all COM ports and connect to the first accessible one">
+                    {scanning
+                      ? <><div className="spinner" style={{ width: 12, height: 12, display: 'inline-block', marginRight: 6 }} />Scanning…</>
+                      : '⚡ Auto-Detect Port'}
+                  </button>
+                )}
+                {scanMsg && (
+                  <span style={{ fontSize: 12, color: scanMsg.startsWith('Connected') ? 'var(--green-400)' : 'var(--red-400)' }}>
+                    {scanMsg}
+                  </span>
+                )}
               </div>
             </div>
           </div>

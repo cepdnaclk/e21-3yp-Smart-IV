@@ -43,7 +43,7 @@ pub fn run() {
 
                 let state = AppState {
                     db,
-                    serial_cancel: Arc::new(tokio::sync::Notify::new()),
+                    serial_cancel: Mutex::new(Arc::new(tokio::sync::Notify::new())),
                     serial_handle: Mutex::new(None),
                     mqtt: Arc::new(Mutex::new(None)),
                     mqtt_handle: Mutex::new(None),
@@ -60,6 +60,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::list_serial_ports,
             commands::connect_serial,
+            commands::scan_and_connect_serial,
             commands::disconnect_serial,
             commands::get_beds,
             commands::upsert_bed,

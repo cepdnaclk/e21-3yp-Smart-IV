@@ -12,8 +12,10 @@ use crate::serial::SerialReader;
 /// App-wide managed state
 pub struct AppState {
     pub db: Db,
-    /// Notified to cancel the current serial reader task
-    pub serial_cancel: Arc<tokio::sync::Notify>,
+    /// Holds the cancel token for the CURRENT serial reader task.
+    /// Wrapped in Mutex so connect_serial can swap it with a fresh Notify
+    /// each time, preventing stale cancel signals from killing a new reader.
+    pub serial_cancel: Mutex<Arc<tokio::sync::Notify>>,
     pub serial_handle: Mutex<Option<tokio::task::JoinHandle<()>>>,
     pub mqtt: Arc<Mutex<Option<MqttPublisher>>>,
     pub mqtt_handle: Mutex<Option<tokio::task::JoinHandle<()>>>,
@@ -35,25 +37,35 @@ pub async fn connect_serial(
     state: State<'_, AppState>,
     app: AppHandle,
 ) -> Result<(), String> {
-    // Gracefully stop any existing reader
-    state.serial_cancel.notify_waiters();
+    // Cancel and abort any existing reader
+    {
+        let old_cancel = state.serial_cancel.lock().await;
+        old_cancel.notify_waiters();
+    }
     {
         let mut h = state.serial_handle.lock().await;
         if let Some(old) = h.take() {
             old.abort();
         }
     }
-    // Small settle delay
+    // Small settle delay so the old task can clean up
     tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;
 
-    // Spawn new reader
-    let cancel = state.serial_cancel.clone();
+    // Create a FRESH cancel token for this connection.
+    // This is critical: if we reuse the old Notify, any pending notify_waiters()
+    // stored from the previous disconnect will immediately kill the new reader.
+    let fresh_cancel = Arc::new(tokio::sync::Notify::new());
+    {
+        let mut guard = state.serial_cancel.lock().await;
+        *guard = fresh_cancel.clone();
+    }
+
     let reader = SerialReader::new(port, baud);
     let handle = reader.spawn(
         state.db.clone(),
         app,
         state.mqtt.clone(),
-        cancel,
+        fresh_cancel,
     );
 
     let mut h = state.serial_handle.lock().await;
@@ -62,9 +74,79 @@ pub async fn connect_serial(
     Ok(())
 }
 
+/// Scan all available COM ports and try to connect to the first one that opens.
+/// Useful when the ESP32-S3 receiver changes COM port numbers after re-enumeration.
+#[command]
+pub async fn scan_and_connect_serial(
+    baud: u32,
+    state: State<'_, AppState>,
+    app: AppHandle,
+) -> Result<String, String> {
+    let available = serialport::available_ports().map_err(|e| e.to_string())?;
+    if available.is_empty() {
+        return Err("No serial ports found".to_string());
+    }
+
+    // Try each port in order, pick the first that opens
+    for port_info in &available {
+        let port_name = port_info.port_name.clone();
+        log::info!("[Serial] Scanning port: {port_name}");
+
+        // Quick test open (sync) to see if the port is accessible
+        let test = serialport::new(&port_name, baud)
+            .timeout(std::time::Duration::from_millis(500))
+            .open();
+
+        if test.is_ok() {
+            drop(test); // close test handle before opening async
+            log::info!("[Serial] Auto-selected port: {port_name}");
+
+            // Cancel and abort any existing reader
+            {
+                let old_cancel = state.serial_cancel.lock().await;
+                old_cancel.notify_waiters();
+            }
+            {
+                let mut h = state.serial_handle.lock().await;
+                if let Some(old) = h.take() {
+                    old.abort();
+                }
+            }
+            tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;
+
+            let fresh_cancel = Arc::new(tokio::sync::Notify::new());
+            {
+                let mut guard = state.serial_cancel.lock().await;
+                *guard = fresh_cancel.clone();
+            }
+
+            let reader = SerialReader::new(&port_name, baud);
+            let handle = reader.spawn(
+                state.db.clone(),
+                app.clone(),
+                state.mqtt.clone(),
+                fresh_cancel,
+            );
+
+            let mut h = state.serial_handle.lock().await;
+            *h = Some(handle);
+
+            return Ok(port_name);
+        }
+    }
+
+    Err(format!(
+        "Could not open any of the available ports: {}",
+        available.iter().map(|p| p.port_name.as_str()).collect::<Vec<_>>().join(", ")
+    ))
+}
+
 #[command]
 pub async fn disconnect_serial(state: State<'_, AppState>) -> Result<(), String> {
-    state.serial_cancel.notify_waiters();
+    {
+        let cancel = state.serial_cancel.lock().await;
+        cancel.notify_waiters();
+    }
     let mut h = state.serial_handle.lock().await;
     if let Some(handle) = h.take() {
         handle.abort();

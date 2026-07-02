@@ -102,6 +102,8 @@ export const commands = {
   listSerialPorts: () => invokeCmd<string[]>('list_serial_ports'),
   connectSerial: (port: string, baud: number) =>
     invokeCmd<void>('connect_serial', { port, baud }),
+  scanAndConnectSerial: (baud: number) =>
+    invokeCmd<string>('scan_and_connect_serial', { baud }),
   disconnectSerial: () => invokeCmd<void>('disconnect_serial'),
   getBeds: () => invokeCmd<Bed[]>('get_beds'),
   upsertBed: (bed: Partial<Bed> & { bedId: string }) =>

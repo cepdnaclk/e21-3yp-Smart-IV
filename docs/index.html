@@ -3281,30 +3281,54 @@
                 </div>
             </div>
 
-            <div class="gallery-subtitle fade-up">Achievements</div>
+            <div class="gallery-subtitle fade-up">Winner - SLASSCOM National Ingenuity Awards 2026</div>
             <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
-                Highlights from our participation as finalists in the SLIoT Challenge and future events.</p>
-            <div class="slideshow-container fade-up" style="margin-bottom:0;" id="gallery-achievements">
-                <div class="slideshow-main" onclick="openLightbox('achievements')">
-                    <img src="images/sliot/pic (1).jpg" alt="Competition Highlight" id="main-img-achievements">
-                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('achievements', -1)">
+                Winner of the National Ingenuity Awards 2026 for the Best Innovative Product (University Category - Central Province) organized by SLASSCOM.</p>
+            <div class="slideshow-container fade-up" style="margin-bottom:48px;" id="gallery-slasscom">
+                <div class="slideshow-main" onclick="openLightbox('slasscom')">
+                    <img src="images/slasscom/1.jpg" alt="SLASSCOM Award Ceremony" id="main-img-slasscom">
+                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('slasscom', -1)">
                         <i class="fas fa-chevron-left"></i>
                     </div>
-                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('achievements', 1)"><i
+                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('slasscom', 1)"><i
                             class="fas fa-chevron-right"></i></div>
                 </div>
-                <div class="slideshow-thumbs" id="thumbs-achievements">
-                    <div class="slideshow-thumb active" onclick="setSlide('achievements', 0)"><img
+                <div class="slideshow-thumbs" id="thumbs-slasscom">
+                    <div class="slideshow-thumb active" onclick="setSlide('slasscom', 0)"><img
+                            src="images/slasscom/1.jpg" alt="Thumb" loading="lazy"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 1)"><img
+                            src="images/slasscom/2.jpg" alt="Thumb" loading="lazy"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 2)"><img
+                            src="images/slasscom/3.jpg" alt="Thumb" loading="lazy"></div>
+                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 3)"><img
+                            src="images/slasscom/4.jpg" alt="Thumb" loading="lazy"></div>
+                </div>
+            </div>
+
+            <div class="gallery-subtitle fade-up">SLIoT Challenge Finalists</div>
+            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
+                Highlights from our participation as finalists in the SLIoT Challenge.</p>
+            <div class="slideshow-container fade-up" style="margin-bottom:0;" id="gallery-sliot">
+                <div class="slideshow-main" onclick="openLightbox('sliot')">
+                    <img src="images/sliot/pic (1).jpg" alt="SLIoT Challenge Finalists" id="main-img-sliot">
+                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('sliot', -1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('sliot', 1)"><i
+                            class="fas fa-chevron-right"></i></div>
+                </div>
+                <div class="slideshow-thumbs" id="thumbs-sliot">
+                    <div class="slideshow-thumb active" onclick="setSlide('sliot', 0)"><img
                             src="images/sliot/pic (1).jpg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('achievements', 1)"><img
+                    <div class="slideshow-thumb" onclick="setSlide('sliot', 1)"><img
                             src="images/sliot/pic (1).jpeg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('achievements', 2)"><img
+                    <div class="slideshow-thumb" onclick="setSlide('sliot', 2)"><img
                             src="images/sliot/pic (2).jpg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('achievements', 4)"><img
+                    <div class="slideshow-thumb" onclick="setSlide('sliot', 3)"><img
                             src="images/sliot/pic (3).jpg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('achievements', 5)"><img
+                    <div class="slideshow-thumb" onclick="setSlide('sliot', 4)"><img
                             src="images/sliot/pic (3).jpeg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('achievements', 6)"><img
+                    <div class="slideshow-thumb" onclick="setSlide('sliot', 5)"><img
                             src="images/sliot/pic (4).jpeg" alt="Thumb" loading="lazy"></div>
                 </div>
             </div>
@@ -3528,12 +3552,23 @@
                     'images/photolog/M1.jpeg', 'images/photolog/M2.jpeg'
                 ]
             },
-            'achievements': {
+            'slasscom': {
                 currentIndex: 0,
                 images: [
-                    'images/sliot/pic (1).jpg', 'images/sliot/pic (1).jpeg',
-                    'images/sliot/pic (2).jpg', 'images/sliot/pic (2).jpeg',
-                    'images/sliot/pic (3).jpg', 'images/sliot/pic (3).jpeg',
+                    'images/slasscom/1.jpg',
+                    'images/slasscom/2.jpg',
+                    'images/slasscom/3.jpg',
+                    'images/slasscom/4.jpg'
+                ]
+            },
+            'sliot': {
+                currentIndex: 0,
+                images: [
+                    'images/sliot/pic (1).jpg',
+                    'images/sliot/pic (1).jpeg',
+                    'images/sliot/pic (2).jpg',
+                    'images/sliot/pic (3).jpg',
+                    'images/sliot/pic (3).jpeg',
                     'images/sliot/pic (4).jpeg'
                 ]
             }
