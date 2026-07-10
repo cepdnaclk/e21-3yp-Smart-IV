@@ -61,29 +61,35 @@ Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 String typed = "";
 
 // -------------------- Keypad correction --------------------
-char translateDemoKey(char raw) {
-  switch (raw) {
-    case '1': return 'A';   // physical F4 = START / RECOVER
-    case '2': return 'D';   // physical F3 = SET VOLUME / DEMO FLOW TOGGLE
-    case '3': return '#';   // physical F2 = SET TARGET / BLOCKAGE TOGGLE
-    case '4': return 'B';   // physical STOP = STOP
+// Re-maps physical keypad wiring to expected keys (Matching your working demo layout)
+char translateKey(char raw) {
+    switch (raw) {
+        // Command mappings
+        case '1': return 'A';   // Physical F4 = START / RESUME
+        case '2': return 'D';   // Physical F3 = SET VOLUME
+        case '3': return '#';   // Physical F2 = SET TARGET
+        case '4': return 'B';   // Physical STOP = STOP / New Infusion
 
-    case '#': return '4';   // physical 4
-    case '9': return '5';   // physical 5
-    case '6': return '6';   // physical 6
-    case '0': return '7';   // physical 7
-    case '8': return '8';   // physical 8
-    case '5': return '9';   // physical 9
-    case '7': return '0';   // physical 0
+        // Numbers 4-9, 0
+        case '#': return '4';   // Physical 4
+        case '9': return '5';   // Physical 5
+        case '6': return '6';   // Physical 6
+        case '0': return '7';   // Physical 7
+        case '8': return '8';   // Physical 8
+        case '5': return '9';   // Physical 9
+        case '7': return '0';   // Physical 0
 
-    case '*': return '*';
-    case 'A': return '1';
-    case 'B': return '2';
-    case 'C': return '3';
-    case 'D': return 'C';
+        // Clear and Numbers 1-3, F1
+        case '*': return '*';   // Physical * = Clear
+        case 'A': return '1';   // Physical 1
+        case 'B': return '2';   // Physical 2
+        case 'C': return '3';   // Physical 3
+        case 'D': return 'C';   // Physical F1 = PAUSE (mapped to C)
 
-    default: return raw;
-  }
+        default: return raw;
+    }
+}
+
 }
 
 // -------------------- Motor / TMC2208 --------------------
