@@ -39,6 +39,8 @@ void initEspNow() {
 void transmitTelemetry() {
     lockTelemetry();
     bool running = telemetry.running;
+    FsmState state = telemetry.fsmState;
+    float volRemaining = telemetry.volRemainingMl;
     
     // Safety check: don't broadcast if the unit is in raw SETUP mode
     if (!running && strcmp(telemetry.statusText, "SETUP") == 0) {
@@ -46,19 +48,32 @@ void transmitTelemetry() {
         return;
     }
 
-    // Build the JSON payload matching the Tauri app schema
+    // Map internal FSM state to Tauri expected status string
+    const char *tauriStatus = "STABLE";
+    if (state == STATE_CRITICAL) {
+        if (volRemaining <= 0.1f) {
+            tauriStatus = "EMPTY_BAG";
+        } else {
+            tauriStatus = "BLOCKAGE";
+        }
+    } else {
+        tauriStatus = "STABLE";
+    }
+
+    // Build the JSON payload matching the Tauri app schema.
+    // 1. We send "sessionId":null to satisfy SQLite foreign key constraints.
+    // 2. We send telemetry.bedId dynamically instead of the hardcoded BED_ID.
     char json[240];
     int n = snprintf(json, sizeof(json),
-        "{\"bedId\":\"%s\",\"status\":\"%s\",\"flowRate\":%.1f,\"volRemaining\":%.1f,\"maxVolume\":%.0f,\"battery\":%d,\"dropFactor\":%d,\"targetMlhr\":%.1f,\"sessionId\":\"%s\"}",
-        BED_ID, 
-        telemetry.statusText, 
+        "{\"bedId\":\"%s\",\"status\":\"%s\",\"flowRate\":%.1f,\"volRemaining\":%.1f,\"maxVolume\":%.0f,\"battery\":%d,\"dropFactor\":%d,\"targetMlhr\":%.1f,\"sessionId\":null}",
+        telemetry.bedId, 
+        tauriStatus, 
         telemetry.measuredFlowMlhr, 
         telemetry.volRemainingMl,
         telemetry.maxVolumeMl, 
         telemetry.batteryPct, 
         DROP_FACTOR, 
-        telemetry.targetMlhr, 
-        telemetry.sessionId
+        telemetry.targetMlhr
     );
     unlockTelemetry();
 

@@ -7,6 +7,7 @@
 static unsigned long lastControlMs = 0;
 static unsigned long lastNoiseCheckMs = 0;
 static unsigned long lastRawEdgesSnapshot = 0;
+static float simulatedFlow = 0.0f; // Stores the smoothed virtual flow rate
 
 void runFlowControlLoop() {
     unsigned long nowMs = millis();
@@ -20,6 +21,7 @@ void runFlowControlLoop() {
 
     // If the FSM is in SETUP or WAITING, disable the motor coils to save power
     if (!running && currentState != STATE_CRITICAL) {
+        simulatedFlow = 0.0f; // Reset simulated flow to 0 when not running
         disableMotor();
         return;
     }
@@ -45,9 +47,51 @@ void runFlowControlLoop() {
     }
 
     // ========================================================
-    // 2. NORMAL RUNNING BEHAVIORS (STABLE or WARNING)
+    // 2. RUNNING BEHAVIORS (STABLE or WARNING)
     // ========================================================
+
+#if SIMULATE_FLOW
+    // --------------------------------------------------------
+    // FLOW RATE SIMULATOR (No physical IR sensor needed)
+    // --------------------------------------------------------
+    float openRatio = 1.0f - ((float)currentClampPos / (float)CLAMP_CLOSED_POS);
+    if (openRatio < 0.0f) openRatio = 0.0f;
+    if (openRatio > 1.0f) openRatio = 1.0f;
+
+    // Flow increases as clamp opens.
+    // At fully open (openRatio=1.0), flow is 1.5x target.
+    // At fully closed (openRatio=0.0), flow is 0.
+    // Non-linear power curve: flow rate increases rapidly with small clamp openings.
+    // Settles at 10% open (clampPos = 540 steps) for the target flow rate.
+    float expectedFlow = targetMlhr * 2.0f * pow(openRatio, 0.3f);
+
+
+    float noise = (float)random(-15, 16) / 10.0f; // Adds random drip noise (-1.5 to +1.5 ml/hr)
+
+    simulatedFlow += (expectedFlow - simulatedFlow) * 0.15f; // Low-pass filter smoothing
+    simulatedFlow += noise;
+    if (simulatedFlow < 0.0f) simulatedFlow = 0.0f;
+
+    lockTelemetry();
+    telemetry.realDropsSeen = true; // Bypasses the initial drop waiting screen
     
+    if (telemetry.forcedBlockage) {
+        telemetry.measuredFlowMlhr = 0.0f;
+    } else {
+        telemetry.measuredFlowMlhr = simulatedFlow;
+    }
+
+    float currentFlow = telemetry.measuredFlowMlhr;
+    bool realSeen = telemetry.realDropsSeen;
+    bool forcedBlock = telemetry.forcedBlockage;
+    float remainingVol = telemetry.volRemainingMl;
+    int battery = telemetry.batteryPct;
+    unlockTelemetry();
+
+#else
+    // --------------------------------------------------------
+    // PHYSICAL HARDWARE SENSOR READINGS
+    // --------------------------------------------------------
     // Noise/Chatter Detection
     if (nowMs - lastNoiseCheckMs >= 2000) {
         unsigned long deltaRaw = rawEdges - lastRawEdgesSnapshot;
@@ -107,11 +151,12 @@ void runFlowControlLoop() {
             return;
         }
     }
+#endif
 
     // --- FSM WARNING/STABLE TRANSITIONS ---
     float error = targetMlhr - currentFlow;
     
-    // Only flag flow deviation warnings if the system has actively started tracking real drops
+    // Only flag flow deviation warnings if the system has actively started tracking real/simulated drops
     bool flowDeviation = realSeen ? (abs(error) > FLOW_TOLERANCE_MLHR) : false;
     bool hasWarningCondition = flowDeviation || (battery < 20) || (remainingVol < 50.0f);
 
@@ -134,15 +179,15 @@ void runFlowControlLoop() {
     if (nowMs - lastControlMs >= CONTROL_INTERVAL_MS) {
         lastControlMs = nowMs;
 
-        // Skip motor movements if no drops have physically been registered yet or target is zero
+        // Skip motor movements if target is zero or we are in a forced blockage
         if (!realSeen || targetMlhr <= 0.0f || forcedBlock) return;
 
         if (error > FLOW_TOLERANCE_MLHR) {
             openClamp(CORRECTION_STEPS);
-            Serial.printf("[CTRL] Flow Low (%.1f < %.1f) -> Opening Clamp\n", currentFlow, targetMlhr);
+            Serial.printf("[CTRL] Flow Low (%.1f < %.1f) -> Opening Clamp (Pos: %d)\n", currentFlow, targetMlhr, telemetry.clampPos);
         } else if (error < -FLOW_TOLERANCE_MLHR) {
             closeClamp(CORRECTION_STEPS);
-            Serial.printf("[CTRL] Flow High (%.1f > %.1f) -> Closing Clamp\n", currentFlow, targetMlhr);
+            Serial.printf("[CTRL] Flow High (%.1f > %.1f) -> Closing Clamp (Pos: %d)\n", currentFlow, targetMlhr, telemetry.clampPos);
         }
     }
 }

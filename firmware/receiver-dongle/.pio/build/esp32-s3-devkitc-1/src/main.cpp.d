@@ -198,4 +198,11 @@
  C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/cores/esp32/Server.h \
  C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFiUdp.h \
  C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/cores/esp32/Udp.h \
- C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_now.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_wifi_types.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_wifi.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_private/esp_wifi_private.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_wifi_crypto_types.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_private/wifi_os_adapter.h \
+ C:/Users/Paarkavi/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32s3/include/esp_wifi/include/esp_wifi_default.h

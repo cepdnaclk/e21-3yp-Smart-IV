@@ -2,11 +2,11 @@
 #include "config.h"
 #include "shared_data.h"
 #include "ir_sensor.h"
-#include "motor.h" // Needed to disable/freeze the motor on pause
+#include "motor.h"
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
 
-// --- PHYSICAL KEYPAD MATRIX DEFINITIONS (From working demo) ---
+// --- PHYSICAL KEYPAD MATRIX DEFINITIONS ---
 char keys[KEYPAD_ROWS][KEYPAD_COLS] = {
   {'1','2','3','A'},
   {'4','5','6','B'},
@@ -14,7 +14,7 @@ char keys[KEYPAD_ROWS][KEYPAD_COLS] = {
   {'*','0','#','D'}
 };
 byte rowPins[4] = {19, 18, 5, 4};
-byte colPins[4] = {17, 16, 14, 13};  // Actually the column wires
+byte colPins[4] = {17, 16, 14, 13}; 
 
 LiquidCrystal_I2C lcd(LCD_ADDR, LCD_COLS, LCD_ROWS);
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, KEYPAD_ROWS, KEYPAD_COLS);
@@ -22,7 +22,6 @@ Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, KEYPAD_ROWS, KEYPAD_C
 static String typedBuffer = "";
 static unsigned long lastLcdUpdateMs = 0;
 
-// --- SETUP STEP ENUM ---
 enum SetupStep {
     STEP_ENTER_BED,
     STEP_ENTER_FLOW,
@@ -31,7 +30,6 @@ enum SetupStep {
 };
 static SetupStep currentSetupStep = STEP_ENTER_BED;
 
-// Since your wiring is standard 1-to-1 now, no translation is needed
 char translateKey(char raw) {
     return raw;
 }
@@ -67,15 +65,15 @@ void startInfusion() {
 
 void pauseInfusion() {
     lockTelemetry();
-    telemetry.running = false;
+    telemetry.running = true;            // Keep running true so the safety clamping loop can execute
     telemetry.measuredFlowMlhr = 0.0f;
-    telemetry.fsmState = STATE_WAITING;
-    strcpy(telemetry.statusText, "WAITING");
+    telemetry.fsmState = STATE_CRITICAL; // Transition to CRITICAL to trigger clamping
+    strcpy(telemetry.statusText, "CRITICAL");
     unlockTelemetry();
     
-    disableMotor(); // Freezes motor immediately
-    Serial.println("[FSM] Transition: RUNNING -> WAITING (Paused)");
+    Serial.println("[FSM] Infusion Paused -> Transitioning to CRITICAL for Safety Pinch");
 }
+
 
 void resumeInfusion() {
     lockTelemetry();
@@ -83,8 +81,6 @@ void resumeInfusion() {
     telemetry.fsmState = STATE_STABLE;
     strcpy(telemetry.statusText, "STABLE");
     unlockTelemetry();
-    
-    // Do NOT clear session volume parameters, just resume counting drops
     Serial.println("[FSM] Transition: WAITING -> STABLE (Resumed)");
 }
 
@@ -99,7 +95,7 @@ void resetToSetup() {
     strcpy(telemetry.statusText, "SETUP");
     unlockTelemetry();
     
-    currentSetupStep = STEP_ENTER_BED; // Reset menu back to Bed ID entry
+    currentSetupStep = STEP_ENTER_BED;
     disableMotor();
     Serial.println("[FSM] Transition: WAITING -> SETUP (New Session)");
 }
@@ -108,16 +104,14 @@ void handleKeypadInput() {
     char raw = keypad.getKey();
     if (!raw) return;
 
-    char key = translateKey(raw);
+    char key = raw;
     Serial.printf("[KEY] Mapped: %c\n", key);
 
     lockTelemetry();
     FsmState currentState = telemetry.fsmState;
     unlockTelemetry();
 
-    // --- STATE MACHINE ROUTING FOR KEYS ---
     if (currentState == STATE_WAITING) {
-        // In WAITING, only accept Resume (C) or New Session / Reset (#)
         if (key == 'C') {
             resumeInfusion();
         } else if (key == '#') {
@@ -127,31 +121,19 @@ void handleKeypadInput() {
     }
 
     if (currentState == STATE_SETUP) {
-        // 1. Handle number inputs
         if (key >= '0' && key <= '9') {
             if (typedBuffer.length() < 6) typedBuffer += key;
             return;
-        } 
-        // 2. Handle All Clear (B)
-        else if (key == 'B') {
+        } else if (key == 'B') {
             typedBuffer = "";
-            return;
-        } 
-        // 3. Handle Backspace (*), but only on entry screens
-        else if (key == '*' && currentSetupStep != STEP_REVIEW) {
-            if (typedBuffer.length() > 0) {
-                typedBuffer.remove(typedBuffer.length() - 1);
-            }
             return;
         }
 
-        // Handle navigation based on the current setup step
         switch (currentSetupStep) {
             case STEP_ENTER_BED:
-                if (key == 'A' && typedBuffer.length() > 0) { // 'A' acts as Next / Enter
+                if (key == 'A' && typedBuffer.length() > 0) {
                     lockTelemetry();
-                    strncpy(telemetry.bedId,typedBuffer.c_str(), sizeof(telemetry.bedId)-1);
-                        telemetry.bedId[sizeof(telemetry.bedId)-1] = '\0';
+                    strncpy(telemetry.bedId, typedBuffer.c_str(), sizeof(telemetry.bedId) - 1);
                     unlockTelemetry();
                     typedBuffer = "";
                     currentSetupStep = STEP_ENTER_FLOW;
@@ -165,7 +147,7 @@ void handleKeypadInput() {
                     unlockTelemetry();
                     typedBuffer = "";
                     currentSetupStep = STEP_ENTER_VOL;
-                } else if (key == 'D') { // Go back (Preload Bed ID)
+                } else if (key == 'D') {
                     lockTelemetry();
                     typedBuffer = String(telemetry.bedId);
                     unlockTelemetry();
@@ -181,7 +163,7 @@ void handleKeypadInput() {
                     unlockTelemetry();
                     typedBuffer = "";
                     currentSetupStep = STEP_REVIEW;
-                } else if (key == 'D') { // Go back (Preload Flow Target)
+                } else if (key == 'D') {
                     lockTelemetry();
                     typedBuffer = String((int)telemetry.targetMlhr);
                     unlockTelemetry();
@@ -190,9 +172,9 @@ void handleKeypadInput() {
                 break;
 
             case STEP_REVIEW:
-                if (key == '*') { // '*' starts the infusion from review screen
+                if (key == '*') {
                     startInfusion();
-                } else if (key == 'D') { // Go back (Preload Bag Volume)
+                } else if (key == 'D') {
                     lockTelemetry();
                     typedBuffer = String((int)telemetry.maxVolumeMl);
                     unlockTelemetry();
@@ -201,35 +183,29 @@ void handleKeypadInput() {
                 break;
         }
     } else {
-        // While Running (STABLE or WARNING):
-        // Pressing STOP (#) pauses it.
         if (key == '#') {
             pauseInfusion();
         }
     }
 }
 
-// Time-based deduction of bag volume
 void updateVolumeTelemetry(unsigned long deltaMs) {
     lockTelemetry();
     bool running = telemetry.running;
     FsmState currentState = telemetry.fsmState;
-    
     if (running && (currentState == STATE_STABLE || currentState == STATE_WARNING)) {
         float dtHr = (float)deltaMs / 3600000.0f;
         telemetry.volRemainingMl -= telemetry.measuredFlowMlhr * dtHr;
-        
         if (telemetry.volRemainingMl <= 0.0f) {
             telemetry.volRemainingMl = 0.0f;
             telemetry.running = false;
-            telemetry.fsmState = STATE_CRITICAL; // Triggers automatic clamping
+            telemetry.fsmState = STATE_CRITICAL;
             strcpy(telemetry.statusText, "CRITICAL");
         }
     }
     unlockTelemetry();
 }
 
-// Helper to write lines to LiquidCrystal screen
 void printLcdLine(uint8_t row, String text) {
     lcd.setCursor(0, row);
     while (text.length() < LCD_COLS) text += " ";
@@ -252,47 +228,44 @@ void updateUI() {
     unlockTelemetry();
 
     if (currentState == STATE_SETUP) {
-        // Step-by-Step Setup layout
         switch (currentSetupStep) {
             case STEP_ENTER_BED:
                 printLcdLine(0, "--- SETUP MENU ---");
                 printLcdLine(1, "Enter Bed ID:");
                 printLcdLine(2, "[" + typedBuffer + "]");
-                printLcdLine(3, "A:Next *:Del B:Clr");
+                printLcdLine(3, "F1=Next  F2=Clear");
                 break;
 
             case STEP_ENTER_FLOW:
                 printLcdLine(0, "--- SETUP MENU ---");
                 printLcdLine(1, "Enter Flow Rate:");
                 printLcdLine(2, "[" + typedBuffer + "] ml/hr");
-                printLcdLine(3, "A:Next *:Del D:Bck");
+                printLcdLine(3, "F1=Next F4=Back");
                 break;
 
             case STEP_ENTER_VOL:
                 printLcdLine(0, "--- SETUP MENU ---");
                 printLcdLine(1, "Enter Bag Volume:");
                 printLcdLine(2, "[" + typedBuffer + "] ml");
-                printLcdLine(3, "A:Next *:Del D:Bck");
+                printLcdLine(3, "F1=Next F4=Back");
                 break;
 
             case STEP_REVIEW:
                 printLcdLine(0, "Review Setup:");
                 printLcdLine(1, "Bed:" + bed + " Rate:" + String(target, 0) + "ml/h");
                 printLcdLine(2, "Bag Vol: " + String(maxVol, 0) + " ml");
-                printLcdLine(3, "*:Start D:Edit");
+                printLcdLine(3, "*=Start F4=Edit");
                 break;
         }
     } else {
-        // Normal Running / Anomaly screen layout
         String line0 = "Bed " + bed + " " + status;
         String line1 = "T:" + String(target, 0) + " F:" + String(flow, 1);
         String line2 = "Vol:" + String(volRem, 1) + "ml";
-        
         String line3;
         if (currentState == STATE_WAITING) {
-            line3 = "C:Res  #:NewInf";
+            line3 = "F3=Res STOP=New";
         } else {
-            line3 = "#:Pause";
+            line3 = "STOP=Pause";
         }
         
         printLcdLine(0, line0);

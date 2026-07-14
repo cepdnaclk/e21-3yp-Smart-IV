@@ -25,11 +25,11 @@ static uint8_t RECEIVER_MAC[6] = {0xAC, 0xA7, 0x04, 0x27, 0xB8, 0x38};
 #define PIN_EN 27
 
 // Stepper Motor Limits & Constants
-#define DIR_CLOSE_LEVEL LOW
+#define DIR_CLOSE_LEVEL HIGH
 #define DIR_OPEN_LEVEL (!DIR_CLOSE_LEVEL)
 #define CLAMP_OPEN_POS 0
 #define CLAMP_CLOSED_POS 600
-#define CORRECTION_STEPS 35
+#define CORRECTION_STEPS 5
 #define STEP_DELAY_US 650
 #define CONTROL_INTERVAL_MS 1800
 #define FLOW_TOLERANCE_MLHR 8.0f
@@ -38,5 +38,7 @@ static uint8_t RECEIVER_MAC[6] = {0xAC, 0xA7, 0x04, 0x27, 0xB8, 0x38};
 #define PIN_IR 34  // GPIO 34 (requires external 10k pull-up resistor)
 #define BLOCKAGE_TIMEOUT_MS 12000UL
 #define DROP_FACTOR 20   // drops per mL
+
+#define SIMULATE_FLOW 1  // 1 = Simulation mode, 0 = Real physical sensor mode
 
 #endif
