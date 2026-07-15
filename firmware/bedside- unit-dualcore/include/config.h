@@ -39,6 +39,6 @@ static uint8_t RECEIVER_MAC[6] = {0xAC, 0xA7, 0x04, 0x27, 0xB8, 0x38};
 #define BLOCKAGE_TIMEOUT_MS 12000UL
 #define DROP_FACTOR 20   // drops per mL
 
-#define SIMULATE_FLOW 1  // 1 = Simulation mode, 0 = Real physical sensor mode
+#define SIMULATE_FLOW 0  // 1 = Simulation mode, 0 = Real physical sensor mode
 
 #endif

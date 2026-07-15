@@ -16,7 +16,7 @@ void vControlTask(void *pvParameters) {
 
     for (;;) {
         // 1. Poll the IR sensor very fast to detect drops
-        //pollIRSensor();
+        pollIRSensor();
 
         // 2. Run the PID FSM flow rate clamp calculations
         runFlowControlLoop();

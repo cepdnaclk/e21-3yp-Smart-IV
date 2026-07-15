@@ -97,12 +97,14 @@ void runFlowControlLoop() {
         unsigned long deltaRaw = rawEdges - lastRawEdgesSnapshot;
         lastRawEdgesSnapshot = rawEdges;
         lastNoiseCheckMs = nowMs;
+        lockTelemetry();
         if (deltaRaw > 25) {
-            lockTelemetry();
             telemetry.sensorNoisy = true;
-            unlockTelemetry();
-            Serial.println("[WARNING] High electrical noise detected on sensor line!");
+            Serial.printf("[WARNING] High electrical noise detected on sensor line! (deltaRaw=%lu)\n", deltaRaw);
+        } else {
+            telemetry.sensorNoisy = false;
         }
+        unlockTelemetry();
     }
 
     // Convert raw sensor drop interval (EMA) to actual flow rate
@@ -179,15 +181,39 @@ void runFlowControlLoop() {
     if (nowMs - lastControlMs >= CONTROL_INTERVAL_MS) {
         lastControlMs = nowMs;
 
+        // If we haven't seen real drops yet, slowly open the clamp to initiate flow
+        if (!realSeen) {
+            if (targetMlhr > 0.0f && !forcedBlock) {
+                openClamp(CORRECTION_STEPS);
+                
+                lockTelemetry();
+                int currentPos = telemetry.clampPos;
+                unlockTelemetry();
+                
+                Serial.printf("[CTRL] Initializing flow: Opening clamp to Pos: %d\n", currentPos);
+            }
+            return;
+        }
+
         // Skip motor movements if target is zero or we are in a forced blockage
-        if (!realSeen || targetMlhr <= 0.0f || forcedBlock) return;
+        if (targetMlhr <= 0.0f || forcedBlock) return;
 
         if (error > FLOW_TOLERANCE_MLHR) {
             openClamp(CORRECTION_STEPS);
-            Serial.printf("[CTRL] Flow Low (%.1f < %.1f) -> Opening Clamp (Pos: %d)\n", currentFlow, targetMlhr, telemetry.clampPos);
+            
+            lockTelemetry();
+            int currentPos = telemetry.clampPos;
+            unlockTelemetry();
+            
+            Serial.printf("[CTRL] Flow Low (%.1f < %.1f) -> Opening Clamp (Pos: %d)\n", currentFlow, targetMlhr, currentPos);
         } else if (error < -FLOW_TOLERANCE_MLHR) {
             closeClamp(CORRECTION_STEPS);
-            Serial.printf("[CTRL] Flow High (%.1f > %.1f) -> Closing Clamp (Pos: %d)\n", currentFlow, targetMlhr, telemetry.clampPos);
+            
+            lockTelemetry();
+            int currentPos = telemetry.clampPos;
+            unlockTelemetry();
+            
+            Serial.printf("[CTRL] Flow High (%.1f > %.1f) -> Closing Clamp (Pos: %d)\n", currentFlow, targetMlhr, currentPos);
         }
     }
 }

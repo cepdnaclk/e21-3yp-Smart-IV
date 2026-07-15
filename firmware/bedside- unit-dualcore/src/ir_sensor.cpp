@@ -66,4 +66,7 @@ void resetIRStats() {
     rawEdges = 0;
     isrLastAcceptedUs = 0;
     irWasActive = false;
+
+    // Re-calibrate baseline state when the session starts (user presses start)
+    irIdleLevel = digitalRead(PIN_IR);
 }
