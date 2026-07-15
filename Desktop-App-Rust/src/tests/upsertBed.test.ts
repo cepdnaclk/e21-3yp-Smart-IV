@@ -4,6 +4,58 @@ import { BedPacket } from '../types';
 
 describe('useBedsStore.upsertBed', () => {
 
+  test('updates one bed without modifying an unrelated bed', () => {
+    useBedsStore.getState().upsertBed({
+      bedId: '12',
+      sessionId: 'sess-12',
+      flowRate: 60,
+      volRemaining: 300,
+      maxVolume: 500,
+      targetMlhr: 60,
+      battery: 90,
+      status: 'STABLE',
+      dropFactor: 20,
+      patientName: 'Patient A',
+      ward: 'Ward A'
+    });
+
+    useBedsStore.getState().upsertBed({
+      bedId: '13',
+      sessionId: 'sess-13',
+      flowRate: 45,
+      volRemaining: 250,
+      maxVolume: 500,
+      targetMlhr: 45,
+      battery: 80,
+      status: 'STABLE',
+      dropFactor: 20,
+      patientName: 'Patient B',
+      ward: 'Ward B'
+    });
+
+    useBedsStore.getState().upsertBed({
+      bedId: '12',
+      sessionId: 'sess-12',
+      flowRate: 75,
+      volRemaining: 280,
+      maxVolume: 500,
+      targetMlhr: 60,
+      battery: 88,
+      status: 'STABLE',
+      dropFactor: 20
+    });
+
+    const state = useBedsStore.getState();
+
+    expect(state.beds['12'].flowRate).toBe(75);
+
+    expect(state.beds['13'].flowRate).toBe(45);
+    expect(state.beds['13'].patientName).toBe('Patient B');
+    expect(state.beds['13'].ward).toBe('Ward B');
+
+    expect(Object.keys(state.beds)).toHaveLength(2);
+  });
+
   beforeEach(() => {
     // Reset Zustand store to default/empty state before each test
     useBedsStore.setState({ beds: {} });
