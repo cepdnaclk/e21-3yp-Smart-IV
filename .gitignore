@@ -5,3 +5,25 @@ vs_buildtools.exe
 full_conversation_history.md
 docs/history.html
 docs/history.md
+
+# PlatformIO build and workspace directories
+.pio/
+.pioenvs/
+.piolibdeps/
+.clang_complete
+.gcc-flags.json
+
+# VS Code workspaces
+.vscode/
+
+# Node.js
+node_modules/
+
+# Rust Target build outputs
+**/target/
+
+# SQLite databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
