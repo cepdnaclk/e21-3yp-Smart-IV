@@ -148,6 +148,7 @@ void runFlowControlLoop() {
             lockTelemetry();
             telemetry.fsmState = STATE_CRITICAL;
             strcpy(telemetry.statusText, "CRITICAL");
+            telemetry.forcedBlockage = true; // Set flag to persist blockage state
             unlockTelemetry();
             Serial.println("[FSM] Fluid Interruption Detected! Transition -> CRITICAL");
             return;

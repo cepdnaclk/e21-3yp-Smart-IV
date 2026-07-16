@@ -50,12 +50,10 @@ void transmitTelemetry() {
 
     // Map internal FSM state to Tauri expected status string
     const char *tauriStatus = "STABLE";
-    if (state == STATE_CRITICAL) {
-        if (volRemaining <= 0.1f) {
-            tauriStatus = "EMPTY_BAG";
-        } else {
-            tauriStatus = "BLOCKAGE";
-        }
+    if (volRemaining <= 1.0f) {
+        tauriStatus = "EMPTY_BAG";
+    } else if (telemetry.forcedBlockage) {
+        tauriStatus = "BLOCKAGE";
     } else {
         tauriStatus = "STABLE";
     }
