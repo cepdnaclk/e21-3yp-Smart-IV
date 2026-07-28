@@ -79,8 +79,10 @@ void resumeInfusion() {
     lockTelemetry();
     telemetry.running = true;
     telemetry.fsmState = STATE_STABLE;
+    telemetry.forcedBlockage = false; // Reset the blockage flag to allow flow
     strcpy(telemetry.statusText, "STABLE");
     unlockTelemetry();
+    resetIRStats(); // Clear stale IR timer intervals
     Serial.println("[FSM] Transition: WAITING -> STABLE (Resumed)");
 }
 
@@ -112,7 +114,7 @@ void handleKeypadInput() {
     unlockTelemetry();
 
     if (currentState == STATE_WAITING) {
-        if (key == 'C') {
+        if (key == '*') {
             resumeInfusion();
         } else if (key == '#') {
             resetToSetup();
@@ -263,7 +265,7 @@ void updateUI() {
         String line2 = "Vol:" + String(volRem, 1) + "ml";
         String line3;
         if (currentState == STATE_WAITING) {
-            line3 = "F3=Res STOP=New";
+            line3 = "*=Res STOP=New";
         } else {
             line3 = "STOP=Pause";
         }
