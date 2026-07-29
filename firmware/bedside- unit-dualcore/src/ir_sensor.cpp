@@ -59,7 +59,7 @@ void pollIRSensor() {
 }
 
 void resetIRStats() {
-    lastAcceptedDropMs = 0;
+    lastAcceptedDropMs = millis();
     acceptedDrops = 0;
     emaIntervalUs = 0;
     hasInterval = false;

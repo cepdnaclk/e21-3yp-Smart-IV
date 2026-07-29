@@ -79,6 +79,7 @@ void resumeInfusion() {
     lockTelemetry();
     telemetry.running = true;
     telemetry.fsmState = STATE_STABLE;
+    telemetry.realDropsSeen = false; 
     telemetry.forcedBlockage = false; // Reset the blockage flag to allow flow
     strcpy(telemetry.statusText, "STABLE");
     unlockTelemetry();
@@ -113,7 +114,7 @@ void handleKeypadInput() {
     FsmState currentState = telemetry.fsmState;
     unlockTelemetry();
 
-    if (currentState == STATE_WAITING) {
+    if (currentState == STATE_WAITING || currentState == STATE_CRITICAL) {
         if (key == '*') {
             resumeInfusion();
         } else if (key == '#') {

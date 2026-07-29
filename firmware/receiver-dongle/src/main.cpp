@@ -9,7 +9,7 @@
 
 // Set this to 'true' only if you are testing manually in the serial monitor.
 // KEEP IT 'false' when connecting to the Tauri desktop app.
-static const bool DEBUG_LOGS = false; 
+static const bool DEBUG_LOGS = true; 
 static constexpr uint8_t ESPNOW_CHANNEL = 1;
 static constexpr uint16_t MAX_JSON_LEN = 240;
 
