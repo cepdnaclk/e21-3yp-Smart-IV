@@ -245,23 +245,23 @@ void updateUI() {
     if (currentState == STATE_SETUP) {
         switch (currentSetupStep) {
             case STEP_ENTER_BED:
-                printLcdLine(0, "--- SETUP MENU ---");
+                printLcdLine(0, "-- SETUP MENU --");
                 printLcdLine(1, "Enter Bed ID:");
-                printLcdLine(2, "[" + typedBuffer + "]");
-                printLcdLine(3, "F1=Next  F2=Clear");
+                printLcdLine(2, "     [" + typedBuffer + "]"); // Centered with 6 spaces
+                printLcdLine(3, "F1=Next F2=Clear");
                 break;
 
             case STEP_ENTER_FLOW:
-                printLcdLine(0, "--- SETUP MENU ---");
+                printLcdLine(0, "-- SETUP MENU --");
                 printLcdLine(1, "Enter Flow Rate:");
-                printLcdLine(2, "[" + typedBuffer + "] ml/hr");
+                printLcdLine(2, "   [" + typedBuffer + "] ml/hr"); // Centered with 3 spaces
                 printLcdLine(3, "F1=Next F4=Back");
                 break;
 
             case STEP_ENTER_VOL:
-                printLcdLine(0, "--- SETUP MENU ---");
+                printLcdLine(0, "-- SETUP MENU --");
                 printLcdLine(1, "Enter Bag Volume:");
-                printLcdLine(2, "[" + typedBuffer + "] ml");
+                printLcdLine(2, "   [" + typedBuffer + "] ml"); // Centered with 3 spaces
                 printLcdLine(3, "F1=Next F4=Back");
                 break;
 
@@ -269,7 +269,7 @@ void updateUI() {
                 printLcdLine(0, "Review Setup:");
                 printLcdLine(1, "Bed:" + bed + " Rate:" + String(target, 0) + "ml/h");
                 printLcdLine(2, "Bag Vol: " + String(maxVol, 0) + " ml");
-                printLcdLine(3, "*=Start F4=Edit");
+                printLcdLine(3, "Start   F4=Edit");
                 break;
         }
     } else {
