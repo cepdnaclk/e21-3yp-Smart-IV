@@ -209,11 +209,23 @@ void updateVolumeTelemetry(unsigned long deltaMs) {
     unlockTelemetry();
 }
 
-void printLcdLine(uint8_t row, String text) {
+/*void printLcdLine(uint8_t row, String text) {
     lcd.setCursor(0, row);
     while (text.length() < LCD_COLS) text += " ";
     lcd.print(text.substring(0, LCD_COLS));
+}*/
+
+void printLcdLine(uint8_t row, String text) {
+    // Compensate for the LiquidCrystal_I2C library's hardcoded +4 column offset on Row 2 & 3
+    if (row == 2 || row == 3) {
+        lcd.setCursor(252, row); // 252 underflows the 8-bit column to move back by 4 columns (0 - 4)
+    } else {
+        lcd.setCursor(0, row);
+    }
+    while (text.length() < LCD_COLS) text += " ";
+    lcd.print(text.substring(0, LCD_COLS));
 }
+
 
 void updateUI() {
     unsigned long now = millis();
