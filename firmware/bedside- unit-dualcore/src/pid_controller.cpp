@@ -199,22 +199,26 @@ void runFlowControlLoop() {
         // Skip motor movements if target is zero or we are in a forced blockage
         if (targetMlhr <= 0.0f || forcedBlock) return;
 
-        if (error > FLOW_TOLERANCE_MLHR) {
-            openClamp(CORRECTION_STEPS);
+                float absError = abs(error);
+        if (absError > FLOW_TOLERANCE_MLHR) {
+            // Calculate step size proportional to error size (cap at 6 steps max)
+            int steps = (int)(absError / 20.0f) + 1;
+            if (steps > 6) steps = 6; 
             
-            lockTelemetry();
-            int currentPos = telemetry.clampPos;
-            unlockTelemetry();
-            
-            Serial.printf("[CTRL] Flow Low (%.1f < %.1f) -> Opening Clamp (Pos: %d)\n", currentFlow, targetMlhr, currentPos);
-        } else if (error < -FLOW_TOLERANCE_MLHR) {
-            closeClamp(CORRECTION_STEPS);
-            
-            lockTelemetry();
-            int currentPos = telemetry.clampPos;
-            unlockTelemetry();
-            
-            Serial.printf("[CTRL] Flow High (%.1f > %.1f) -> Closing Clamp (Pos: %d)\n", currentFlow, targetMlhr, currentPos);
+            if (error > 0.0f) {
+                openClamp(steps);
+                lockTelemetry();
+                int currentPos = telemetry.clampPos;
+                unlockTelemetry();
+                Serial.printf("[CTRL] Flow Low (%.1f < %.1f) -> Opening Clamp (%d steps, Pos: %d)\n", currentFlow, targetMlhr, steps, currentPos);
+            } else {
+                closeClamp(steps);
+                lockTelemetry();
+                int currentPos = telemetry.clampPos;
+                unlockTelemetry();
+                Serial.printf("[CTRL] Flow High (%.1f > %.1f) -> Closing Clamp (%d steps, Pos: %d)\n", currentFlow, targetMlhr, steps, currentPos);
+            }
         }
+
     }
 }
