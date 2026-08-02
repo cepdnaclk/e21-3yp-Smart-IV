@@ -54,6 +54,8 @@ void transmitTelemetry() {
         tauriStatus = "EMPTY_BAG";
     } else if (telemetry.forcedBlockage) {
         tauriStatus = "BLOCKAGE";
+    } else if (state == STATE_WARNING) {
+        tauriStatus = "WARNING";
     } else {
         tauriStatus = "STABLE";
     }
