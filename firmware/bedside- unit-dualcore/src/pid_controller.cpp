@@ -158,9 +158,13 @@ void runFlowControlLoop() {
 
     // --- FSM WARNING/STABLE TRANSITIONS ---
     float error = targetMlhr - currentFlow;
+
+    // Step-wise tolerance: 10 mL/hr for rates >= 150 mL/hr, otherwise 5 mL/hr
+    float dynamicTolerance = (targetMlhr >= 150.0f) ? 10.0f : 5.0f;
     
     // Only flag flow deviation warnings if the system has actively started tracking real/simulated drops
-    bool flowDeviation = realSeen ? (abs(error) > FLOW_TOLERANCE_MLHR) : false;
+    //bool flowDeviation = realSeen ? (abs(error) > FLOW_TOLERANCE_MLHR) : false;
+    bool flowDeviation = realSeen ? (abs(error) > dynamicTolerance) : false;
     bool hasWarningCondition = flowDeviation || (battery < 20) || (remainingVol < 50.0f);
 
     if (currentState == STATE_STABLE && hasWarningCondition) {
@@ -198,9 +202,11 @@ void runFlowControlLoop() {
 
         // Skip motor movements if target is zero or we are in a forced blockage
         if (targetMlhr <= 0.0f || forcedBlock) return;
+        // Step-wise tolerance: 10 mL/hr for rates >= 150 mL/hr, otherwise 5 mL/hr
+        float dynamicTolerance = (targetMlhr >= 150.0f) ? 10.0f : 5.0f;
 
-                float absError = abs(error);
-        if (absError > FLOW_TOLERANCE_MLHR) {
+        float absError = abs(error);
+        if (absError > dynamicTolerance) {
             // Calculate step size proportional to error size (cap at 6 steps max)
             int steps = (int)(absError / 20.0f) + 1;
             if (steps > 6) steps = 6; 

@@ -48,8 +48,9 @@ function BatteryBar({ pct }: { pct: number }) {
 export default function BedCard({ bed, onClick }: BedCardProps) {
   const volPct = bed.maxVolume > 0 ? (bed.volRemaining / bed.maxVolume) * 100 : 0;
   const isLowVol = volPct < 20;
-  const flowDiff = bed.flowRate - bed.targetMlhr;
-  const flowOk = Math.abs(flowDiff) < 5;
+  const flowDiff = Math.abs(bed.flowRate - bed.targetMlhr);
+  const dynamicTolerance = bed.targetMlhr >= 150 ? 10 : 5;
+  const flowOk = flowDiff <= dynamicTolerance;
 
   return (
     <div
