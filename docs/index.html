@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* ===== CSS VARIABLES ===== */
+
         :root {
             --primary: #0B6AFF;
             --primary-dark: #0047CC;
@@ -83,6 +84,14 @@
         }
 
         /* ===== UTILITIES ===== */
+        /* Offset anchor scrolling for fixed navbar */
+section[id] {
+    scroll-margin-top: 90px;
+}
+
+#hero {
+    scroll-margin-top: 0;
+}
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -4514,46 +4523,54 @@ District General Hospital Ampara
 
 
     // ============================================================
-    // SMOOTH SCROLL FOR NAVIGATION LINKS
-    // ============================================================
+// SMOOTH SCROLL FOR NAVIGATION LINKS
+// Accounts for the fixed navbar
+// ============================================================
 
-    document
-        .querySelectorAll('a[href^="#"]')
-        .forEach(anchor => {
+document
+    .querySelectorAll('a[href^="#"]')
+    .forEach(anchor => {
 
-            anchor.addEventListener(
-                'click',
-                event => {
+        anchor.addEventListener('click', event => {
 
-                    const href =
-                        anchor.getAttribute('href');
+            const href = anchor.getAttribute('href');
 
+            if (!href || href === '#') {
+                return;
+            }
 
-                    if (
-                        !href ||
-                        href === '#'
-                    ) {
-                        return;
-                    }
+            const target = document.querySelector(href);
 
+            if (!target) {
+                return;
+            }
 
-                    const target =
-                        document.querySelector(href);
+            event.preventDefault();
 
+            // Home should go exactly to the top
+            if (href === '#hero') {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return;
+            }
 
-                    if (target) {
+            // Navbar is fixed, so leave space for it.
+            // 80px gives enough room in both normal and scrolled states.
+            const navbarOffset = 80;
 
-                        event.preventDefault();
+            const targetPosition =
+                target.getBoundingClientRect().top +
+                window.scrollY -
+                navbarOffset;
 
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }
-            );
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
         });
-
+    });
 
     // ============================================================
     // COPY SHA HASH
