@@ -3333,145 +3333,433 @@ District General Hospital Ampara
         </div>
     </section>
 
-    <!-- ===== GALLERY & ACHIEVEMENTS ===== -->
-    <section id="gallery" class="section-pad" style="background:white;">
-        <div class="container">
-            <div class="section-title center fade-up">
-                <div class="tag">Gallery</div>
-                <h2>Project Journey & Achievements</h2>
-                <p>A visual log of our prototyping phases and competition highlights.</p>
+   <!-- ===== GALLERY & ACHIEVEMENTS ===== -->
+<section id="gallery" class="section-pad" style="background:white;">
+    <div class="container">
+
+        <div class="section-title center fade-up">
+            <div class="tag">Gallery</div>
+            <h2>Project Journey & Achievements</h2>
+            <p>A visual log of our prototyping phases and competition highlights.</p>
+        </div>
+
+        <!-- ===== SMART IV JOURNEY ===== -->
+        <div class="gallery-subtitle fade-up">Our journey with Smart IV</div>
+
+        <div class="slideshow-container fade-up" id="gallery-journey">
+
+            <div class="slideshow-main" onclick="openLightbox('journey')">
+
+                <img
+                    src="images/photolog/1.png"
+                    alt="Journey with Smart IV"
+                    id="main-img-journey">
+
+                <div
+                    class="slideshow-nav prev"
+                    onclick="event.stopPropagation(); changeSlide('journey', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+
+                <div
+                    class="slideshow-nav next"
+                    onclick="event.stopPropagation(); changeSlide('journey', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
             </div>
 
-            <div class="gallery-subtitle fade-up">Our journey with Smart IV</div>
-            <div class="slideshow-container fade-up" id="gallery-journey">
-                <div class="slideshow-main" onclick="openLightbox('journey')">
-                    <img src="images/photolog/1.png" alt="Journey with Smart IV" id="main-img-journey">
-                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('journey', -1)"><i
-                            class="fas fa-chevron-left"></i></div>
-                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('journey', 1)"><i
-                            class="fas fa-chevron-right"></i></div>
-                </div>
-                <div class="slideshow-thumbs" id="thumbs-journey">
-                    <div class="slideshow-thumb active" onclick="setSlide('journey', 0)">
-                        <img src="images/photolog/1.png" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 1)">
-                        <img src="images/photolog/1.jpg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 2)">
-                        <img src="images/photolog/2.jpg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 3)">
-                        <img src="images/photolog/3.jpg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 4)">
-                        <img src="images/photolog/4.jpeg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 5)">
-                        <img src="images/photolog/5.jpg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 6)">
-                        <img src="images/photolog/6.jpg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 7)">
-                        <img src="images/photolog/7.jpeg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 8)">
-                        <img src="images/photolog/8.jpeg" alt="Thumb" loading="lazy">
-                    </div>
-                    <div class="slideshow-thumb" onclick="setSlide('journey', 8)">
-                        <img src="images/photolog/9.jpeg" alt="Thumb" loading="lazy">
-                    </div>
-                </div>
-            </div>
+            <div class="slideshow-thumbs" id="thumbs-journey">
 
-            <div class="gallery-subtitle fade-up">Winner - SLASSCOM National Ingenuity Awards 2026</div>
-            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
-                Winner of the National Ingenuity Awards 2026 for the Best Innovative Product (University Category -
-                Central Province) organized by SLASSCOM.</p>
-            <div class="slideshow-container fade-up" style="margin-bottom:48px;" id="gallery-slasscom">
-                <div class="slideshow-main" onclick="openLightbox('slasscom')">
-                    <img src="images/slasscom/1.jpeg" alt="SLASSCOM Award Ceremony" id="main-img-slasscom">
-                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('slasscom', -1)">
-                        <i class="fas fa-chevron-left"></i>
-                    </div>
-                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('slasscom', 1)"><i
-                            class="fas fa-chevron-right"></i></div>
+                <div
+                    class="slideshow-thumb active"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/1.png"
+                        alt="Smart IV Journey"
+                        loading="lazy">
                 </div>
-                <div class="slideshow-thumbs" id="thumbs-slasscom">
-                    <div class="slideshow-thumb active" onclick="setSlide('slasscom', 0)"><img
-                            src="images/slasscom/1.jpeg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 0)"><img
-                            src="images/slasscom/2.jpg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 1)"><img src="images/slasscom/3.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 2)"><img src="images/slasscom/4.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('slasscom', 3)"><img src="images/slasscom/1.1.jpeg"
-                            alt="Thumb" loading="lazy"></div>
-                </div>
-            </div>
 
-            <div class="gallery-subtitle fade-up">1st Runner Up - NetX IoT Challenge 2026</div>
-            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
-                1st Runner Up of the NetX IoT Challenge 2026 organized by IEEE Student Branch and ComSoc of University of Sri Jayewardenepura.</p>
-            <div class="slideshow-container fade-up" style="margin-bottom:48px;" id="gallery-netx">
-                <div class="slideshow-main" onclick="openLightbox('netx')">
-                    <img src="images/netx/1.jpeg" alt="NetX" id="main-img-netx">
-                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('netx', -1)">
-                        <i class="fas fa-chevron-left"></i>
-                    </div>
-                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('netx', 1)"><i
-                            class="fas fa-chevron-right"></i></div>
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/1.jpg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
                 </div>
-                <div class="slideshow-thumbs" id="thumbs-netx">
-                    <div class="slideshow-thumb active" onclick="setSlide('netx', 0)"><img
-                            src="images/netx/1.jpg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('netx', 1)"><img src="images/netx/2.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('netx', 2)"><img src="images/netx/3.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('netx', 3)"><img src="images/netx/4.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('netx', 4)"><img src="images/netx/5.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('netx', 5)"><img src="images/netx/6.jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('netx', 6)"><img src="images/netx/7.jpeg"
-                            alt="Thumb" loading="lazy"></div>
 
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/2.jpg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
                 </div>
-            </div>
 
-            <div class="gallery-subtitle fade-up">Finalist - SLIoT Challenge 2026</div>
-            <p class="fade-up" style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
-                Finalists in the SLIoT Challenge 2026 organized by IESL Student Branch and CSE department of University of Moratuwa along with SLT-Mobitel.</p>
-            <div class="slideshow-container fade-up" style="margin-bottom:0;" id="gallery-sliot">
-                <div class="slideshow-main" onclick="openLightbox('sliot')">
-                    <img src="images/sliot/pic (1).jpg" alt="SLIoT Challenge Finalists" id="main-img-sliot">
-                    <div class="slideshow-nav prev" onclick="event.stopPropagation(); changeSlide('sliot', -1)">
-                        <i class="fas fa-chevron-left"></i>
-                    </div>
-                    <div class="slideshow-nav next" onclick="event.stopPropagation(); changeSlide('sliot', 1)"><i
-                            class="fas fa-chevron-right"></i></div>
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/3.jpg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
                 </div>
-                <div class="slideshow-thumbs" id="thumbs-sliot">
-                    <div class="slideshow-thumb active" onclick="setSlide('sliot', 0)"><img
-                            src="images/sliot/pic (1).jpg" alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('sliot', 1)"><img src="images/sliot/pic (1).jpeg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('sliot', 2)"><img src="images/sliot/pic (2).jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('sliot', 3)"><img src="images/sliot/pic (3).jpg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('sliot', 4)"><img src="images/sliot/pic (3).jpeg"
-                            alt="Thumb" loading="lazy"></div>
-                    <div class="slideshow-thumb" onclick="setSlide('sliot', 5)"><img src="images/sliot/pic (4).jpeg"
-                            alt="Thumb" loading="lazy"></div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/4.jpeg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
                 </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/5.jpg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/6.jpg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/7.jpeg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/8.jpeg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('journey', this)">
+                    <img
+                        src="images/photolog/9.jpeg"
+                        alt="Smart IV Journey"
+                        loading="lazy">
+                </div>
+
             </div>
         </div>
-    </section>
+
+
+        <!-- ===== SLASSCOM ===== -->
+        <div class="gallery-subtitle fade-up">
+            Winner - SLASSCOM National Ingenuity Awards 2026
+        </div>
+
+        <p
+            class="fade-up"
+            style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
+            Winner of the National Ingenuity Awards 2026 for the Best Innovative Product
+            (University Category - Central Province) organized by SLASSCOM.
+        </p>
+
+        <div
+            class="slideshow-container fade-up"
+            style="margin-bottom:48px;"
+            id="gallery-slasscom">
+
+            <div class="slideshow-main" onclick="openLightbox('slasscom')">
+
+                <img
+                    src="images/slasscom/1.jpeg"
+                    alt="SLASSCOM Award Ceremony"
+                    id="main-img-slasscom">
+
+                <div
+                    class="slideshow-nav prev"
+                    onclick="event.stopPropagation(); changeSlide('slasscom', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+
+                <div
+                    class="slideshow-nav next"
+                    onclick="event.stopPropagation(); changeSlide('slasscom', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
+            </div>
+
+            <div class="slideshow-thumbs" id="thumbs-slasscom">
+
+                <div
+                    class="slideshow-thumb active"
+                    onclick="setSlideFromThumb('slasscom', this)">
+                    <img
+                        src="images/slasscom/1.jpeg"
+                        alt="SLASSCOM Award Ceremony"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('slasscom', this)">
+                    <img
+                        src="images/slasscom/2.jpg"
+                        alt="SLASSCOM Award Ceremony"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('slasscom', this)">
+                    <img
+                        src="images/slasscom/3.jpg"
+                        alt="SLASSCOM Award Ceremony"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('slasscom', this)">
+                    <img
+                        src="images/slasscom/4.jpg"
+                        alt="SLASSCOM Award Ceremony"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('slasscom', this)">
+                    <img
+                        src="images/slasscom/1.1.jpeg"
+                        alt="SLASSCOM Award Ceremony"
+                        loading="lazy">
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ===== NETX ===== -->
+        <div class="gallery-subtitle fade-up">
+            1st Runner Up - NetX IoT Challenge 2026
+        </div>
+
+        <p
+            class="fade-up"
+            style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
+            1st Runner Up of the NetX IoT Challenge 2026 organized by IEEE Student Branch
+            and ComSoc of University of Sri Jayewardenepura.
+        </p>
+
+        <div
+            class="slideshow-container fade-up"
+            style="margin-bottom:48px;"
+            id="gallery-netx">
+
+            <div class="slideshow-main" onclick="openLightbox('netx')">
+
+                <img
+                    src="images/netx/1.jpg"
+                    alt="NetX IoT Challenge"
+                    id="main-img-netx">
+
+                <div
+                    class="slideshow-nav prev"
+                    onclick="event.stopPropagation(); changeSlide('netx', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+
+                <div
+                    class="slideshow-nav next"
+                    onclick="event.stopPropagation(); changeSlide('netx', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
+            </div>
+
+            <div class="slideshow-thumbs" id="thumbs-netx">
+
+                <div
+                    class="slideshow-thumb active"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/1.jpg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/2.jpg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/3.jpg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/4.jpg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/5.jpg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/6.jpg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('netx', this)">
+                    <img
+                        src="images/netx/7.jpeg"
+                        alt="NetX IoT Challenge"
+                        loading="lazy">
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ===== SLIoT ===== -->
+        <div class="gallery-subtitle fade-up">
+            Finalist - SLIoT Challenge 2026
+        </div>
+
+        <p
+            class="fade-up"
+            style="color:var(--text-light); margin-top:-12px; margin-bottom:20px; font-size:14px;">
+            Finalists in the SLIoT Challenge 2026 organized by IESL Student Branch and
+            CSE department of University of Moratuwa along with SLT-Mobitel.
+        </p>
+
+        <div
+            class="slideshow-container fade-up"
+            style="margin-bottom:0;"
+            id="gallery-sliot">
+
+            <div class="slideshow-main" onclick="openLightbox('sliot')">
+
+                <img
+                    src="images/sliot/pic (1).jpg"
+                    alt="SLIoT Challenge Finalists"
+                    id="main-img-sliot">
+
+                <div
+                    class="slideshow-nav prev"
+                    onclick="event.stopPropagation(); changeSlide('sliot', -1)">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+
+                <div
+                    class="slideshow-nav next"
+                    onclick="event.stopPropagation(); changeSlide('sliot', 1)">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
+            </div>
+
+            <div class="slideshow-thumbs" id="thumbs-sliot">
+
+                <div
+                    class="slideshow-thumb active"
+                    onclick="setSlideFromThumb('sliot', this)">
+                    <img
+                        src="images/sliot/pic (1).jpg"
+                        alt="SLIoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('sliot', this)">
+                    <img
+                        src="images/sliot/pic (1).jpeg"
+                        alt="SLIoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('sliot', this)">
+                    <img
+                        src="images/sliot/pic (2).jpg"
+                        alt="SLIoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('sliot', this)">
+                    <img
+                        src="images/sliot/pic (3).jpg"
+                        alt="SLIoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('sliot', this)">
+                    <img
+                        src="images/sliot/pic (3).jpeg"
+                        alt="SLIoT Challenge"
+                        loading="lazy">
+                </div>
+
+                <div
+                    class="slideshow-thumb"
+                    onclick="setSlideFromThumb('sliot', this)">
+                    <img
+                        src="images/sliot/pic (4).jpeg"
+                        alt="SLIoT Challenge"
+                        loading="lazy">
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
 
     <!-- ===== DOWNLOAD ===== -->
     <section id="download" class="section-pad">
@@ -3573,194 +3861,750 @@ District General Hospital Ampara
         </div>
     </footer>
 
-    <!-- ===== JAVASCRIPT ===== -->
-    <script>
-        // Faster Preloader Logic
-        function hidePreloader() {
-            const preloader = document.getElementById('preloader');
-            if (preloader && !preloader.classList.contains('hidden')) {
-                preloader.classList.add('hidden');
-            }
-        }
-        // Hide when DOM is ready (much faster than window.load)
-        document.addEventListener('DOMContentLoaded', hidePreloader);
-        // Fallback for older browsers or edge cases
-        window.addEventListener('load', hidePreloader);
-        // Force hide after 2 seconds to ensure user is never stuck
-        setTimeout(hidePreloader, 2000);
+   <script>
+    // ============================================================
+    // PRELOADER
+    // ============================================================
 
-        // Navbar scroll
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 60);
-            document.getElementById('scrolltop').classList.toggle('show', window.scrollY > 400);
+    function hidePreloader() {
+        const preloader = document.getElementById('preloader');
+
+        if (preloader && !preloader.classList.contains('hidden')) {
+            preloader.classList.add('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', hidePreloader);
+    window.addEventListener('load', hidePreloader);
+
+    // Force hide after 2 seconds as fallback
+    setTimeout(hidePreloader, 2000);
+
+
+    // ============================================================
+    // NAVBAR SCROLL
+    // ============================================================
+
+    const navbar = document.getElementById('navbar');
+
+    window.addEventListener('scroll', () => {
+
+        if (navbar) {
+            navbar.classList.toggle(
+                'scrolled',
+                window.scrollY > 60
+            );
+        }
+
+        const scrollTopButton = document.getElementById('scrolltop');
+
+        if (scrollTopButton) {
+            scrollTopButton.classList.toggle(
+                'show',
+                window.scrollY > 400
+            );
+        }
+    });
+
+
+    // ============================================================
+    // MOBILE MENU
+    // ============================================================
+
+    function openMobileMenu() {
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        if (mobileNav) {
+            mobileNav.classList.add('open');
+        }
+
+        if (mobileOverlay) {
+            mobileOverlay.classList.add('open');
+        }
+    }
+
+
+    function closeMobileMenu() {
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        if (mobileNav) {
+            mobileNav.classList.remove('open');
+        }
+
+        if (mobileOverlay) {
+            mobileOverlay.classList.remove('open');
+        }
+    }
+
+
+    // ============================================================
+    // GALLERY DATA
+    //
+    // IMPORTANT:
+    // Images are automatically read from the thumbnail HTML.
+    //
+    // You DO NOT need to manually maintain an images array anymore.
+    // ============================================================
+
+    const galleriesData = {};
+
+
+    function initializeGalleries() {
+
+        const galleryContainers =
+            document.querySelectorAll(
+                '.slideshow-container[id^="gallery-"]'
+            );
+
+        galleryContainers.forEach(container => {
+
+            const galleryId =
+                container.id.replace('gallery-', '');
+
+            const thumbImages =
+                container.querySelectorAll(
+                    '.slideshow-thumb img'
+                );
+
+            const images =
+                Array.from(thumbImages)
+                    .map(img => img.getAttribute('src'))
+                    .filter(Boolean);
+
+            galleriesData[galleryId] = {
+                currentIndex: 0,
+                images: images,
+                fadeTimer: null
+            };
+
+            // Make sure main image starts with
+            // the first thumbnail image.
+            const mainImg =
+                document.getElementById(
+                    `main-img-${galleryId}`
+                );
+
+            if (mainImg && images.length > 0) {
+                mainImg.src = images[0];
+            }
+        });
+    }
+
+
+    // Initialize galleries now because the script is
+    // placed after the HTML content.
+    initializeGalleries();
+
+
+    // ============================================================
+    // GALLERY SLIDESHOW
+    // ============================================================
+
+    function updateSlide(galleryId) {
+
+        const gallery = galleriesData[galleryId];
+
+        if (!gallery || gallery.images.length === 0) {
+            console.error(
+                `Gallery "${galleryId}" does not exist or contains no images.`
+            );
+            return;
+        }
+
+        const mainImg =
+            document.getElementById(
+                `main-img-${galleryId}`
+            );
+
+        const thumbsContainer =
+            document.getElementById(
+                `thumbs-${galleryId}`
+            );
+
+        if (!mainImg || !thumbsContainer) {
+            console.error(
+                `Missing gallery HTML elements for "${galleryId}".`
+            );
+            return;
+        }
+
+        const thumbs =
+            thumbsContainer.querySelectorAll(
+                '.slideshow-thumb'
+            );
+
+
+        // Cancel an older transition if the user
+        // clicks very quickly.
+        if (gallery.fadeTimer) {
+            clearTimeout(gallery.fadeTimer);
+        }
+
+
+        // Fade image slightly
+        mainImg.style.opacity = '0.4';
+
+
+        gallery.fadeTimer = setTimeout(() => {
+
+            mainImg.src =
+                gallery.images[
+                    gallery.currentIndex
+                ];
+
+            mainImg.style.opacity = '1';
+
+            gallery.fadeTimer = null;
+
+        }, 150);
+
+
+        // Update active thumbnail
+        thumbs.forEach((thumb, index) => {
+
+            if (index === gallery.currentIndex) {
+
+                thumb.classList.add('active');
+
+            } else {
+
+                thumb.classList.remove('active');
+
+            }
         });
 
-        // Mobile menu
-        function openMobileMenu() {
-            document.getElementById('mobileNav').classList.add('open');
-            document.getElementById('mobileOverlay').classList.add('open');
-        }
-        function closeMobileMenu() {
-            document.getElementById('mobileNav').classList.remove('open');
-            document.getElementById('mobileOverlay').classList.remove('open');
-        }
 
-        // Lightbox Functionality (with navigation)
-        let lightboxGallery = '';
-        let lightboxIndex = 0;
+        // Scroll only the thumbnail strip horizontally.
+        // This avoids scrollIntoView accidentally moving
+        // the whole webpage vertically.
+        const activeThumb =
+            thumbs[gallery.currentIndex];
 
-        function openLightbox(galleryId) {
-            lightboxGallery = galleryId;
-            // Sync lightbox index with the current slideshow index
-            lightboxIndex = galleriesData[galleryId].currentIndex;
-            updateLightboxImage();
-            document.getElementById('lightbox').classList.add('open');
-        }
+        if (activeThumb) {
 
-        function updateLightboxImage() {
-            document.getElementById('lightbox-img').src = galleriesData[lightboxGallery].images[lightboxIndex];
-        }
+            const targetScroll =
+                activeThumb.offsetLeft
+                - (thumbsContainer.clientWidth / 2)
+                + (activeThumb.clientWidth / 2);
 
-        function changeLightboxSlide(direction) {
-            const gallery = galleriesData[lightboxGallery];
-            lightboxIndex += direction;
-
-            // Loop around if we hit the end or beginning
-            if (lightboxIndex >= gallery.images.length) lightboxIndex = 0;
-            if (lightboxIndex < 0) lightboxIndex = gallery.images.length - 1;
-
-            updateLightboxImage();
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('open');
-        }
-
-        // Tab switcher
-        function switchTab(btn, tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content-item').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('tab-' + tab).classList.add('active');
-        }
-
-        // Intersection Observer for fade-up animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                    observer.unobserve(e.target);
-                }
+            thumbsContainer.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
             });
-        }, { threshold: 0.12 });
+        }
+    }
 
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // Smooth scroll for nav links
-        document.querySelectorAll('a[href^="#"]').forEach(a => {
-            a.addEventListener('click', e => {
-                const target = document.querySelector(a.getAttribute('href'));
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+    function changeSlide(galleryId, direction) {
+
+        const gallery = galleriesData[galleryId];
+
+        if (!gallery || gallery.images.length === 0) {
+            console.error(
+                `Cannot change slide. Gallery "${galleryId}" was not found.`
+            );
+            return;
+        }
+
+        gallery.currentIndex += direction;
+
+
+        // Loop back to beginning
+        if (
+            gallery.currentIndex >=
+            gallery.images.length
+        ) {
+            gallery.currentIndex = 0;
+        }
+
+
+        // Loop back to end
+        if (gallery.currentIndex < 0) {
+            gallery.currentIndex =
+                gallery.images.length - 1;
+        }
+
+
+        updateSlide(galleryId);
+    }
+
+
+    function setSlide(galleryId, index) {
+
+        const gallery = galleriesData[galleryId];
+
+        if (!gallery) {
+            console.error(
+                `Gallery "${galleryId}" was not found.`
+            );
+            return;
+        }
+
+
+        if (
+            index < 0 ||
+            index >= gallery.images.length
+        ) {
+            console.error(
+                `Invalid image index ${index} for gallery "${galleryId}".`
+            );
+            return;
+        }
+
+
+        gallery.currentIndex = index;
+
+        updateSlide(galleryId);
+    }
+
+
+    // Instead of manually writing:
+    //
+    // setSlide('journey', 0)
+    // setSlide('journey', 1)
+    // setSlide('journey', 2)
+    //
+    // this function automatically finds which
+    // thumbnail the user clicked.
+    function setSlideFromThumb(
+        galleryId,
+        thumbElement
+    ) {
+
+        const thumbsContainer =
+            document.getElementById(
+                `thumbs-${galleryId}`
+            );
+
+        if (!thumbsContainer) {
+            return;
+        }
+
+
+        const thumbs =
+            Array.from(
+                thumbsContainer.querySelectorAll(
+                    '.slideshow-thumb'
+                )
+            );
+
+
+        const index =
+            thumbs.indexOf(thumbElement);
+
+
+        if (index !== -1) {
+            setSlide(galleryId, index);
+        }
+    }
+
+
+    // ============================================================
+    // LIGHTBOX
+    //
+    // Supports BOTH:
+    //
+    // openLightbox('journey')
+    //
+    // AND your existing:
+    //
+    // openLightbox(this.src)
+    //
+    // So architecture/hardware images elsewhere
+    // in your HTML continue working.
+    // ============================================================
+
+    let lightboxGallery = '';
+    let lightboxIndex = 0;
+
+
+    function openLightbox(source) {
+
+        const lightbox =
+            document.getElementById('lightbox');
+
+        const lightboxImg =
+            document.getElementById('lightbox-img');
+
+        const navButtons =
+            document.querySelectorAll(
+                '#lightbox .lightbox-nav'
+            );
+
+
+        if (!lightbox || !lightboxImg) {
+            return;
+        }
+
+
+        // --------------------------------------------------------
+        // GALLERY MODE
+        // --------------------------------------------------------
+
+        if (galleriesData[source]) {
+
+            lightboxGallery = source;
+
+            lightboxIndex =
+                galleriesData[source].currentIndex;
+
+
+            // Show navigation arrows
+            navButtons.forEach(button => {
+                button.style.display = '';
             });
+
+
+            updateLightboxImage();
+        }
+
+
+        // --------------------------------------------------------
+        // SINGLE IMAGE MODE
+        //
+        // Used for:
+        //
+        // openLightbox(this.src)
+        //
+        // elsewhere in your website.
+        // --------------------------------------------------------
+
+        else {
+
+            lightboxGallery = '';
+            lightboxIndex = 0;
+
+            lightboxImg.src = source;
+
+
+            // No next/previous buttons for single images
+            navButtons.forEach(button => {
+                button.style.display = 'none';
+            });
+        }
+
+
+        lightbox.classList.add('open');
+    }
+
+
+    function updateLightboxImage() {
+
+        if (
+            !lightboxGallery ||
+            !galleriesData[lightboxGallery]
+        ) {
+            return;
+        }
+
+
+        const gallery =
+            galleriesData[lightboxGallery];
+
+
+        const lightboxImg =
+            document.getElementById(
+                'lightbox-img'
+            );
+
+
+        if (!lightboxImg) {
+            return;
+        }
+
+
+        lightboxImg.src =
+            gallery.images[lightboxIndex];
+    }
+
+
+    function changeLightboxSlide(direction) {
+
+        if (
+            !lightboxGallery ||
+            !galleriesData[lightboxGallery]
+        ) {
+            return;
+        }
+
+
+        const gallery =
+            galleriesData[lightboxGallery];
+
+
+        lightboxIndex += direction;
+
+
+        // Loop forward
+        if (
+            lightboxIndex >=
+            gallery.images.length
+        ) {
+            lightboxIndex = 0;
+        }
+
+
+        // Loop backward
+        if (lightboxIndex < 0) {
+            lightboxIndex =
+                gallery.images.length - 1;
+        }
+
+
+        // Keep slideshow position synchronized
+        // with lightbox position.
+        gallery.currentIndex =
+            lightboxIndex;
+
+
+        updateLightboxImage();
+    }
+
+
+    function closeLightbox() {
+
+        const lightbox =
+            document.getElementById(
+                'lightbox'
+            );
+
+
+        if (lightbox) {
+            lightbox.classList.remove('open');
+        }
+
+
+        // If user navigated inside gallery lightbox,
+        // update the main slideshow and active thumbnail
+        // to the same image when closing.
+        if (
+            lightboxGallery &&
+            galleriesData[lightboxGallery]
+        ) {
+
+            galleriesData[
+                lightboxGallery
+            ].currentIndex =
+                lightboxIndex;
+
+
+            updateSlide(lightboxGallery);
+        }
+
+
+        lightboxGallery = '';
+        lightboxIndex = 0;
+    }
+
+
+    // Keyboard support for lightbox
+    document.addEventListener(
+        'keydown',
+        event => {
+
+            const lightbox =
+                document.getElementById(
+                    'lightbox'
+                );
+
+
+            if (
+                !lightbox ||
+                !lightbox.classList.contains('open')
+            ) {
+                return;
+            }
+
+
+            if (event.key === 'Escape') {
+
+                closeLightbox();
+
+            } else if (
+                event.key === 'ArrowLeft' &&
+                lightboxGallery
+            ) {
+
+                changeLightboxSlide(-1);
+
+            } else if (
+                event.key === 'ArrowRight' &&
+                lightboxGallery
+            ) {
+
+                changeLightboxSlide(1);
+
+            }
+        }
+    );
+
+
+    // ============================================================
+    // TAB SWITCHER
+    // ============================================================
+
+    function switchTab(btn, tab) {
+
+        document
+            .querySelectorAll('.tab-btn')
+            .forEach(button => {
+                button.classList.remove('active');
+            });
+
+
+        document
+            .querySelectorAll('.tab-content-item')
+            .forEach(content => {
+                content.classList.remove('active');
+            });
+
+
+        btn.classList.add('active');
+
+
+        const targetTab =
+            document.getElementById(
+                'tab-' + tab
+            );
+
+
+        if (targetTab) {
+            targetTab.classList.add('active');
+        }
+    }
+
+
+    // ============================================================
+    // FADE-UP INTERSECTION OBSERVER
+    // ============================================================
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+
+                entries.forEach(entry => {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target
+                            .classList
+                            .add('visible');
+
+
+                        observer.unobserve(
+                            entry.target
+                        );
+                    }
+                });
+
+            },
+            {
+                threshold: 0.12
+            }
+        );
+
+
+    document
+        .querySelectorAll('.fade-up')
+        .forEach(element => {
+            observer.observe(element);
         });
 
-        // Copy SHA hash to clipboard
-        function copyHash() {
-            const hash = document.getElementById('sha-value').textContent;
-            navigator.clipboard.writeText(hash).then(() => {
-                const el = document.getElementById('sha-value');
-                const orig = el.textContent;
-                el.textContent = 'Copied!';
-                el.style.color = 'var(--accent)';
-                setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 1800);
-            });
-        }
 
-        // ===== MODERN SLIDESHOW GALLERY LOGIC =====
-        const galleriesData = {
-            'journey': {
-                currentIndex: 0,
-                images: [
-                    'images/photolog/prototype (1).jpeg',
-                    'images/photolog/prototype (2).jpg',
-                    'images/photolog/prototype (3).jpg',
-                    'images/photolog/prototype (4).jpg',
-                    'images/photolog/prototype (5).jpg',
-                    'images/photolog/prototype (6).jpg',
-                    'images/photolog/prototype (7).jpeg',
-                    'images/photolog/prototype (8).jpeg',
-                    'images/photolog/prototype (9).jpeg',
-                    'images/photolog/M2.jpeg'
-                ]
-            },
-            'slasscom': {
-                currentIndex: 0,
-                images: [
-                    'images/slasscom/1.jpg',
-                    'images/slasscom/2.jpg',
-                    'images/slasscom/3.jpg',
-                    'images/slasscom/4.jpg'
-                ]
-            },
-            'sliot': {
-                currentIndex: 0,
-                images: [
-                    'images/sliot/pic (1).jpg',
-                    'images/sliot/pic (1).jpeg',
-                    'images/sliot/pic (2).jpg',
-                    'images/sliot/pic (3).jpg',
-                    'images/sliot/pic (3).jpeg',
-                    'images/sliot/pic (4).jpeg'
-                ]
-            }
-        };
+    // ============================================================
+    // SMOOTH SCROLL FOR NAVIGATION LINKS
+    // ============================================================
 
-        function updateSlide(galleryId) {
-            const gallery = galleriesData[galleryId];
-            const mainImg = document.getElementById(`main-img-${galleryId}`);
-            const thumbs = document.querySelectorAll(`#thumbs-${galleryId} .slideshow-thumb`);
+    document
+        .querySelectorAll('a[href^="#"]')
+        .forEach(anchor => {
 
-            // Quick fade transition
-            mainImg.style.opacity = '0.4';
-            setTimeout(() => {
-                mainImg.src = gallery.images[gallery.currentIndex];
-                mainImg.style.opacity = '1';
-            }, 150);
+            anchor.addEventListener(
+                'click',
+                event => {
 
-            // Update active state on thumbnails
-            thumbs.forEach((thumb, index) => {
-                if (index === gallery.currentIndex) {
-                    thumb.classList.add('active');
-                    // Smoothly scroll the active thumbnail into view
-                    thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                } else {
-                    thumb.classList.remove('active');
+                    const href =
+                        anchor.getAttribute('href');
+
+
+                    if (
+                        !href ||
+                        href === '#'
+                    ) {
+                        return;
+                    }
+
+
+                    const target =
+                        document.querySelector(href);
+
+
+                    if (target) {
+
+                        event.preventDefault();
+
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
                 }
+            );
+        });
+
+
+    // ============================================================
+    // COPY SHA HASH
+    // ============================================================
+
+    function copyHash() {
+
+        const hashElement =
+            document.getElementById(
+                'sha-value'
+            );
+
+
+        if (!hashElement) {
+            return;
+        }
+
+
+        const hash =
+            hashElement.textContent;
+
+
+        navigator.clipboard
+            .writeText(hash)
+            .then(() => {
+
+                const originalText =
+                    hashElement.textContent;
+
+
+                hashElement.textContent =
+                    'Copied!';
+
+
+                hashElement.style.color =
+                    'var(--accent)';
+
+
+                setTimeout(() => {
+
+                    hashElement.textContent =
+                        originalText;
+
+
+                    hashElement.style.color =
+                        '';
+
+                }, 1800);
             });
-        }
-
-        function changeSlide(galleryId, direction) {
-            const gallery = galleriesData[galleryId];
-            gallery.currentIndex += direction;
-
-            // Loop logic
-            if (gallery.currentIndex >= gallery.images.length) {
-                gallery.currentIndex = 0;
-            } else if (gallery.currentIndex < 0) {
-                gallery.currentIndex = gallery.images.length - 1;
-            }
-            updateSlide(galleryId);
-        }
-
-        function setSlide(galleryId, index) {
-            galleriesData[galleryId].currentIndex = index;
-            updateSlide(galleryId);
-        }
-    </script>
+    }
+</script>
 </body>
 
 </html>
